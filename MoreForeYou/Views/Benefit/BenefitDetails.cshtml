@@ -1,0 +1,159 @@
+﻿@model MoreForYou.Services.Models.API.BenefitAPIModel
+
+@{
+    ViewData["Title"] = "BenefitDetails";
+    Layout = "~/Views/Shared/_More4ULayout2.cshtml";
+
+}
+<style>
+    .accordion .card 
+    {
+        margin-bottom: 7px;
+    }
+
+    .accordion .card-header 
+    {
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #EEEEEE;
+    }
+
+    .accordion .card-body 
+    {
+        box-shadow: 0px;
+    }
+
+    #accordion-one .fa 
+    {
+        float: right;
+    }
+
+    #accordion-one [data-toggle="collapse"] .fa:before {
+        content: "\f068";
+    }
+
+    #accordion-one [data-toggle="collapse"].collapsed .fa:before {
+        content: "\f067";
+    }
+    #accordion-two .fa {
+        float: right;
+    }
+
+    #accordion-two [data-toggle="collapse"] .fa:before {
+        content: "\f068";
+    }
+
+    #accordion-two [data-toggle="collapse"].collapsed .fa:before {
+        content: "\f067";
+    }
+</style>
+
+<section class="page-title">
+    <!-- Container Start -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <!-- Title text -->
+                <h3>@Model.Name</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Container End -->
+</section>
+<!--==================================
+=            Blog Section            =
+===================================-->
+
+<section class="blog section">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+
+                    <div class="card-body" style="box-shadow: 8px 8px 8px 8px rgba(0, 0, 0, .2)">
+                        <h4 class="card-title">Benefits</h4>
+                        <div class="active-member">
+                            @*<div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">*@
+                            <!-- Article 01 -->
+                            <article>
+                                <!-- Post Image -->
+                                <div class="image">
+                                    <img src="~/images/BenefitCards/@Model.BenefitCard" alt="article-01" class="zoom">
+                                </div>
+                                <!-- Post Title -->
+                                @*<h3>@Model.Name</h3>*@
+                                <div style="text-align:center">
+                                    <p class="">@Model.Description</p>
+                                </div>
+                                <div id="accordion-one" class="accordion">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                <i class="fa" aria-hidden="true"></i> Conditions
+                                            </h5>
+                                        </div>
+                                        <div id="collapseOne" class="collapse show" data-parent="#accordion-one">
+                                            <div class="card-body">
+
+                                                <ul>
+                                                    @foreach (string condition in Model.BenefitConditions)
+                                                    {
+                                                        <li>@condition</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="accordion-two" class="accordion">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                                <i class="fa" aria-hidden="true"></i> Workflow
+                                            </h5>
+                                        </div>
+                                        <div id="collapseTwo" class="collapse show" data-parent="#accordion-two">
+                                            <div class="card-body">
+
+
+                                                @if (Model.BenefitWorkflows.Count != 0)
+                                                {
+                                                <ul>
+                                                    <div> This benefit must be approved from =></div>
+                                                    @for (int index2 = 1; index2 <= Model.BenefitWorkflows.Count; index2 ++)
+                                                    {
+                                                        <li><span>@index2  :- </span> <span>@Model.BenefitWorkflows[index2-1]</span></li>
+                                                    }
+                                                </ul>
+                                                }
+                                                        else
+                                                        {
+                                                            <div> No APProval Needeed</div>
+                                                        }
+
+                                                   
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="text-align:center; margin-top:20px">
+                                    <!-- Read more button -->
+                                    @if (Model.EmployeeCanRedeem == true)
+                                    {
+
+                                        <a class="btn btn-transparent" value="@Model.Id" asp-action="Redeem" asp-route-id="@Model.Id">Redeem</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-transparent disabled" value="@Model.Id" asp-action="Redeem" asp-route-id="@Model.Id">Redeem</a>
+
+                                    }
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

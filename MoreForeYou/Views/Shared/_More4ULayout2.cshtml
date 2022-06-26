@@ -1,0 +1,462 @@
+﻿@inject UserManager<AspNetUser> userManager
+@inject SignInManager<AspNetUser> SignInManager
+@inject MoreForYou.Services.Contracts.IUserNotificationService _userNotificationService
+
+@{ var user = await userManager.GetUserAsync(User);
+    var displayName = user.UserName;
+    var roles = await userManager.GetRolesAsync(user);
+    var notifications = @_userNotificationService.GetUserNotification(user.Id);
+    int NotificationCount = 0;
+    if (notifications != null)
+    {
+        NotificationCount = notifications.Count;
+    }
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+
+        <!-- SITE TITTLE -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Classimax</title>
+
+        <!-- FAVICON -->
+        <link href="~/classimax-premium/img/favicon.png" rel="shortcut icon">
+        <!-- ~/classimax-premium/plugins/ CSS STYLE -->
+        <!-- <link href="~/classimax-premium/plugins//jquery-ui/jquery-ui.min.css" rel="stylesheet"> -->
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="~/classimax-premium/plugins//bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="~/classimax-premium/plugins//bootstrap/css/bootstrap-slider.css">
+        <!-- Font Awesome -->
+        <link href="~/classimax-premium/plugins//font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="~/classimax-premium/plugins/font-awesome/css/all.css" rel="stylesheet" />
+        <!-- Owl Carousel -->
+        <link href="~/classimax-premium/plugins//slick-carousel/slick/slick.css" rel="stylesheet">
+        <link href="~/classimax-premium/plugins//slick-carousel/slick/slick-theme.css" rel="stylesheet">
+        <!-- Fancy Box -->
+        <link href="~/classimax-premium/plugins//fancybox/jquery.fancybox.pack.css" rel="stylesheet">
+        <link href="~/classimax-premium/plugins//jquery-nice-select/css/nice-select.css" rel="stylesheet">
+        <!-- CUSTOM CSS -->
+        <link href="~/classimax-premium/css/style.css" rel="stylesheet">
+        <link href="./plugins/sweetalert/css/sweetalert.css" rel="stylesheet">
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+        <style>
+            body {
+                margin-top: 50px;
+            }
+
+            .nav-pills .nav-link2.active, .nav-pills .show > .nav-link2 {
+                background-color: #17A2B8;
+            }
+
+            .dropdown-menu {
+                top: 60px;
+                right: 0px;
+                left: unset;
+                width: 460px;
+                box-shadow: 0px 5px 7px -1px #c1c1c1;
+                padding-bottom: 0px;
+                padding: 0px;
+            }
+
+                .dropdown-menu:before {
+                    content: "";
+                    position: absolute;
+                    top: -20px;
+                    right: 12px;
+                    border: 10px solid #343A40;
+                    border-color: transparent transparent #343A40 transparent;
+                }
+
+            .notification-box {
+                padding: 10px 0px;
+            }
+
+            .bg-gray {
+                background-color: #eee;
+            }
+
+            .nav2 {
+                display: block;
+            }
+
+                .nav2 .nav-item2, .nav2 .nav-item2 a {
+                    padding-left: 0px;
+                }
+
+            .message {
+                font-size: 13px;
+            }
+        </style>
+
+    </head>
+
+    <body class="body-wrapper">
+
+
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav class="navbar navbar-expand-lg navbar-light navigation">
+                            <a class="navbar-brand" href="index.html">
+                                <img class="logImg" src="~/classimax-premium/images/logo.png" alt="">
+                            </a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <input type="hidden" value="@user.Id" />
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav ml-auto main-nav ">
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href="/Benefit/ShowBenefits">Home</a>
+                                    </li>
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href="/Benefit/ShowMyBenefits">MyBenefits</a>
+                                    </li>
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href="/Privilege/Index">Privileges</a>
+                                    </li>
+                                    @if (roles.Count != 0)
+                                    {
+                                        <li class="nav-item active">
+                                            <a class="nav-link" href="/Benefit/ShowRequests">Manage Requests</a>
+                                        </li>
+}
+                                    <li class="nav-item active">
+                                        <a asp-route-userid="@user.Id" asp-action="UserProfile" asp-controller="Employee">
+                                            User Profile
+
+                                        </a>
+                                    </li>
+                                    @if (roles.Contains("Admin"))
+                                    {
+                                        <li class="nav-item dropdown dropdown-slide">
+                                            <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Master Data <span><i class="fa fa-angle-down"></i></span>
+                                            </a>
+                                            Dropdown list
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="/Employee/Index">Employee</a>
+                                                <a class="dropdown-item" href="/Department/Index">Department</a>
+                                                <a class="dropdown-item" href="/Position/Index">Position</a>
+                                                <a class="dropdown-item" href="/Nationality/Index">Nationality</a>
+                                                <a class="dropdown-item" href="/Company/Index">Company</a>
+                                                <a class="dropdown-item" href="/Privilege/Index">Privileges</a>
+                                                <a class="dropdown-item" href="/Employee/MySetting">MySetting</a>
+
+                                            </div>
+                                        </li>
+                                    }
+                                    <li class="nav-item2 dropdown">
+                                        <a class="nav-link2 text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-bell" style="color: #17A2B8; font-size:40px"></i>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="head text-light bg-dark">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-sm-12 col-12">
+                                                        @if (notifications.Count != 0)
+                                                        {
+                                                            <span>Notifications (<span id="notificationCount">@NotificationCount</span>)</span>
+                                                            <a href="" class="float-right text-light">Mark all as read</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>Notifications (<span id="notificationCount">0</span>)</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="notification-box">
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-sm-3 col-3 text-center" id="employeePhoto">
+                                                        @*<img src="/demo/man-profile.jpg" class="w-50 rounded-circle">*@
+                                                    </div>
+                                                    <div class="col-lg-8 col-sm-8 col-8">
+                                                        <div id="notfiyType">
+
+                                                        </div>
+                                                        @*<strong class="text-info" id="NotificationType2"></strong>
+                            <hr />
+                            <a asp-action="UserProfile" asp-controller="Employee" id="userProfileLink">
+                                <strong class="text-info" id="employeeName2">
+                                </strong>
+                            </a>*@
+                                                        @*<div>
+
+                                <span id="notificationMessage2"></span><a  id="benefitDetails2" asp-action="BenefitDetails" asp-controller="Benefit">
+                                </a>
+                            </div>
+                            <small class="text-warning"> <span id="NotificationDate"></span>, <span id="NotificationTime"></span> </small>*@
+                                                    </div>
+                                                </div>
+                                            </li>
+
+
+                                            @if (notifications.Count != 0)
+                                            {
+                                                @foreach (var notification in notifications)
+                                                {
+                                                    <li class="notification-box">
+                                                        <div class="row">
+                                                            <div class="col-lg-3 col-sm-3 col-3 text-center">
+                                                                <img src="/demo/man-profile.jpg" class="w-50 rounded-circle">
+                                                            </div>
+                                                            <div class="col-lg-8 col-sm-8 col-8">
+                                                                <strong class="text-info" id="NotificationType">@notification.Notification.Type</strong>
+                                                                <hr />
+                                                                @if (notification.Notification.Type == "Request")
+                                                                {
+                                                                    <a asp-action="UserProfile" asp-controller="Employee" asp-route-userId="@notification.Notification.BenefitRequest.Employee.UserId">
+                                                                        <strong class="text-info" id="employeeName">
+                                                                            @notification.Notification.BenefitRequest.Employee.FullName
+                                                                        </strong>
+                                                                    </a>
+                                                                }
+                                                                else if (notification.Notification.Type == "Response")
+                                                                {
+                                                                    <a asp-action="UserProfile" asp-controller="Employee" asp-route-userId="@notification.ResponsedByEmployee.EmployeeNumber">
+                                                                        <strong class="text-info" id="employeeName">
+                                                                            @notification.ResponsedByEmployee.FullName
+                                                                        </strong>
+                                                                    </a>
+                                                                }
+                                                                <div id="notificationMessage">
+
+                                                                    <span>@notification.Notification.Message</span>
+                                                                </div>
+                                                                @*<div id="notificationMessage">
+
+                                                                    <span>
+                                                                        @if (notification.Notification.BenefitRequest.RequestStatus.Name == "Approved" || notification.Notification.BenefitRequest.RequestStatus.Name == "InProgress")
+                                                                        {
+                                            <b style="color:lawngreen">Approved </b>
+                                            }
+                                        else if (notification.Notification.BenefitRequest.RequestStatus.Name == "Rejected")
+                                        {
+                                    <b style="color:red">Rejected </b>
+                                    }
+                                                                        your request with number <span>@notification.Notification.BenefitRequest.Id </span>for
+                                                                    </span><a asp-action="BenefitDetails" asp-controller="Benefit" asp-route-id="@notification.Notification.BenefitRequest.Benefit.Id">
+                                                                        @notification.Notification.BenefitRequest.Benefit.Name
+                                                                    </a> benefit
+                                                                </div>*@
+                                                                <div id="requestStatus">
+
+                                                                    <strong>Request Status :- </strong>@notification.Notification.BenefitRequest.RequestStatus.Name
+                                                                </div>
+
+                                                                <small class="text-warning" id="NotificationDate">@notification.Notification.CreatedDate.ToString("dd-MM-yyyy"), @notification.Notification.CreatedDate.ToString("HH:mm")</small>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                }
+                                                <li class="footer bg-dark text-center">
+                                                    <a href="" class="text-light">View All</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!--===============================
+    =            Hero Area            =
+    ================================-->
+
+        <section class="hero-area mainImg text-center overly">
+            <!-- Container Start -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Header Contetnt -->
+                        <div class="content-block">
+                            <h1>More 4 You </h1>
+                            <p>we care about our teams and memebers happienies </p> <br> <p class="signaturs">Cemex HR</p>
+                            <div class="short-popular-category-list text-center">
+                                <!--	<h2>Popular Category</h2>
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <a href="category.html"><i class="fa fa-bed"></i> Hotel</a></li>
+                                <li class="list-inline-item">
+                                    <a href="category.html"><i class="fa fa-grav"></i> Fitness</a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="category.html"><i class="fa fa-car"></i> Cars</a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="category.html"><i class="fa fa-cutlery"></i> Restaurants</a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="category.html"><i class="fa fa-coffee"></i> Cafe</a>
+                                </li>
+                            </ul> -->
+                            </div>
+
+                        </div>
+                        <!-- Advance Search -->
+
+
+                    </div>
+                </div>
+            </div>
+            <!-- Container End -->
+        </section>
+
+        <!--===================================
+    =            Client Slider            =
+    ====================================-->
+
+        @RenderBody()
+
+        <!--===========================================
+    =            Popular deals section            =
+    ============================================-->
+        <!--============================
+    =            Footer            =
+    =============================-->
+
+        <footer class="footer section section-sm">
+            <!-- Container Start -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-7 offset-md-1 offset-lg-0">
+                        <!-- About -->
+                        <div class="block about">
+                            <!-- footer logo -->
+                            <img src="images/logo-footer.png" alt="">
+                            <!-- description -->
+                            <p class="alt-color">
+                                CEMEX UAE has over 10 years local experience in the UAE and we are part of the country’s story. 
+                                CEMEX has supplied readymix concrete and cement to iconic and innovative green building solutions throughout the UAE.
+
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Link list -->
+                    <div class="col-lg-2 offset-lg-1 col-md-3">
+                        <div class="block">
+                            <h4>Site Pages</h4>
+                            <ul>
+                                <li><a href="#">Boston</a></li>
+                                <li><a href="#">How It works</a></li>
+                                <li><a href="#">Deals & Coupons</a></li>
+                                <li><a href="#">Articls & Tips</a></li>
+                                <li><a href="terms-condition.html">Terms & Conditions</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Link list -->
+                    <div class="col-lg-2 col-md-3 offset-md-1 offset-lg-0">
+                        <div class="block">
+                            <h4>Admin Pages</h4>
+                            <ul>
+                                <li><a href="category.html">Category</a></li>
+                                <li><a href="single.html">Single Page</a></li>
+                                <li><a href="store.html">Store Single</a></li>
+                                <li>
+                                    <a href="single-blog.html">Single Post</a>
+                                </li>
+                                <li><a href="blog.html">Blog</a></li>
+
+
+
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Promotion -->
+                    <div class="col-lg-4 col-md-7">
+                        <!-- App promotion -->
+                        <div class="block-2 app-promotion">
+                            <div class="mobile d-flex">
+                                <a href="">
+                                    <!-- Icon -->
+                                    <img src="images/footer/phone-icon.png" alt="mobile-icon">
+                                </a>
+                                <p>Get the Dealsy Mobile App and Save more</p>
+                            </div>
+                            <div class="download-btn d-flex my-3">
+                                <a href="#"><img src="images/apps/google-play-store.png" class="img-fluid" alt=""></a>
+                                <a href="#" class=" ml-3"><img src="images/apps/apple-app-store.png" class="img-fluid" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container End -->
+        </footer>
+        <!-- Footer Bottom -->
+        <footer class="footer-bottom">
+            <!-- Container Start -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-12">
+                        <!-- Copyright -->
+                        <div class="copyright">
+                            <p>
+                                Copyright ©
+                                <script>
+                                    var CurrentYear = new Date().getFullYear()
+                                    document.write(CurrentYear)
+                                </script>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-12">
+                        <!-- Social Icons -->
+                        @*<ul class="social-media-icons text-right">
+                            <li><a class="fa fa-facebook" href="https://www.facebook.com/themefisher" target="_blank"></a></li>
+                            <li><a class="fa fa-twitter" href="https://www.twitter.com/themefisher" target="_blank"></a></li>
+                            <li><a class="fa fa-pinterest-p" href="https://www.pinterest.com/themefisher" target="_blank"></a></li>
+                            <li><a class="fa fa-vimeo" href=""></a></li>
+                        </ul>*@
+                    </div>
+                </div>
+            </div>
+            <!-- Container End -->
+            <!-- To Top -->
+            <div class="top-to">
+                <a id="top" class="" href="#"><i class="fa fa-angle-up"></i></a>
+            </div>
+        </footer>
+        <input type="hidden" id="userId" value="@user.Id" />
+        <script src="~/classimax-premium/plugins//jQuery/jquery.min.js"></script>
+        <script src="~/classimax-premium/plugins//bootstrap/js/popper.min.js"></script>
+        <script src="~/classimax-premium/plugins//bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/classimax-premium/plugins//bootstrap/js/bootstrap-slider.js"></script>
+        <!-- tether js -->
+        <script src="~/classimax-premium/plugins//tether/js/tether.min.js"></script>
+        <script src="~/classimax-premium/plugins//raty/jquery.raty-fa.js"></script>
+        <script src="~/classimax-premium/plugins//slick-carousel/slick/slick.min.js"></script>
+        <script src="~/classimax-premium/plugins//jquery-nice-select/js/jquery.nice-select.min.js"></script>
+        <script src="~/classimax-premium/plugins//fancybox/jquery.fancybox.pack.js"></script>
+        <script src="~/classimax-premium/plugins//smoothscroll/SmoothScroll.min.js"></script>
+        <!-- google map -->
+        <script src="~/classimax-premium/plugins//google-map/gmap.js"></script>
+        <script src="~/classimax-premium/js/script.js"></script>
+        <script src="~/js/signalr/dist/browser/signalr.js"></script>
+        <script src="~/js/Notification.js"></script>
+    </body>
+    @RenderSection("Scripts", required: false)
+    </html>
+}
+
+
