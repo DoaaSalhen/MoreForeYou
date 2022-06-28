@@ -56,7 +56,7 @@ namespace MoreForYou.APIController
             return employee;
         }
 
-        [HttpPost]
+        [HttpPost("userLogin")]
         public async Task<ActionResult> UserLogin(LoginModel loginModel)
         {
             EmployeeModel employee = _EmployeeService.GetEmployee(loginModel.EmployeeNumber);
@@ -92,7 +92,7 @@ namespace MoreForYou.APIController
 
         }
 
-
+        [HttpPost("refreshToken")]
         public async Task<ActionResult> UpdateToken(string userId, string newToken)
         {
             AspNetUser user = await _userManager.FindByIdAsync(userId);

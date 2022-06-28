@@ -289,7 +289,9 @@ namespace MoreForYou.Controllers
                 Model.IsVisible = true;
                 Model.IsDelted = false;
                 Model.HasWorkflow = true;
-                string imageName = _requestWorkflowService.UploadedImageAsync(Model.ImageName, "images/BenefitCards").Result;
+                Model.BenefitReturn = 1;
+
+                string imageName = _requestWorkflowService.UploadedImageAsync(Model.ImageName, @"C:\inetpub\wwwroot\_more4u\wwwroot\images\BenefitCards").Result;
                 Model.BenefitCard = imageName;
                 var addedBenefitModel = _BenefitService.CreateBenefit(Model);
                 if (addedBenefitModel != null)
@@ -583,7 +585,7 @@ namespace MoreForYou.Controllers
 
 
 
-                if (request.BenefitType == Enum.GetName(typeof(CommanData.BenefitTypes),2))
+                if (request.BenefitType == Enum.GetName(typeof(CommanData.BenefitTypes),1))
                 {
                     return View("BenefitRequest", request);
                 }

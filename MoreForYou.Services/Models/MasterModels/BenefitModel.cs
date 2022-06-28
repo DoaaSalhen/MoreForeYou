@@ -102,6 +102,8 @@ namespace MoreForYou.Services.Models.MasterModels
         public int NumberOfApprovedRequests { get; set; }
 
         public List<BenefitStats> benefitStatses { get; set; }
+        public int BenefitReturn { get; set; }
+
     }
 
     public class RoleOrder

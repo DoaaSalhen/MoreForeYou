@@ -708,9 +708,12 @@ namespace MoreForYou.Services.Implementation
             request.BenefitName = benefitModel.Name;
             request.IsAgift = benefitModel.IsAgift;
             request.benefitId = benefitModel.Id;
-            request.RequiredDocuments = benefitModel.RequiredDocuments.Split(";");
+            if(benefitModel.RequiredDocuments != null)
+            {
+                request.RequiredDocuments = benefitModel.RequiredDocuments.Split(";");
+            }
             request.BenefitType = benefitModel.BenefitType.Name;
-            if (benefitModel.BenefitTypeId == 2)
+            if (benefitModel.BenefitTypeId ==(int) CommanData.BenefitTypes.Individual)
             {
                 return request;
             }

@@ -20,7 +20,7 @@ namespace MoreForYou.Services.Implementation
             {
                 app = FirebaseApp.Create(new AppOptions()
                 {
-                    Credential = GoogleCredential.FromFile("serviceKey.json").
+                    Credential = GoogleCredential.FromFile("ServiceKey.json").
                CreateScoped("https://www.googleapis.com/auth/firebase.messaging")
                 });
             }

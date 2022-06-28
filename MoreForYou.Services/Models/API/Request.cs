@@ -48,7 +48,7 @@ namespace MoreForYou.Services.Models.API
 
         public List<Participant> ParticipantsData { get; set; }
         public List<LoginUser> FullParticipantsData { get; set; }
-        public IFormFile[] Documents { get; set; }
+        //public IFormFile[] Documents { get; set; }
 
         public int numberOfDays { get; set; }
 

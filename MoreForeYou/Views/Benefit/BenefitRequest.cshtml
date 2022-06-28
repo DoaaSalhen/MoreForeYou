@@ -179,7 +179,7 @@ else if (ViewBag.Error != null)
                         <label for="current-password">To</label>
                         <input class="form-control" id="To" type="date" asp-for="To" onclick="setYear(@Model.Year)">
                     </div>
-                    @if (Model.RequiredDocuments != null)
+                    @*@if (Model.RequiredDocuments != null)
                     {
                         for(int index=0; index<Model.RequiredDocuments.Length; index++)
                         {
@@ -189,7 +189,7 @@ else if (ViewBag.Error != null)
                         </div>
                         }
                         
-                    }
+                    }*@
                     @if (Model.IsAgift == true)
                     {
                         <div class="form-group">

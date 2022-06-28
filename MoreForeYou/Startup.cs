@@ -100,10 +100,11 @@ namespace MoreForeYou
             {
                 options.Conventions.AddAreaPageRoute("Identity", "/Account/Login", "");
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:4200")
+                    builder => builder.WithOrigins("http://20.86.97.165/more4u")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
@@ -129,16 +130,20 @@ namespace MoreForeYou
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "MoreForYou.API");
                 c.EnableFilter();
             });
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Home/Error");
+            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            //    app.UseHsts();
+            //}
+            app.UseExceptionHandler("/Home/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+            app.UseDeveloperExceptionPage();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -147,14 +152,14 @@ namespace MoreForeYou
             app.UseAuthorization();
             app.UseMvc();
 
-            //app.UseCors("CorsPolicy");
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Department}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                    pattern: "{more4u}/{controller=Benefit}/{action=Index}/{id?}");
+                //endpoints.MapRazorPages();
                 endpoints.MapHub<NotificationHub>("/NotificationHub");
 
             });

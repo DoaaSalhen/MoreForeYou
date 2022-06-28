@@ -15,5 +15,6 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_DbContextTypeFullName>Repository.EntityFramework.APPDBContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_EnablerDialogWidth>650</WebStackScaffolding_EnablerDialogWidth>
+    <NameOfLastUsedPublishProfile>C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\Properties\PublishProfiles\FolderProfile.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

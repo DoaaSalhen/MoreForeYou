@@ -84,7 +84,7 @@ namespace WebApplication9.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/Benefit/ShowBenefits");
+            returnUrl = returnUrl ?? Url.Content("~/more4u/Benefit/ShowBenefits");
 
             if (ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace WebApplication9.Areas.Identity.Pages.Account
                         _logger.LogInformation("User logged in.");
                         var user = await _userManager.FindByNameAsync(result1.Email);
                         var roles = await _userManager.GetRolesAsync(user);
-                        returnUrl = Url.Content("~/Benefit/ShowBenefits");
+                        returnUrl = Url.Content("~/more4u/Benefit/ShowBenefits");
                         return LocalRedirect(returnUrl);
                     }
                     //else

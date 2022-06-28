@@ -786,18 +786,18 @@ namespace MoreForYou.Services.Implementation
                 NewBenefitRequestModel.ExpectedDateTo = Convert.ToDateTime(request.To);
 
             }
-            if (request.Documents != null)
-            {
-                string filePath = "";
-                foreach (var file in request.Documents)
-                {
-                    RequestDocumentModel requestDocumentModel = new RequestDocumentModel();
-                    filePath = UploadedImageAsync(file, "BenefitRequestFiles").Result;
-                    requestDocumentModel.fileName = filePath;
-                    requestDocumentModel.FileType = file.ContentType;
-                    requestDocumentModels.Add(requestDocumentModel);
-                }
-            }
+            //if (request.Documents != null)
+            //{
+            //    string filePath = "";
+            //    foreach (var file in request.Documents)
+            //    {
+            //        RequestDocumentModel requestDocumentModel = new RequestDocumentModel();
+            //        filePath = UploadedImageAsync(file, @"C:\inetpub\wwwroot\_more4u\wwwroot\BenefitRequestFiles").Result;
+            //        requestDocumentModel.fileName = filePath;
+            //        requestDocumentModel.FileType = file.ContentType;
+            //        requestDocumentModels.Add(requestDocumentModel);
+            //    }
+            //}
             if (request.SendToId != 0)
             {
                 NewBenefitRequestModel.SendTo = request.SendToId;
@@ -805,14 +805,14 @@ namespace MoreForYou.Services.Implementation
             BenefitRequestModel addedRequest =_benefitRequestService.CreateBenefitRequest(NewBenefitRequestModel);
             if (addedRequest != null)
             {
-                if (requestDocumentModels != null)
-                {
-                    foreach (var document in requestDocumentModels)
-                    {
-                        document.BenefitRequestId = addedRequest.Id;
-                        _requestDocumentService.CreateRequestDocument(document);
-                    }
-                }
+                //if (requestDocumentModels != null)
+                //{
+                //    foreach (var document in requestDocumentModels)
+                //    {
+                //        document.BenefitRequestId = addedRequest.Id;
+                //        _requestDocumentService.CreateRequestDocument(document);
+                //    }
+                //}
 
                 BenefitRequestModel newBenefitRequestModel = new BenefitRequestModel();
                 newBenefitRequestModel.Benefit = benefitModel;
