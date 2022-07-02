@@ -41,6 +41,7 @@ namespace MoreForYou.Services.Contracts
 
         Task<bool> SendToSpecificUser(string message, RequestWokflowModel model, string requestType, string employeeName, string userId);
 
+        Task<string> AddDocumentsToRequest(long requestNumber, List<IFormFile> files);
 
 
 

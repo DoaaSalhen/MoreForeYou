@@ -184,59 +184,122 @@ namespace MoreForYou.Services.Implementation
             return benefitModels;
         }
 
-        public List<string> CreateBenefitConditions(BenefitModel benefitModel)
+        public BenefitConditionsAndAvailable CreateBenefitConditions(BenefitModel benefitModel, EmployeeModel employeeModel)
         {
-            List<string> BenefitConditions = new List<string>();
+            Dictionary<string, string> BenefitConditions = new Dictionary<string, string>();
+            Dictionary<string, bool> ConditionsApplicable = new Dictionary<string, bool>();
+
             if (benefitModel.Age != 0)
             {
-                BenefitConditions.Add("Age " + benefitModel.AgeSign + benefitModel.Age);
+                //BenefitConditions.Add("Age " + benefitModel.AgeSign + benefitModel.Age);
+                BenefitConditions.Add("Age", "Age " + benefitModel.AgeSign + benefitModel.Age);
+                int employeeAge = DateTime.Now.Year - employeeModel.BirthDate.Year;
+                if(employeeAge >= benefitModel.Age)
+                {
+                    ConditionsApplicable.Add("Age", true);
+                }
+                else
+                {
+                    ConditionsApplicable.Add("Age", false);
+                }
             }
             //else
             //{
             //    BenefitConditions.Add("Age : Any");
             //}
-            BenefitConditions.Add("Type : " + benefitModel.BenefitType.Name);
-            if(benefitModel.WorkDuration != 0)
+            BenefitConditions.Add("Type", benefitModel.BenefitType.Name);
+            ConditionsApplicable.Add("Type", true);
+
+            if (benefitModel.WorkDuration != 0)
             {
-                BenefitConditions.Add("Work Duration >= " + benefitModel.WorkDuration);
+                BenefitConditions.Add("WorkDuration", "Work Duration >= " + benefitModel.WorkDuration);
+                int employeeWorkDuartion = DateTime.Now.Year - employeeModel.JoiningDate.Year;
+                if(employeeWorkDuartion >= benefitModel.WorkDuration)
+                {
+                    ConditionsApplicable.Add("WorkDuration", true);
+
+                }
+                else
+                {
+                    ConditionsApplicable.Add("WorkDuration", false);
+                }
 
             }
             if (benefitModel.gender != (int)CommanData.Gender.Any)
             {
-                BenefitConditions.Add("Gender : " + (CommanData.Gender)benefitModel.gender);
+                BenefitConditions.Add("Gender", ""+(CommanData.Gender)benefitModel.gender);
+                if(employeeModel.Gender == benefitModel.gender)
+                {
+                    ConditionsApplicable.Add("Gender", true);
+
+                }
+                else
+                {
+                    ConditionsApplicable.Add("Gender", false);
+                }
 
             }
             if(benefitModel.MaritalStatus != (int)CommanData.MaritialStatus.Any)
             {
-                BenefitConditions.Add("MaritalStatus : " + (CommanData.MaritialStatus)benefitModel.MaritalStatus);
+                BenefitConditions.Add("MaritalStatus", ""+(CommanData.MaritialStatus)benefitModel.MaritalStatus);
+                if (employeeModel.MaritalStatus == benefitModel.MaritalStatus)
+                {
+                    ConditionsApplicable.Add("MaritalStatus", true);
+
+                }
+                else
+                {
+                    ConditionsApplicable.Add("MaritalStatus", false);
+                }
             }
             if(benefitModel.Collar != (int)CommanData.CollarTypes.Any)
             {
-                BenefitConditions.Add("Payroll Area : " + (CommanData.CollarTypes)benefitModel.Collar);
+                BenefitConditions.Add("PayrollArea", ""+(CommanData.CollarTypes)benefitModel.Collar);
+                if (employeeModel.Collar == benefitModel.Collar)
+                {
+                    ConditionsApplicable.Add("PayrollArea", true);
+
+                }
+                else
+                {
+                    ConditionsApplicable.Add("PayrollArea", false);
+                }
             }
             if (benefitModel.DateToMatch != "Any" && (benefitModel.DateToMatch == "Birth Date" || benefitModel.DateToMatch == "Join Date"))
             {
-                BenefitConditions.Add("Benefit Redeemation date must match with your :" + benefitModel.DateToMatch);
+                BenefitConditions.Add("DateToMatch", "Benefit Redeemation date must match with your :" + benefitModel.DateToMatch);
+                ConditionsApplicable.Add("DateToMatch", true);
+
             }
             else if (benefitModel.DateToMatch != "Any" && (benefitModel.DateToMatch == "Certain Date"))
             {
-                BenefitConditions.Add("Benefit Redeemation date must be at :" + benefitModel.CertainDate);
+                BenefitConditions.Add("DateToMatch","Benefit Redeemation date must be at :" + benefitModel.CertainDate);
+                ConditionsApplicable.Add("DateToMatch", true);
             }
+
             //else
             //{
             //    BenefitConditions.Add("Benefit Redeemation can be at any date you desired");
             //}
             if (benefitModel.RequiredDocuments != null)
             {
-                BenefitConditions.Add("Required Documents are " + benefitModel.RequiredDocuments);
+                BenefitConditions.Add("RequiredDocuments", "Required Documents are " + benefitModel.RequiredDocuments);
+                ConditionsApplicable.Add("RequiredDocuments", true);
+
             }
 
             if (benefitModel.BenefitTypeId == 3)
             {
-                BenefitConditions.Add("Min Participant : " + benefitModel.MinParticipant);
-                BenefitConditions.Add("Max Participant : " + benefitModel.MaxParticipant);
+                BenefitConditions.Add("MinParticipant",  ""+benefitModel.MinParticipant);
+                BenefitConditions.Add("MaxParticipant", "" + benefitModel.MaxParticipant);
+                ConditionsApplicable.Add("MinParticipant", true);
+                ConditionsApplicable.Add("MaxParticipant", true);
+
             }
-            return BenefitConditions;
+            BenefitConditionsAndAvailable benefitConditionsAndAvailable = new BenefitConditionsAndAvailable();
+            benefitConditionsAndAvailable.BenefitApplicable = ConditionsApplicable;
+            benefitConditionsAndAvailable.BenefitConditions = BenefitConditions;
+            return benefitConditionsAndAvailable;
 
         }
 
@@ -255,6 +318,7 @@ namespace MoreForYou.Services.Implementation
                 benefitAPIModel.CertainDate = model.CertainDate;
                 benefitAPIModel.BenefitType = model.BenefitType.Name;
                 benefitAPIModel.BenefitConditions = model.BenefitConditions;
+                benefitAPIModel.BenefitApplicable = model.BenefitApplicable;
                 benefitAPIModel.BenefitWorkflows = model.BenefitWorkflows;
                 benefitAPIModel.EmployeeCanRedeem = model.EmployeeCanRedeem;
                 benefitAPIModel.MaxParticipant = model.MaxParticipant;
@@ -443,7 +507,8 @@ namespace MoreForYou.Services.Implementation
             try
             {
                 HomeModel homeModel = new HomeModel();
-                List<string> BenefitConditions = new List<string>();
+                Dictionary<string, string> BenefitConditions = new Dictionary<string, string>();
+                Dictionary<string, bool> BenefitApplicale = new Dictionary<string, bool>();
                 List<string> BenefitWorkflows = new List<string>();
 
                 List<BenefitModel> AllBenefitModels = new List<BenefitModel>();
@@ -480,16 +545,26 @@ namespace MoreForYou.Services.Implementation
                 }
                 foreach (BenefitModel benefitModel in AllBenefitModels)
                 {
-                  BenefitConditions = CreateBenefitConditions(benefitModel);
-                    if(BenefitConditions != null)
+                  BenefitConditionsAndAvailable benefitConditionsAndAvailable = CreateBenefitConditions(benefitModel, employeeModel);
+                   BenefitConditions =  benefitConditionsAndAvailable.BenefitConditions;
+                   BenefitApplicale = benefitConditionsAndAvailable.BenefitApplicable;
+                    if (BenefitConditions != null)
                     {
                         benefitModel.BenefitConditions = BenefitConditions;
                     }
                     else
                     {
-                        benefitModel.BenefitConditions = new List<string>();
+                        benefitModel.BenefitConditions = new Dictionary<string, string>();
                     }
-                  BenefitWorkflows = _benefitWorkflowService.CreateBenefitWorkFlow(benefitModel);
+                    if (BenefitApplicale != null)
+                    {
+                        benefitModel.BenefitApplicable = BenefitApplicale;
+                    }
+                    else
+                    {
+                        benefitModel.BenefitApplicable = new Dictionary<string, bool>();
+                    }
+                    BenefitWorkflows = _benefitWorkflowService.CreateBenefitWorkFlow(benefitModel);
                     if (BenefitWorkflows != null)
                     {
                         benefitModel.BenefitWorkflows = BenefitWorkflows;
@@ -547,8 +622,10 @@ namespace MoreForYou.Services.Implementation
             try
             {
                 BenefitModel benefitModel = GetBenefit(benefitId);
-                benefitModel.BenefitConditions = CreateBenefitConditions(benefitModel);
-               benefitModel.BenefitWorkflows = _benefitWorkflowService.CreateBenefitWorkFlow(benefitModel);
+                BenefitConditionsAndAvailable benefitConditionsAndAvailable = CreateBenefitConditions(benefitModel, employeeModel);
+                benefitModel.BenefitConditions = benefitConditionsAndAvailable.BenefitConditions;
+
+                benefitModel.BenefitWorkflows = _benefitWorkflowService.CreateBenefitWorkFlow(benefitModel);
                 List<BenefitModel> benefitModels = new List<BenefitModel>();
                 benefitModels.Add(benefitModel);
                 benefitModels = BenefitsUserCanRedeem(benefitModels, employeeModel);

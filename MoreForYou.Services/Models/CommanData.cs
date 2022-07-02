@@ -43,8 +43,8 @@ namespace MoreForYou.Services.Models
 
         public enum BenefitTypes
         {
-            Individual = 1,
-            Group = 2,
+            Individual = 2,
+            Group = 3,
         };
 
 

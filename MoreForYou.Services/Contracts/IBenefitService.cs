@@ -18,7 +18,7 @@ namespace MoreForYou.Services.Contracts
         BenefitModel GetBenefit(long id);
         Task<List<BenefitModel>> GetBenefitByName(BenefitModel model);
         List<BenefitModel> BenefitsUserCanRedeem(List<BenefitModel> benefitModels, EmployeeModel employeeModel);
-        List<string> CreateBenefitConditions(BenefitModel benefitModel);
+        BenefitConditionsAndAvailable CreateBenefitConditions(BenefitModel benefitModel, EmployeeModel employeeModel);
         BenefitAPIModel CreateBenefitAPIModel(BenefitModel model);
         public List<BenefitAPIModel> GetMyBenefits(long employeeNumber);
 

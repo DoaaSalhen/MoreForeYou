@@ -3,6 +3,7 @@ using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Text;
 
 namespace MoreForYou.Services.Models.API
@@ -65,6 +66,7 @@ namespace MoreForYou.Services.Models.API
         public bool IsAgift { get; set; }
 
         public string[] DocumentsPath { get; set; }
+        
     }
 
     public class RequestWorkFlowAPI

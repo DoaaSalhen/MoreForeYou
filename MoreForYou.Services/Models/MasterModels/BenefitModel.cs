@@ -59,7 +59,7 @@ namespace MoreForYou.Services.Models.MasterModels
         public DateTime UpdatedDate { get; set; }
 
         public bool EmployeeCanRedeem { get; set; }
-        public List<String> BenefitConditions { get; set; }
+        public Dictionary<string, string> BenefitConditions { get; set; }
         public string MartialStatusText { get; set; }
         public string GenderText { get; set; }
 
@@ -103,6 +103,8 @@ namespace MoreForYou.Services.Models.MasterModels
 
         public List<BenefitStats> benefitStatses { get; set; }
         public int BenefitReturn { get; set; }
+        public Dictionary<string, bool> BenefitApplicable { get; set; }
+
 
     }
 

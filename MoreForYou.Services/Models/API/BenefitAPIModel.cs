@@ -42,15 +42,28 @@ namespace MoreForYou.Services.Models.API
         public int TimesEmployeeReceiveThisBenefit { get; set; }
 
         public List<string> BenefitWorkflows { get; set; }
-        public List<string> BenefitConditions { get; set; }
+        //public List<string> BenefitConditions { get; set; }
 
         public List<BenefitStats> benefitStatses { get; set; }
+
+        public Dictionary<string, string> BenefitConditions { get; set; }
+        public Dictionary<string, bool> BenefitApplicable { get; set; }
+
     }
 
     public class BenefitStats
     {
         public string Name { get; set; }
         public int Count { get; set; }
+
+    }
+
+    public class BenefitConditionsAndAvailable
+    {
+        public Dictionary<string, string> BenefitConditions { get; set; }
+
+        public Dictionary<string, bool> BenefitApplicable { get; set; }
+
 
     }
 

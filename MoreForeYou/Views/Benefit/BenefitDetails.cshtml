@@ -96,9 +96,9 @@
                                             <div class="card-body">
 
                                                 <ul>
-                                                    @foreach (string condition in Model.BenefitConditions)
+                                                    @foreach (var condition in Model.BenefitConditions)
                                                     {
-                                                        <li>@condition</li>
+                                                        <li>@condition.Value</li>
                                                     }
                                                 </ul>
                                             </div>

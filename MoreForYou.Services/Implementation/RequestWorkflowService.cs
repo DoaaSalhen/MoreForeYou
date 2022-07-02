@@ -854,7 +854,7 @@ namespace MoreForYou.Services.Implementation
                 filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    ImageName.CopyTo(fileStream);
+                  await ImageName.CopyToAsync(fileStream);
                 }
 
                 //using (var dataStream = new MemoryStream())
@@ -1280,6 +1280,44 @@ namespace MoreForYou.Services.Implementation
                 }
             }
             return true;
+        }
+
+        public Task<string> AddDocumentsToRequest(long requestNumber, List<IFormFile> files)
+        {
+            string message = "";
+            if (files.Count != 0)
+            {
+            
+                string filePath = "";
+                int count = 0;
+                foreach (var file in files)
+                {
+                    if(file.Length > 0)
+                    {
+                        RequestDocumentModel requestDocumentModel = new RequestDocumentModel();
+                        filePath = UploadedImageAsync(file, "BenefitRequestFiles").Result;
+                        requestDocumentModel.fileName = filePath;
+                        requestDocumentModel.FileType = file.ContentType;
+                        requestDocumentModel.BenefitRequestId = requestNumber;
+                        RequestDocumentModel requestDocument = _requestDocumentService.CreateRequestDocument(requestDocumentModel);
+                        if (requestDocument != null)
+                        {
+                            count++;
+                        }
+                    }
+                   
+                }
+                if(count == files.Count)
+                {
+                    message = "Success Process, you upload " + count + "files";
+                }
+                else
+                {
+                    message = "failed Process";
+                }
+
+            }
+            return Task<string>.FromResult(message);
         }
 
     }

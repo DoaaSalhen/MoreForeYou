@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MoreForYou.Models.Models;
 using MoreForYou.Service.Contracts.Auth;
@@ -372,8 +373,8 @@ namespace MoreForYou.APIController
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost("ConfirmRequest")]
+        //[ValidateAntiForgeryToken]
         public async Task<ActionResult> ConfirmRequest(Request request)
         {
             try
@@ -402,15 +403,51 @@ namespace MoreForYou.APIController
             }
             catch (Exception e)
             {
-                return BadRequest(new { Message = "Sucessful Process", Data = 0 });
+                return BadRequest(new { Message = "Failed Process", Data = 0 });
+
+            }
+        }
+
+        [HttpPost("UploadRequestDocuments")]
+        public async Task<IActionResult> UploadRequestDocuments( long requestNumber, List<IFormFile> files)
+        {
+            string message = await _requestWorkflowService.AddDocumentsToRequest(requestNumber, files);
+            if(message.Contains("Success Process"))
+            {
+                return Ok ( new {Message = "Sucessful Process", Data = true});
+            }
+            else
+            {
+                return BadRequest(new { Message = "Failed Process", Data = false });
 
             }
         }
 
 
-
-
-
+        [HttpPost("updatePrfilePicture")]
+        public async Task<IActionResult> updatePrfilePicture(string userId, IFormFile file)
+        {
+            string fileName = "";
+            bool result = false;
+            if(file.Length > 0)
+            {
+                fileName = await _requestWorkflowService.UploadedImageAsync(file, "images/userProfile");
+                if(fileName != "")
+                {
+                    EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(userId);
+                    employeeModel.ProfilePicture = fileName;
+                    result = _EmployeeService.UpdateEmployee(employeeModel).Result;
+                }
+            }
+            if (result == true)
+            {
+                return Ok(new { Message = "profile picture updated Successfully", Data = true });
+            }
+            else
+            {
+                return BadRequest(new { Message = "Failed Process", Data = false });
+            }
+        }
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]

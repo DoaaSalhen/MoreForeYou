@@ -54,13 +54,12 @@ namespace Repository.EntityFramework
             modelBuilder.Entity<Employee>().HasIndex(E => E.PhoneNumber).IsUnique();
             modelBuilder.Entity<GroupEmployee>().HasKey(GE => new { GE.EmployeeId, GE.GroupId });
 
-            modelBuilder.Entity<EmployeeDependent>().HasKey(d => new {d.Id, d.EmployeeNumber });
+            modelBuilder.Entity<EmployeeDependent>().HasKey(d => new { d.Id, d.EmployeeNumber });
             modelBuilder.Entity<EmployeeDependent>().HasIndex(D => D.Id).IsUnique();
             modelBuilder.Entity<EmployeeDependent>().HasIndex(D => D.PhoneNumber).IsUnique();
             modelBuilder.Entity<RequestWorkflow>().HasKey(RW => new { RW.BenefitRequestId, RW.EmployeeId });
             modelBuilder.Entity<UserNotification>().HasKey(UN => new { UN.NotificationId, UN.EmployeeId });
 
         }
-
     }
 }
