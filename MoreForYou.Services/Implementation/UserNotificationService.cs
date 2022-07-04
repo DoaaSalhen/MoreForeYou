@@ -22,7 +22,7 @@ namespace MoreForYou.Services.Implementation
 
 
         public UserNotificationService(IRepository<UserNotification, long> repository,
-            ILogger<UserNotificationService> logger, 
+            ILogger<UserNotificationService> logger,
             IMapper mapper,
             IEmployeeService employeeService)
         {
@@ -35,7 +35,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                UserNotification userNotification  = _mapper.Map<UserNotification>(model);
+                UserNotification userNotification = _mapper.Map<UserNotification>(model);
                 userNotification = _repository.Add(userNotification);
                 UserNotificationModel Newmodel = _mapper.Map<UserNotificationModel>(userNotification);
                 return Newmodel;
@@ -51,18 +51,22 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                List<UserNotification> userNotifications = _repository.Find(UN => UN.Employee.UserId == userId, false, UN => UN.Notification, UN => UN.Notification.BenefitRequest, UN => UN.Notification.BenefitRequest.RequestStatus, UN =>UN.Notification.BenefitRequest.Benefit, UN => UN.Notification.BenefitRequest.Employee).ToList();
+                List<UserNotification> userNotifications = _repository.Find(UN => UN.Employee.UserId == userId, false, UN => UN.Notification, UN => UN.Notification.BenefitRequest, UN => UN.Notification.BenefitRequest.RequestStatus, UN => UN.Notification.BenefitRequest.Benefit, UN => UN.Notification.BenefitRequest.Employee).ToList();
                 List<UserNotificationModel> userNotificationModels = _mapper.Map<List<UserNotificationModel>>(userNotifications);
-                if(userNotificationModels != null)
+                if (userNotificationModels != null)
                 {
-                    foreach(UserNotificationModel userNotificationModel in userNotificationModels.Where(UN=>UN.Notification.Type == "Response"))
+                    if (userNotificationModels.Count > 10)
+                    {
+                        userNotificationModels = userNotificationModels.TakeLast(10).ToList();
+                    }
+                    foreach (UserNotificationModel userNotificationModel in userNotificationModels.Where(UN => UN.Notification.Type == "Response"))
                     {
                         userNotificationModel.ResponsedByEmployee = _employeeService.GetEmployee((long)userNotificationModel.Notification.ResponsedBy);
                     }
                 }
                 return userNotificationModels;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
@@ -70,7 +74,7 @@ namespace MoreForYou.Services.Implementation
 
         }
 
-        public  List<NotificationAPIModel> CreateNotificationAPIModel(List<UserNotificationModel> userNotificationModels)
+        public List<NotificationAPIModel> CreateNotificationAPIModel(List<UserNotificationModel> userNotificationModels)
         {
             try
             {
@@ -79,16 +83,16 @@ namespace MoreForYou.Services.Implementation
                 foreach (var userNotification in userNotificationModels)
                 {
                     NotificationAPIModel notificationAPIModel = new NotificationAPIModel();
-                    if(userNotification.Notification.Type == "Request" || userNotification.Notification.Type == "CreateGroup")
+                    if (userNotification.Notification.Type == "Request" || userNotification.Notification.Type == "CreateGroup")
                     {
-                        notificationAPIModel.EmployeeFullName  = userNotification.Notification.BenefitRequest.Employee.FullName;
+                        notificationAPIModel.EmployeeFullName = userNotification.Notification.BenefitRequest.Employee.FullName;
                         notificationAPIModel.EmployeeNumber = userNotification.Notification.BenefitRequest.Employee.EmployeeNumber;
                         notificationAPIModel.EmployeeProfilePicture = userNotification.Notification.BenefitRequest.Employee.ProfilePicture;
 
                     }
                     else if (userNotification.Notification.Type == "Response")
                     {
-                       EmployeeModel employeeModel = _employeeService.GetEmployee((long)userNotification.Notification.ResponsedBy);
+                        EmployeeModel employeeModel = _employeeService.GetEmployee((long)userNotification.Notification.ResponsedBy);
                         notificationAPIModel.EmployeeNumber = employeeModel.EmployeeNumber;
                         notificationAPIModel.EmployeeFullName = employeeModel.FullName;
                         notificationAPIModel.EmployeeProfilePicture = employeeModel.ProfilePicture;
@@ -102,7 +106,34 @@ namespace MoreForYou.Services.Implementation
                 }
                 return notificationAPIModels;
             }
-            catch(Exception e)
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return null;
+            }
+        }
+
+
+        public List<UserNotificationModel> GetUserNotification(string userId, int start)
+        {
+            try
+            {
+                List<UserNotification> userNotifications = _repository.Find(UN => UN.Employee.UserId == userId && UN.NotificationId < start, false, UN => UN.Notification, UN => UN.Notification.BenefitRequest, UN => UN.Notification.BenefitRequest.RequestStatus, UN => UN.Notification.BenefitRequest.Benefit, UN => UN.Notification.BenefitRequest.Employee).ToList();
+                List<UserNotificationModel> userNotificationModels = _mapper.Map<List<UserNotificationModel>>(userNotifications);
+                if (userNotificationModels != null)
+                {
+                    if (userNotificationModels.Count > 50)
+                    {
+                        userNotificationModels = userNotificationModels.TakeLast(50).ToList();
+                    }
+                    foreach (UserNotificationModel userNotificationModel in userNotificationModels.Where(UN => UN.Notification.Type == "Response"))
+                    {
+                        userNotificationModel.ResponsedByEmployee = _employeeService.GetEmployee((long)userNotificationModel.Notification.ResponsedBy);
+                    }
+                }
+                return userNotificationModels;
+            }
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;

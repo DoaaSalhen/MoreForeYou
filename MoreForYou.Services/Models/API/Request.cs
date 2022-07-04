@@ -18,7 +18,7 @@ namespace MoreForYou.Services.Models.API
 
         public string GroupName { get; set; }
 
-        public string Participants { get; set; }
+        public string SelectedEmployeeNumbers { get; set; }
 
         public long SendToId { get; set; }
         public LoginUser SendToModel { get; set; }
@@ -66,7 +66,7 @@ namespace MoreForYou.Services.Models.API
         public bool IsAgift { get; set; }
 
         public string[] DocumentsPath { get; set; }
-        
+
     }
 
     public class RequestWorkFlowAPI
@@ -98,5 +98,24 @@ namespace MoreForYou.Services.Models.API
     //    public int MyProperty { get; set; }
 
     //}
+    public class RequestAPI
+    {
+        public string From { get; set; }
+        public string To { get; set; }
 
+        public string Message { get; set; }
+
+        public string GroupName { get; set; }
+
+        public string SelectedEmployeeNumbers { get; set; }
+
+        public long SendToId { get; set; }
+
+        public string[] Documents { get; set; }
+
+        public long benefitId { get; set; }
+
+        public long EmployeeNumber { get; set; }
+
+    }
 }

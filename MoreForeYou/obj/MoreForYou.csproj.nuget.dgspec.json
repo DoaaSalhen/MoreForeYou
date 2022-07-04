@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj": {}
+    "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj": {}
   },
   "projects": {
-    "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Data.Repository\\Data.Repository.csproj": {
+    "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Data.Repository\\Data.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Data.Repository\\Data.Repository.csproj",
+        "projectUniqueName": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Data.Repository\\Data.Repository.csproj",
         "projectName": "Data.Repository",
-        "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Data.Repository\\Data.Repository.csproj",
-        "packagesPath": "C:\\Users\\e-dmabdel\\.nuget\\packages\\",
-        "outputPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Data.Repository\\obj\\",
+        "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Data.Repository\\Data.Repository.csproj",
+        "packagesPath": "C:\\Users\\imabdallah\\.nuget\\packages\\",
+        "outputPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Data.Repository\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\e-dmabdel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\imabdallah\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -59,36 +55,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[3.1.21, 3.1.21]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj": {
+    "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj",
+        "projectUniqueName": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj",
         "projectName": "MoreForYou",
-        "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj",
-        "packagesPath": "C:\\Users\\e-dmabdel\\.nuget\\packages\\",
-        "outputPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForeYou\\obj\\",
+        "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForeYou\\MoreForYou.csproj",
+        "packagesPath": "C:\\Users\\imabdallah\\.nuget\\packages\\",
+        "outputPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForeYou\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\e-dmabdel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\imabdallah\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -102,11 +88,11 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj": {
-                "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj"
+              "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj": {
+                "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj"
               },
-              "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj": {
-                "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj"
+              "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj": {
+                "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj"
               }
             }
           }
@@ -178,12 +164,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[3.1.21, 3.1.21]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -192,25 +172,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj": {
+    "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj",
+        "projectUniqueName": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj",
         "projectName": "MoreForYou.Models",
-        "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj",
-        "packagesPath": "C:\\Users\\e-dmabdel\\.nuget\\packages\\",
-        "outputPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\obj\\",
+        "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj",
+        "packagesPath": "C:\\Users\\imabdallah\\.nuget\\packages\\",
+        "outputPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\e-dmabdel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\imabdallah\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -255,36 +231,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[3.1.21, 3.1.21]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj": {
+    "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj",
+        "projectUniqueName": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj",
         "projectName": "MoreForYou.Services",
-        "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj",
-        "packagesPath": "C:\\Users\\e-dmabdel\\.nuget\\packages\\",
-        "outputPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Services\\obj\\",
+        "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Services\\MoreForYou.Services.csproj",
+        "packagesPath": "C:\\Users\\imabdallah\\.nuget\\packages\\",
+        "outputPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Services\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\e-dmabdel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\imabdallah\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -298,11 +264,11 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Data.Repository\\Data.Repository.csproj": {
-                "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Data.Repository\\Data.Repository.csproj"
+              "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Data.Repository\\Data.Repository.csproj": {
+                "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Data.Repository\\Data.Repository.csproj"
               },
-              "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj": {
-                "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj"
+              "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj": {
+                "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj"
               }
             }
           }
@@ -336,36 +302,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[3.1.21, 3.1.21]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj": {
+    "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj",
+        "projectUniqueName": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj",
         "projectName": "Repository.EntityFramework",
-        "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj",
-        "packagesPath": "C:\\Users\\e-dmabdel\\.nuget\\packages\\",
-        "outputPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\Repository.EntityFramework\\obj\\",
+        "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Repository.EntityFramework\\Repository.EntityFramework.csproj",
+        "packagesPath": "C:\\Users\\imabdallah\\.nuget\\packages\\",
+        "outputPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\Repository.EntityFramework\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\e-dmabdel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\imabdallah\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -379,8 +335,8 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj": {
-                "projectPath": "D:\\Work\\MoreForYou\\Development\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj"
+              "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj": {
+                "projectPath": "C:\\_cemex\\_projects\\_more4u\\MoreForeYou\\MoreForYou.Models\\MoreForYou.Models.csproj"
               }
             }
           }
@@ -426,18 +382,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[3.1.21, 3.1.21]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     }

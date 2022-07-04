@@ -6,11 +6,14 @@ using System.Text;
 
 namespace MoreForYou.Services.Contracts
 {
-   public interface IUserNotificationService
+    public interface IUserNotificationService
     {
         UserNotificationModel CreateUserNotification(UserNotificationModel model);
 
         List<UserNotificationModel> GetUserNotification(string userId);
+
+        List<UserNotificationModel> GetUserNotification(string userId, int start);
+
 
         List<NotificationAPIModel> CreateNotificationAPIModel(List<UserNotificationModel> userNotificationModels);
 

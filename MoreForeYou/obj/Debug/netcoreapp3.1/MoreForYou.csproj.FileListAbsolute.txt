@@ -585,3 +585,4 @@ C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\More
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.dll
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.pdb
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.genruntimeconfig.cache
+C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.MvcApplicationPartsAssemblyInfo.cs

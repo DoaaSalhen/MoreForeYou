@@ -1,4 +1,5 @@
-﻿@model MoreForYou.Services.Models.MasterModels.GroupModel
+﻿@model MoreForYou.Services.Models.API.Request
+
 
 @{
     ViewData["Title"] = "GroupRequest";
@@ -26,13 +27,11 @@
     }
 </style>
 <script>
-    function setToDateValue(e)
-    {
-        var from = new Date(document.getElementById("ExpectedDateFrom").value);
+    function setToDateValue(e) {
+        var from = new Date(document.getElementById("From").value);
         var numberOfDays = parseInt(document.getElementById('numberOfDays').value);
         from.setDate(from.getDate() + numberOfDays - 1);
-        //alert(from.getFullYear() + "-" + from.getMonth() + "-" + from.getDate());
-        document.getElementById("ExpectedDateTo").value = formatDate(from);
+        document.getElementById("To").value = formatDate(from);
 
     }
 
@@ -50,8 +49,8 @@
     }
 
     function setYear(year) {
-        document.getElementById('ExpectedDateFrom').setAttribute("min", year + "-01-01");
-        document.getElementById('ExpectedDateFrom').setAttribute("max", year + "-12-31");
+        document.getElementById('From').setAttribute("min", year + "-01-01");
+        document.getElementById('From').setAttribute("max", year + "-12-31");
     }
 </script>
 
@@ -77,7 +76,6 @@
 
 
     function hideOptions() {
-        alert("tessssssst");
         var ele = document.getElementsByClassName("select2-results__option");
         ele[0].hidden = true;
     }
@@ -94,140 +92,138 @@ else if (ViewBag.Error != null)
     <input type="hidden" id="error" value="@ViewBag.Error" />
     <script>
         showAlert("Error");
-     </script>
+    </script>
 }
 <h4>GroupRequest</h4>
 
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-12">
-                <div class="card-body">
-                    <form asp-action="ConfirmGroupRequest">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="card-body">
+                <form asp-action="ConfirmRequest">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                        <div class="form-group">
-                            <input type="hidden" asp-for="@Model.BenefitRequestModel.Benefit.Id" />
-                            <input type="hidden" id="numberOfDays" asp-for="@Model.BenefitRequestModel.Benefit.numberOfDays" />
-                            <input id="maxParticipant" type="hidden" asp-for="@Model.BenefitRequestModel.Benefit.MaxParticipant" />
-                            <input id="minParticipant" type="hidden" asp-for="@Model.BenefitRequestModel.Benefit.MinParticipant" />
+                    <div class="form-group">
+                        <input type="hidden" asp-for="@Model.benefitId" />
+                        <input type="hidden" id="numberOfDays" asp-for="@Model.numberOfDays" />
+                        <input id="maxParticipant" type="hidden" asp-for="@Model.MaxParticipant" />
+                        <input id="minParticipant" type="hidden" asp-for="@Model.MinParticipant" />
 
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Group Name <span style="color:red">*</span></label>
-                            <input asp-for="Name" id="Name" name="Name" class="form-control" required />
-                            <span asp-validation-for="Name" class="text-danger"></span>
-                        </div>
-                        <div>
-                            <label class="control-label">Participants <span style="color:red">*</span></label>
-                            <select style="display:none; width:500px" class="dropdown-mul-1" name="" id="id_select2_example"
-                                    multiple placeholder="Select" onchange="test(this)"
-                                    asp-items="@( new SelectList(Model.Participants,"EmployeeNumber","FullName"))">
-                                @for (int index = 0; index < Model.Participants.Count; index++)
-                                {
-                                    optionId = "optionId" + index;
-                                    <option  value="@Model.Participants[index].EmployeeNumber"
-                                            data-value="@Model.Participants[index].EmployeeNumber"
-                                            data-img_src="/~/images/userProfile/userProfile1.png" id="@optionId">
-                                            @Model.Participants[index].FullName</option>
-                                }
-                            </select>
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Group Name <span style="color:red">*</span></label>
+                        <input asp-for="GroupName" id="GroupName" name="GroupName" class="form-control" required />
+                        <span asp-validation-for="GroupName" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label class="control-label">Participants <span style="color:red">*</span></label>
+                        <select style="display:none; width:500px" class="dropdown-mul-1" name="" id="id_select2_example"
+                                multiple placeholder="Select" onchange="test(this)"
+                                asp-items="@( new SelectList(Model.ParticipantsData,"EmployeeNumber","FullName"))">
+                            @for (int index = 0; index < Model.ParticipantsData.Count; index++)
+                            {
+                                optionId = "optionId" + index;
+                                <option value="@Model.ParticipantsData[index].EmployeeNumber"
+                                        data-value="@Model.ParticipantsData[index].EmployeeNumber"
+                                        data-img_src="/~/images/userProfile/userProfile1.png" id="@optionId">
+                                    @Model.ParticipantsData[index].FullName
+                                </option>
+                            }
+                        </select>
+                    </div>
 
-                        <div class="form-group">
-                            <label class="control-label">From <span style="color:red">*</span></label>
-                            <input type="date" class="form-control" id="ExpectedDateFrom" asp-for="ExpectedDateFrom" onchange="setToDateValue(this)" onclick="setYear(@Model.BenefitRequestModel.Benefit.Year)">
-                            <span asp-validation-for="ExpectedDateFrom" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">To <span style="color:red">*</span></label>
-                            <input type="date" id="ExpectedDateTo" asp-for="ExpectedDateTo" class="form-control" readonly/>
-                            <span asp-validation-for="ExpectedDateTo" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Message <span style="color:red">*</span></label>
-                            <textarea asp-for="Message" class="form-control" required></textarea>
-                            <span asp-validation-for="Message" class="text-danger"></span>
-                        </div>
-                        <input type="hidden" asp-for="BenefitRequestModel.SelectedEmployeeNumbers" id="SelectedEmployeeNumbers" value="" />
-                        <div class="form-group">
-                            <input type="submit" value="Send Request" class="btn btn-primary" id="submitbtn" disabled/>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <label class="control-label">From <span style="color:red">*</span></label>
+                        <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">
+                        <span asp-validation-for="From" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">To <span style="color:red">*</span></label>
+                        <input type="date" id="To" asp-for="To" class="form-control" readonly />
+                        <span asp-validation-for="To" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Message <span style="color:red">*</span></label>
+                        <textarea asp-for="Message" class="form-control" required></textarea>
+                        <span asp-validation-for="Message" class="text-danger"></span>
+                    </div>
+                    <input type="hidden" asp-for="SelectedEmployeeNumbers" id="SelectedEmployeeNumbers" value="" />
+                    <div class="form-group">
+                        <input type="submit" value="Send Request" class="btn btn-primary" id="submitbtn" disabled />
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
 <script>
 
-        $('.dropdown-mul-1').dropdown({
-            //data: json1.data,
-            limitCount: 40,
-            multipleMode: 'label',
-            choice: function () {
+    $('.dropdown-mul-1').dropdown({
+        //data: json1.data,
+        limitCount: 40,
+        multipleMode: 'label',
+        choice: function () {
 
-                console.log("test");
+            console.log("test");
+        }
+    });
+
+    function test(e) {
+        var optionSelected = $("option:selected", e);
+        var valueSelected = e.value;
+        console.log(optionSelected);
+        console.log(valueSelected);
+        var selectedIds = [];
+        var liEle = document.getElementsByClassName("select2-selection__choice");
+        var maxNumber = document.getElementById("maxParticipant").value;
+        var minNumber = document.getElementById("minParticipant").value;
+        if (liEle.length >= minNumber - 1) {
+            $('#submitbtn').prop('disabled', false);
+        }
+        else {
+            $('#submitbtn').prop('disabled', true);
+
+        }
+        if (liEle.length <= maxNumber - 1) {
+            document.getElementById("SelectedEmployeeNumbers").value = "";
+            for (var i = 0; i < liEle.length; i++) {
+                var iid = liEle[i].children[1].getAttribute("id");
+                selectedIds.push(iid);
+
+                document.getElementById("SelectedEmployeeNumbers").value = document.getElementById("SelectedEmployeeNumbers").value + iid + ";";
             }
-        });
-
-        function test(e) {
-            //alert("select");
-            //alert(e.innerText);
-            var optionSelected = $("option:selected", e);
-            var valueSelected = e.value;
-            console.log(optionSelected);
-            console.log(valueSelected);
-            var selectedIds = [];
-            var liEle = document.getElementsByClassName("select2-selection__choice");
-            var maxNumber = document.getElementById("maxParticipant").value;
-            var minNumber = document.getElementById("minParticipant").value;
-            if (liEle.length >= minNumber - 1) {
-                $('#submitbtn').prop('disabled', false);
-            }
-            else {
-                $('#submitbtn').prop('disabled', true);
-
-            }
-            if (liEle.length <= maxNumber-1) {
-                document.getElementById("SelectedEmployeeNumbers").value = "";
-                for (var i = 0; i < liEle.length; i++) {
-                    var iid = liEle[i].children[1].getAttribute("id");
-                    selectedIds.push(iid);
-
-                    document.getElementById("SelectedEmployeeNumbers").value = document.getElementById("SelectedEmployeeNumbers").value + iid + ";";
-                }
-            }
-            else
-            {
-                alert("you can not add new members, you reach the maximum number of participants");
-            }
-
-
+        }
+        else {
+            alert("you can not add new members, you reach the maximum number of participants");
         }
 
 
+    }
+
+
 </script>
-    <script type="text/javascript">
-                        function custom_template(obj) {
-                            var data = $(obj.element).data();
-                            var text = $(obj.element).text();
-                            if (data && data['img_src']) {
-                                img_src = data['img_src'];
-                                value = data['value'];
-                                template = $("<div style=\" width:auto; height:40px;   display: flex; padding:0px\" id=" + value + "><img src=\"" + img_src + "\" style=\"width:40px;height:40px; border-radius: 50%;\"/><span style=\"font-weight: 200;font-size:13pt;text-align:center; padding:5px\">" + text + "</span></div>");
+<script type="text/javascript">
+    function custom_template(obj) {
+        var data = $(obj.element).data();
+        var text = $(obj.element).text();
+        if (data && data['img_src']) {
+            img_src = data['img_src'];
+            value = data['value'];
+            template = $("<div style=\" width:auto; height:40px;   display: flex; padding:0px\" id=" + value + "><img src=\"" + img_src + "\" style=\"width:40px;height:40px; border-radius: 50%;\"/><span style=\"font-weight: 200;font-size:13pt;text-align:center; padding:5px\">" + text + "</span></div>");
             return template;
-                            }
-                        }
-            var options =
-            {
-                'templateSelection': custom_template,
-                'templateResult': custom_template,
-            }
-            $('#id_select2_example').select2(options);
-            $('.select2-container--default .select2-selection--single').css({ 'height': '100px' });
-            $('.select2-container--default .select2-selection--single').css({ 'width': '200px' });
+        }
+    }
+    var options =
+    {
+        'templateSelection': custom_template,
+        'templateResult': custom_template,
+    }
+    $('#id_select2_example').select2(options);
+    $('.select2-container--default .select2-selection--single').css({ 'height': '100px' });
+    $('.select2-container--default .select2-selection--single').css({ 'width': '200px' });
 
 
 
-    </script>
+</script>
 

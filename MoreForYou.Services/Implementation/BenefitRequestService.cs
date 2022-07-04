@@ -374,8 +374,35 @@ namespace MoreForYou.Services.Implementation
         //    return result;
         //}
 
+        public Request CreateRequestModel(RequestAPI requestAPI, long benefitTypeId, bool isGift)
+        {
+            Request request = new Request();
+            request.benefitId = requestAPI.benefitId;
+            request.EmployeeNumber = requestAPI.EmployeeNumber;
+            request.benefitId = requestAPI.benefitId;
+            request.EmployeeNumber = requestAPI.EmployeeNumber;
+            request.From = requestAPI.From;
+            request.To = requestAPI.To;
+            if(request.Message != "" )
+            {
+                request.Message = requestAPI.Message;
+            }
+            if (isGift == true)
+            {
+                request.SendToId = requestAPI.SendToId;
 
-
+            }
+            if(requestAPI.Documents.Length > 0)
+            {
+                request.DocumentsPath = requestAPI.Documents;
+            }
+            if (benefitTypeId == (int)CommanData.BenefitTypes.Group)
+            {
+                request.GroupName = requestAPI.GroupName;
+                request.SelectedEmployeeNumbers = requestAPI.SelectedEmployeeNumbers;
+            }
+            return request;
+        }
 
     }
 }

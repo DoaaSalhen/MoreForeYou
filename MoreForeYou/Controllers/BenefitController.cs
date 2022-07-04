@@ -242,18 +242,18 @@ namespace MoreForYou.Controllers
         public ActionResult RequestCancel(long id, long benefitId)
         {
             string message = _requestWorkflowService.CancelMyRequest(id);
-                if (message == "Success Process")
-                {
-                    TempData["Message"] = "Sucess process, your request with number " +id + " has been cancelled";
-                    BenefitRequestModel benefitRequestModel = _benefitRequestService.GetBenefitRequest(id);
-                    RequestWokflowModel requestWokflowModel = _requestWorkflowService.GetRequestWorkflow(id).First();
-                    bool result = SendNotification(benefitRequestModel, requestWokflowModel, "RequestCancel").Result;
+            if (message == "Success Process")
+            {
+                TempData["Message"] = "Sucess process, your request with number " + id + " has been cancelled";
+                BenefitRequestModel benefitRequestModel = _benefitRequestService.GetBenefitRequest(id);
+                RequestWokflowModel requestWokflowModel = _requestWorkflowService.GetRequestWorkflow(id).First();
+                bool result = SendNotification(benefitRequestModel, requestWokflowModel, "RequestCancel").Result;
 
             }
             else
-                {
-                    TempData["Error"] = message;
-                }
+            {
+                TempData["Error"] = message;
+            }
             return RedirectToAction("ShowMyBenefitRequests", new { BenefitId = benefitId });
         }
 
@@ -372,11 +372,11 @@ namespace MoreForYou.Controllers
         //            }
         //        }
         //    }
-     
+
         //    return RequestDocumentModels;
         //}
 
-        
+
         // GET: BenefitController/Edit/5
         public ActionResult RequestEdit(int id)
         {
@@ -519,7 +519,7 @@ namespace MoreForYou.Controllers
         {
             AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
             EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(CurrentUser.Id).Result;
-           HomeModel homeModel = _BenefitService.ShowAllBenefits(employeeModel);
+            HomeModel homeModel = _BenefitService.ShowAllBenefits(employeeModel);
             homeModel.user.Email = CurrentUser.Email;
             return View(homeModel);
         }
@@ -527,7 +527,7 @@ namespace MoreForYou.Controllers
         public async Task<ActionResult> BenefitDetails(long id)
         {
             AspNetUser aspNetUser = await _userManager.GetUserAsync(User);
-           EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(aspNetUser.Id).Result;
+            EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(aspNetUser.Id).Result;
             BenefitAPIModel benefitAPIModel = _BenefitService.GetBenefitDetails(id, employeeModel);
             return View("BenefitDetails", benefitAPIModel);
         }
@@ -552,40 +552,8 @@ namespace MoreForYou.Controllers
             try
             {
                 AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
-                Request request = _BenefitService.BenefitRedeem( id, CurrentUser.Id);
-                //EmployeeModel CurrentEmployee = _EmployeeService.GetEmployeeByUserId(CurrentUser.Id).Result;
-                //BenefitModel benefitModel = _BenefitService.GetBenefit(id);
-                ////benefitModel.BenefitConditions = CreateBenefitConditions(benefitModel);
-                //BenefitRequestModel benefitRequestModel = new BenefitRequestModel();
-                //benefitModel.EmployeeCanRedeem = true;
-                //benefitRequestModel.Benefit = benefitModel;
-                //if (benefitModel.DateToMatch == "Any")
-                //{
-                //    benefitRequestModel.ExpectedDateFromString = DateTime.Today.ToString("yyyy-MM-dd");
-                //    benefitRequestModel.ExpectedDateToString = DateTime.Today.ToString("yyyy-MM-dd");
-                //}
-                //else if (benefitModel.DateToMatch != "Any")
-                //{
-                //    if (benefitModel.DateToMatch == "Birth Date")
-                //    {
-                //        benefitRequestModel.ExpectedDateFromString = new DateTime(DateTime.Today.Year, CurrentEmployee.BirthDate.Month, CurrentEmployee.BirthDate.Day).ToString("yyyy-MM-dd");
-                //        benefitRequestModel.ExpectedDateToString = new DateTime(DateTime.Today.Year, CurrentEmployee.BirthDate.Month, CurrentEmployee.BirthDate.Day).ToString("yyyy-MM-dd");
-                //    }
-                //    else if (benefitModel.DateToMatch == "Join Date")
-                //    {
-                //        benefitRequestModel.ExpectedDateFrom = new DateTime(DateTime.Today.Year, CurrentEmployee.JoiningDate.Month, CurrentEmployee.JoiningDate.Day);
-                //        benefitRequestModel.ExpectedDateTo = new DateTime(DateTime.Today.Year, CurrentEmployee.JoiningDate.Month, CurrentEmployee.JoiningDate.Day);
-                //    }
-                //    else
-                //    {
-                //        benefitRequestModel.ExpectedDateFrom = new DateTime(DateTime.Today.Year, benefitRequestModel.Benefit.CertainDate.Month, benefitRequestModel.Benefit.CertainDate.Day);
-                //        benefitRequestModel.ExpectedDateTo = new DateTime(DateTime.Today.Year, benefitRequestModel.Benefit.CertainDate.Month, benefitRequestModel.Benefit.CertainDate.Day);
-                //    }
-                //}
-
-
-
-                if (request.BenefitType == Enum.GetName(typeof(CommanData.BenefitTypes),1))
+                Request request = _BenefitService.BenefitRedeem(id, CurrentUser.Id);
+                if (request.BenefitType == Enum.GetName(typeof(CommanData.BenefitTypes), 2))
                 {
                     return View("BenefitRequest", request);
                 }
@@ -601,72 +569,6 @@ namespace MoreForYou.Controllers
             }
         }
 
-
-        //[HttpPost]
-        //public async Task<RequestModel> Redeem(RequestModel requestModel)
-        //{
-        //    try
-        //    {
-        //        AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
-        //        EmployeeModel CurrentEmployee = _EmployeeService.GetEmployeeByUserId(CurrentUser.Id).Result;
-        //        BenefitModel benefitModel = _BenefitService.GetBenefit(requestModel.Id);
-        //        //benefitModel.BenefitConditions = CreateBenefitConditions(benefitModel);
-        //        BenefitRequestModel benefitRequestModel = new BenefitRequestModel();
-        //        benefitModel.EmployeeCanRedeem = true;
-        //        benefitRequestModel.Benefit = benefitModel;
-        //        if (benefitModel.DateToMatch == "Any")
-        //        {
-        //            benefitRequestModel.ExpectedDateFrom = DateTime.Today.AddDays(1);
-        //            benefitRequestModel.ExpectedDateTo = DateTime.Today.AddDays(1);
-        //        }
-        //        else if(benefitModel.DateToMatch != "Any")
-        //        {
-        //            if(benefitModel.DateToMatch =="Birth Date")
-        //            {
-        //                benefitRequestModel.ExpectedDateFrom =  new DateTime(DateTime.Today.Year, CurrentEmployee.BirthDate.Month, CurrentEmployee.BirthDate.Day) ;
-        //                benefitRequestModel.ExpectedDateTo = new DateTime(DateTime.Today.Year, CurrentEmployee.BirthDate.Month, CurrentEmployee.BirthDate.Day);
-        //            }
-        //            else if(benefitModel.DateToMatch =="Join Date")
-        //            {
-        //                benefitRequestModel.ExpectedDateFrom = new DateTime(DateTime.Today.Year, CurrentEmployee.JoiningDate.Month, CurrentEmployee.JoiningDate.Day) ;
-        //                benefitRequestModel.ExpectedDateTo = new DateTime(DateTime.Today.Year, CurrentEmployee.JoiningDate.Month, CurrentEmployee.JoiningDate.Day);
-        //            }
-        //            else 
-        //            {
-        //                benefitRequestModel.ExpectedDateFrom = new DateTime(DateTime.Today.Year, benefitRequestModel.Benefit.CertainDate.Month, benefitRequestModel.Benefit.CertainDate.Day);
-        //                benefitRequestModel.ExpectedDateTo = new DateTime(DateTime.Today.Year, benefitRequestModel.Benefit.CertainDate.Month, benefitRequestModel.Benefit.CertainDate.Day);
-        //            }
-        //        }
-
-        //        if (benefitModel.BenefitTypeId == 2)
-        //        {
-        //            RequestModel requestModel1 = new RequestModel();
-        //            requestModel1.ExpectedDateFrom = benefitRequestModel.ExpectedDateFrom;
-        //            requestModel1.IsAgift = benefitRequestModel.Benefit.IsAgift;
-        //            requestModel1.numberOfDays = benefitRequestModel.Benefit.numberOfDays;
-        //            requestModel1.Id = benefitRequestModel.Benefit.Id;
-        //            return requestModel1;
-        //        }
-        //        else
-        //        {
-        //            List<EmployeeModel> employeeModels = _EmployeeService.GetAllEmployees().Result;
-        //            EmployeeModel employeeModel = employeeModels.Where(e => e.EmployeeNumber == CurrentEmployee.EmployeeNumber).First();
-        //            bool currentUserRemoved = employeeModels.Remove(employeeModel);
-        //            benefitRequestModel.Participants = employeeModels;
-        //            GroupModel groupModel = new GroupModel();
-        //            groupModel.BenefitRequestModel = benefitRequestModel;
-        //            // return View("GroupRequest", groupModel);
-        //            return null;
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError(e.ToString());
-        //        return null;
-        //    }
-        //}
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ConfirmRequest(Request request)
@@ -676,16 +578,16 @@ namespace MoreForYou.Controllers
                 string result = "";
                 AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
                 BenefitModel benefitModel = _BenefitService.GetBenefit(request.benefitId);
-                if(benefitModel.BenefitTypeId == (int)CommanData.BenefitTypes.Individual)
+                if (benefitModel.BenefitTypeId == (int)CommanData.BenefitTypes.Individual)
                 {
                     result = _requestWorkflowService.AddIndividualRequest(request, CurrentUser.Id, benefitModel);
 
                 }
                 else
                 {
-                   result = _requestWorkflowService.ConfirmGroupRequest(request, CurrentUser.Id, benefitModel).Result;
+                    result = _requestWorkflowService.ConfirmGroupRequest(request, CurrentUser.Id, benefitModel).Result;
                 }
-                if(result.Contains("Sucess Process"))
+                if (result.Contains("Sucess Process"))
                 {
                     return RedirectToAction("ShowMyBenefitRequests", new { BenefitId = request.benefitId });
                 }
@@ -922,7 +824,7 @@ namespace MoreForYou.Controllers
                             {
                                 RequestWokflowModel requestWokflowModel1 = _requestWorkflowService.GetRequestWorkflowByEmployeeNumber(requestWorkflow.Result.EmployeeId, requestWorkflow.Result.BenefitRequestId);
                                 message = "successful Process, your request will be proceed";
-                               bool result = SendNotification(benefitRequestModel, requestWokflowModel1, "Request").Result;
+                                bool result = SendNotification(benefitRequestModel, requestWokflowModel1, "Request").Result;
 
 
                                 //NotificationModel notificationModel = CreateNotification("Request", requestWokflowModel1);
@@ -964,19 +866,20 @@ namespace MoreForYou.Controllers
                 EmployeeModel CurrentEmployee = _EmployeeService.GetEmployeeByUserId(CurrentUser.Id).Result;
                 List<BenefitAPIModel> benefitModels = _BenefitService.GetMyBenefits(CurrentEmployee.EmployeeNumber).ToList();
 
-                if(TempData["Message"] != null)
+                if (TempData["Message"] != null)
                 {
                     ViewBag.Message = TempData["Message"];
                 }
-                
-                if(benefitModels != null)
+
+                if (benefitModels != null)
                 {
                     return View(benefitModels);
                 }
                 else
                 {
                     ViewBag.Error = "you do not have any benefitss";
-                    return null;
+                    benefitModels = new List<BenefitAPIModel>();
+                    return View(benefitModels);
                 }
 
             }
@@ -1010,7 +913,7 @@ namespace MoreForYou.Controllers
                 {
                     ViewBag.Message = TempData["Message"];
                 }
-                else if(TempData["Error"] != null)
+                else if (TempData["Error"] != null)
                 {
                     ViewBag.Error = TempData["Error"];
                 }
@@ -1067,12 +970,12 @@ namespace MoreForYou.Controllers
                     manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id).Result;
                     if (requestWokflowModels.Count != 0)
                     {
-                        foreach(var request in requestWokflowModels)
+                        foreach (var request in requestWokflowModels)
                         {
-                            if(request.BenefitRequest.Benefit.RequiredDocuments != null)
+                            if (request.BenefitRequest.Benefit.RequiredDocuments != null)
                             {
-                               List<RequestDocumentModel> requestDocumentModels = _requestDocumentService.GetRequestDocuments(request.BenefitRequestId);
-                                if(requestDocumentModels != null)
+                                List<RequestDocumentModel> requestDocumentModels = _requestDocumentService.GetRequestDocuments(request.BenefitRequestId);
+                                if (requestDocumentModels != null)
                                 {
                                     string[] documents = new string[requestDocumentModels.Count];
                                     for (int index = 0; index < requestDocumentModels.Count; index++)
@@ -1179,14 +1082,14 @@ namespace MoreForYou.Controllers
                     ViewBag.Error = "You do not have any requests";
                 }
                 return View(manageRequest);
-        }
+            }
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
             }
-}
-        
+        }
+
 
 
         public async Task<ActionResult> RequestResponse(long RequestId)
@@ -1273,7 +1176,7 @@ namespace MoreForYou.Controllers
             }
 
         }
-       public async Task<bool> AddResponse(long requestId, int status, string message)
+        public async Task<bool> AddResponse(long requestId, int status, string message)
         {
             try
             {
@@ -1308,7 +1211,7 @@ namespace MoreForYou.Controllers
                     else
                     {
                         ViewBag.Error = "Failed process";
-                        result =  false;
+                        result = false;
 
                     }
                 }
@@ -1347,7 +1250,7 @@ namespace MoreForYou.Controllers
                         }
                     }
                 }
-                return result; 
+                return result;
             }
             catch (Exception e)
             {
@@ -1386,7 +1289,7 @@ namespace MoreForYou.Controllers
                         if (updateResult == true)
                         {
                             ViewBag.Message = "Thank you for kind response";
-                            updateResult = SendNotification(benefitRequestModel, DBRequestWorkflowModel, "Response" ).Result;
+                            updateResult = SendNotification(benefitRequestModel, DBRequestWorkflowModel, "Response").Result;
                         }
                     }
                     else
@@ -1458,7 +1361,7 @@ namespace MoreForYou.Controllers
                     requestWokflowModel.RequestStatusId = (int)CommanData.BenefitStatus.Rejected;
                     benefitRequestModel.RequestStatusId = (int)CommanData.BenefitStatus.Rejected;
                 }
-                else if(status == 1)
+                else if (status == 1)
                 {
                     groupModel1.RequestStatusId = (int)CommanData.BenefitStatus.Approved;
                     requestWokflowModel.RequestStatusId = (int)CommanData.BenefitStatus.Approved;
@@ -1466,29 +1369,29 @@ namespace MoreForYou.Controllers
                 }
                 updateResult = await _requestWorkflowService.UpdateRequestWorkflow(requestWokflowModel);
 
+                if (updateResult == true)
+                {
+                    updateResult = await _benefitRequestService.UpdateBenefitRequest(benefitRequestModel);
+
                     if (updateResult == true)
                     {
-                         updateResult = await _benefitRequestService.UpdateBenefitRequest(benefitRequestModel);
+                        updateResult = _groupService.UpdateGroup(groupModel1);
 
-                            if (updateResult == true)
+                        if (updateResult == true)
+                        {
+                            List<RequestWokflowModel> requestWorkflowModels = _requestWorkflowService.GetRequestWorkflow(benefitRequestModel.Id);
+                            requestWorkflowModels = requestWorkflowModels.Where(rw => rw.EmployeeId != employeeModel.EmployeeNumber).ToList();
+                            foreach (var requestWorkflow in requestWorkflowModels)
                             {
-                                  updateResult = _groupService.UpdateGroup(groupModel1);
-
-                                    if (updateResult == true)
-                                    {
-                                        List<RequestWokflowModel> requestWorkflowModels = _requestWorkflowService.GetRequestWorkflow(benefitRequestModel.Id);
-                                        requestWorkflowModels = requestWorkflowModels.Where(rw => rw.EmployeeId != employeeModel.EmployeeNumber).ToList();
-                                        foreach (var requestWorkflow in requestWorkflowModels)
-                                        {
-                                            requestWorkflow.IsVisible = false;
-                                            requestWorkflow.IsDelted = true;
-                                            await _requestWorkflowService.UpdateRequestWorkflow(requestWorkflow);
-                                        }
-                                    }
+                                requestWorkflow.IsVisible = false;
+                                requestWorkflow.IsDelted = true;
+                                await _requestWorkflowService.UpdateRequestWorkflow(requestWorkflow);
                             }
+                        }
                     }
-                    
-                
+                }
+
+
             }
             catch (Exception e)
             {
@@ -1508,13 +1411,13 @@ namespace MoreForYou.Controllers
             notificationModel.BenefitRequestId = BenefitRequestId;
             notificationModel.Type = Type;
             notificationModel.Message = message;
-            if(Type == "Response")
+            if (Type == "Response")
             {
                 notificationModel.ResponsedBy = responsedBy;
             }
             NotificationModel newNotificationModel = _notificationService.CreateNotification(notificationModel);
 
-            if(newNotificationModel != null)
+            if (newNotificationModel != null)
             {
                 UserNotificationModel userNotificationModel = new UserNotificationModel();
                 userNotificationModel.CreatedDate = DateTime.Now;
@@ -1546,11 +1449,11 @@ namespace MoreForYou.Controllers
             var connections = _userConnectionManager.GetUserConnections(model.Employee.UserId);
             if (requestType == "Request" || requestType == "RequestCancel")
             {
-                 connections = _userConnectionManager.GetUserConnections(model.Employee.UserId);
+                connections = _userConnectionManager.GetUserConnections(model.Employee.UserId);
             }
             else
             {
-                 connections = _userConnectionManager.GetUserConnections(model.BenefitRequest.Employee.UserId);
+                connections = _userConnectionManager.GetUserConnections(model.BenefitRequest.Employee.UserId);
             }
             if (connections != null && connections.Count > 0)
             {
@@ -1585,7 +1488,7 @@ namespace MoreForYou.Controllers
             {
                 NotificationModel notificationModel = new NotificationModel();
                 string notificationMessage = "";
-                if (type=="CreateGroup")
+                if (type == "CreateGroup")
                 {
                     List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupParticipants((long)DBRequestWorkflowModel.BenefitRequest.GroupId).Result.ToList();
                     notificationMessage = benefitRequestModel.Employee.FullName + " added you to new group for " + benefitRequestModel.Benefit.Name + " benefit";
@@ -1597,13 +1500,13 @@ namespace MoreForYou.Controllers
 
                     //if (benefitRequestModel.Benefit.BenefitTypeId == (int)CommanData.BenefitTypes.Individual)
                     //{
-                    if(type == "Request" )
+                    if (type == "Request")
                     {
                         notificationMessage = benefitRequestModel.Employee.FullName + " added new request for " + benefitRequestModel.Benefit.Name + " benefit";
                         notificationModel = CreateNotification(type, DBRequestWorkflowModel.EmployeeId, benefitRequestModel.Id, notificationMessage, 0);
                         await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
-                       // var token = "";
-                       // await _firebaseNotificationService.SendNotification("Request", notificationMessage, token);
+                        // var token = "";
+                        // await _firebaseNotificationService.SendNotification("Request", notificationMessage, token);
                     }
                     if (type == "RequestCancel")
                     {
@@ -1612,11 +1515,11 @@ namespace MoreForYou.Controllers
                         await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
 
                     }
-                    else if(type == "Response")
+                    else if (type == "Response")
                     {
-                        if(DBRequestWorkflowModel.RequestStatusId == (int)CommanData.BenefitStatus.Approved)
+                        if (DBRequestWorkflowModel.RequestStatusId == (int)CommanData.BenefitStatus.Approved)
                         {
-                           notificationMessage = DBRequestWorkflowModel.Employee.FullName + " Approved your request for " + benefitRequestModel.Benefit.Name + " benefit";
+                            notificationMessage = DBRequestWorkflowModel.Employee.FullName + " Approved your request for " + benefitRequestModel.Benefit.Name + " benefit";
                             if (benefitRequestModel.SendTo != 0)
                             {
                                 EmployeeModel employee = _EmployeeService.GetEmployee(benefitRequestModel.SendTo);
@@ -1631,7 +1534,7 @@ namespace MoreForYou.Controllers
                         {
                             notificationMessage = DBRequestWorkflowModel.Employee.FullName + " Rejected your request for " + benefitRequestModel.Benefit.Name + " benefit";
                         }
-                        if(benefitRequestModel.GroupId == null)
+                        if (benefitRequestModel.GroupId == null)
                         {
                             notificationModel = CreateNotification(type, benefitRequestModel.EmployeeId, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
                             await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, DBRequestWorkflowModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
@@ -1656,7 +1559,7 @@ namespace MoreForYou.Controllers
 
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return false;
@@ -1686,12 +1589,12 @@ namespace MoreForYou.Controllers
                     return false;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return false;
             }
-           
+
         }
 
 
@@ -1702,27 +1605,27 @@ namespace MoreForYou.Controllers
 
             //if (employeeModel != null)
             //{
-                BenefitModel benefitModel = _BenefitService.GetBenefit(benefitId);
-                int EmployeeGroupsCount = 0;
-                List<EmployeeModel> employeeModels = _EmployeeService.GetAllEmployees().Result.ToList();
-                List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetAllGroupEmployees().Result.ToList();
-                groupEmployeeModels = _groupEmployeeService.GetAllGroupEmployees().Result.ToList().Where(ge => ge.Employee.FullName.Contains(text) == true).ToList();
+            BenefitModel benefitModel = _BenefitService.GetBenefit(benefitId);
+            int EmployeeGroupsCount = 0;
+            List<EmployeeModel> employeeModels = _EmployeeService.GetAllEmployees().Result.ToList();
+            List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetAllGroupEmployees().Result.ToList();
+            groupEmployeeModels = _groupEmployeeService.GetAllGroupEmployees().Result.ToList().Where(ge => ge.Employee.FullName.Contains(text) == true).ToList();
 
             foreach (EmployeeModel employee in employeeModels)
+            {
+                EmployeeGroupsCount = groupEmployeeModels.Where(ge => ge.EmployeeId == employee.EmployeeNumber &&
+                ge.Group.BenefitId == benefitId &&
+               (ge.Group.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled ||
+                ge.Group.RequestStatusId != (int)CommanData.BenefitStatus.Rejected)).ToList().Count;
+                if (EmployeeGroupsCount < benefitModel.Times)
                 {
-                    EmployeeGroupsCount = groupEmployeeModels.Where(ge => ge.EmployeeId == employee.EmployeeNumber &&
-                    ge.Group.BenefitId == benefitId &&
-                   (ge.Group.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled ||
-                    ge.Group.RequestStatusId != (int)CommanData.BenefitStatus.Rejected)).ToList().Count;
-                    if (EmployeeGroupsCount < benefitModel.Times)
-                    {
-                        Participant participant = new Participant();
-                        participant.EmployeeNumber = employee.EmployeeNumber;
-                        participant.FullName = employee.FullName;
-                        participant.ProfilePicture = employee.ProfilePicture;
-                        participants.Add(participant);
-                    }
+                    Participant participant = new Participant();
+                    participant.EmployeeNumber = employee.EmployeeNumber;
+                    participant.FullName = employee.FullName;
+                    participant.ProfilePicture = employee.ProfilePicture;
+                    participants.Add(participant);
                 }
+            }
             //}
             return Json(new { items = participants });
 

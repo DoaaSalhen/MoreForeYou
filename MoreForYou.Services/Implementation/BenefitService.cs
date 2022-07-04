@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Data.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MoreForYou.Models.Models.MasterModels;
 using MoreForYou.Services.Contracts;
@@ -10,10 +9,8 @@ using MoreForYou.Services.Models.MasterModels;
 using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 
 
 namespace MoreForYou.Services.Implementation
@@ -30,7 +27,7 @@ namespace MoreForYou.Services.Implementation
         private readonly IBenefitWorkflowService _benefitWorkflowService;
 
         public BenefitService(IRepository<Benefit, long> benefitRepository,
-          ILogger<BenefitService> logger, 
+          ILogger<BenefitService> logger,
           IMapper mapper,
           IBenefitRequestService benefitRequestService,
           IGroupEmployeeService groupEmployeeService,
@@ -140,13 +137,30 @@ namespace MoreForYou.Services.Implementation
             int HoldedRequests = 0;
             int employeeWorkDuration = 0;
             int employeeAge = 0;
+            int groupBenefitTimes = 0;
+            int groupHoldRequest = 0;
             foreach (BenefitModel benefitModel in benefitModels)
             {
                 employeeWorkDuration = DateTime.Now.Year - employeeModel.JoiningDate.Year;
                 employeeAge = DateTime.Now.Year - employeeModel.BirthDate.Year;
                 List<BenefitRequestModel> employeeBenefitRequestModels = _benefitRequestService.GetBenefitRequestByEmployeeId(employeeModel.EmployeeNumber, benefitModel.Id).Result.Where(r => r.RequestStatusId == (int)CommanData.BenefitStatus.Approved || r.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).ToList();
-                times = employeeBenefitRequestModels.Count;
-                HoldedRequests = employeeBenefitRequestModels.Where(r => r.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).Count();
+                var employeeGroups = _groupEmployeeService.GetGroupsByEmployeeId(employeeModel.EmployeeNumber).Result;
+                if (employeeGroups != null)
+                {
+                    var employeeBenefitGroup = employeeGroups.Where(eg => eg.Group.BenefitId == benefitModel.Id);
+                    if (employeeBenefitGroup != null)
+                    {
+                        groupBenefitTimes = employeeBenefitGroup.ToList().Count;
+                        groupHoldRequest = employeeBenefitGroup.Where(r => r.Group.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.Group.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).Count();
+                    }
+
+                }
+                if (employeeBenefitRequestModels.Count > 0)
+                {
+                    times = employeeBenefitRequestModels.Count + groupBenefitTimes;
+                    HoldedRequests = employeeBenefitRequestModels.Where(r => r.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).Count();
+                }
+
                 benefitModel.EmployeeCanRedeem = false;
                 if (benefitModel.Year == DateTime.Now.Year)
                 {
@@ -194,7 +208,7 @@ namespace MoreForYou.Services.Implementation
                 //BenefitConditions.Add("Age " + benefitModel.AgeSign + benefitModel.Age);
                 BenefitConditions.Add("Age", "Age " + benefitModel.AgeSign + benefitModel.Age);
                 int employeeAge = DateTime.Now.Year - employeeModel.BirthDate.Year;
-                if(employeeAge >= benefitModel.Age)
+                if (employeeAge >= benefitModel.Age)
                 {
                     ConditionsApplicable.Add("Age", true);
                 }
@@ -214,7 +228,7 @@ namespace MoreForYou.Services.Implementation
             {
                 BenefitConditions.Add("WorkDuration", "Work Duration >= " + benefitModel.WorkDuration);
                 int employeeWorkDuartion = DateTime.Now.Year - employeeModel.JoiningDate.Year;
-                if(employeeWorkDuartion >= benefitModel.WorkDuration)
+                if (employeeWorkDuartion >= benefitModel.WorkDuration)
                 {
                     ConditionsApplicable.Add("WorkDuration", true);
 
@@ -227,8 +241,8 @@ namespace MoreForYou.Services.Implementation
             }
             if (benefitModel.gender != (int)CommanData.Gender.Any)
             {
-                BenefitConditions.Add("Gender", ""+(CommanData.Gender)benefitModel.gender);
-                if(employeeModel.Gender == benefitModel.gender)
+                BenefitConditions.Add("Gender", "" + (CommanData.Gender)benefitModel.gender);
+                if (employeeModel.Gender == benefitModel.gender)
                 {
                     ConditionsApplicable.Add("Gender", true);
 
@@ -239,9 +253,9 @@ namespace MoreForYou.Services.Implementation
                 }
 
             }
-            if(benefitModel.MaritalStatus != (int)CommanData.MaritialStatus.Any)
+            if (benefitModel.MaritalStatus != (int)CommanData.MaritialStatus.Any)
             {
-                BenefitConditions.Add("MaritalStatus", ""+(CommanData.MaritialStatus)benefitModel.MaritalStatus);
+                BenefitConditions.Add("MaritalStatus", "" + (CommanData.MaritialStatus)benefitModel.MaritalStatus);
                 if (employeeModel.MaritalStatus == benefitModel.MaritalStatus)
                 {
                     ConditionsApplicable.Add("MaritalStatus", true);
@@ -252,9 +266,9 @@ namespace MoreForYou.Services.Implementation
                     ConditionsApplicable.Add("MaritalStatus", false);
                 }
             }
-            if(benefitModel.Collar != (int)CommanData.CollarTypes.Any)
+            if (benefitModel.Collar != (int)CommanData.CollarTypes.Any)
             {
-                BenefitConditions.Add("PayrollArea", ""+(CommanData.CollarTypes)benefitModel.Collar);
+                BenefitConditions.Add("PayrollArea", "" + (CommanData.CollarTypes)benefitModel.Collar);
                 if (employeeModel.Collar == benefitModel.Collar)
                 {
                     ConditionsApplicable.Add("PayrollArea", true);
@@ -273,7 +287,7 @@ namespace MoreForYou.Services.Implementation
             }
             else if (benefitModel.DateToMatch != "Any" && (benefitModel.DateToMatch == "Certain Date"))
             {
-                BenefitConditions.Add("DateToMatch","Benefit Redeemation date must be at :" + benefitModel.CertainDate);
+                BenefitConditions.Add("DateToMatch", "Benefit Redeemation date must be at :" + benefitModel.CertainDate);
                 ConditionsApplicable.Add("DateToMatch", true);
             }
 
@@ -290,7 +304,7 @@ namespace MoreForYou.Services.Implementation
 
             if (benefitModel.BenefitTypeId == 3)
             {
-                BenefitConditions.Add("MinParticipant",  ""+benefitModel.MinParticipant);
+                BenefitConditions.Add("MinParticipant", "" + benefitModel.MinParticipant);
                 BenefitConditions.Add("MaxParticipant", "" + benefitModel.MaxParticipant);
                 ConditionsApplicable.Add("MinParticipant", true);
                 ConditionsApplicable.Add("MaxParticipant", true);
@@ -342,64 +356,71 @@ namespace MoreForYou.Services.Implementation
             {
                 List<BenefitModel> benefitModels = new List<BenefitModel>();
                 var benefitRequestModels1 = _benefitRequestService.GetBenefitRequestByEmployeeId(employeeNumber).Result;
-                if (benefitRequestModels1 != null)
-                {
-                    benefitRequestModels1 = benefitRequestModels1.OrderByDescending(r => r.CreatedDate).ToList();
-                    List<BenefitRequestModel> benefitRequestModels = benefitRequestModels1.Where(r => r.GroupId == null).ToList();
-
-                    var benefitRequestModelsGroup = benefitRequestModels.GroupBy(BR => BR.Benefit.Id).ToList();
-                    foreach (var group in benefitRequestModelsGroup)
-                    {
-                        BenefitModel benefitModel = GetBenefit(group.Key);
-
-                        List<BenefitRequestModel> benefitRequestModels2= group.AsEnumerable().ToList();
-                        List<BenefitStats> benefitStats = GetIndividualBenefitStats(benefitRequestModels2).ToList();
-                        benefitModel.benefitStatses = benefitStats;
-                        benefitModel.LastStatus = group.First().RequestStatus.Name;
-                        benefitModel.LastRequetedDate = group.First().CreatedDate;
-                        benefitModels.Add(benefitModel);
-                    }
-                }
                 List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupsByEmployeeId(employeeNumber).Result;
-                if(groupEmployeeModels != null)
+                if (groupEmployeeModels != null || benefitRequestModels1.Count != 0)
                 {
-                    var groupEmployeeModelGroups = groupEmployeeModels.OrderByDescending(g=>g.Group.CreatedDate).GroupBy(g => g.Group.BenefitId).ToList();//.Select(g => g.Select(g => g.Group.Benefit));
-                    foreach (var groups in groupEmployeeModelGroups)
-                    {
-                        List<BenefitRequestModel> GroupbenefitRequestes = new List<BenefitRequestModel>();
-                        BenefitModel benefitModel = GetBenefit(groups.Key);
 
-                        foreach (var group in groups)
+                    if (benefitRequestModels1.Count != 0)
+                    {
+                        benefitRequestModels1 = benefitRequestModels1.OrderByDescending(r => r.CreatedDate).ToList();
+                        List<BenefitRequestModel> benefitRequestModels = benefitRequestModels1.Where(r => r.GroupId == null).ToList();
+
+                        var benefitRequestModelsGroup = benefitRequestModels.GroupBy(BR => BR.Benefit.Id).ToList();
+                        foreach (var group in benefitRequestModelsGroup)
                         {
-                            BenefitRequestModel GroupbenefitRequest = _benefitRequestService.GetBenefitRequestByGroupId(group.Group.Id).Result;
-                            GroupbenefitRequestes.Add(GroupbenefitRequest);
-                                                 
+                            BenefitModel benefitModel = GetBenefit(group.Key);
+
+                            List<BenefitRequestModel> benefitRequestModels2 = group.AsEnumerable().ToList();
+                            List<BenefitStats> benefitStats = GetIndividualBenefitStats(benefitRequestModels2).ToList();
+                            benefitModel.benefitStatses = benefitStats;
+                            benefitModel.LastStatus = group.First().RequestStatus.Name;
+                            benefitModel.LastRequetedDate = group.First().CreatedDate;
+                            benefitModels.Add(benefitModel);
                         }
-                        List<BenefitStats> benefitStats = GetIndividualBenefitStats(GroupbenefitRequestes).ToList();
-                        benefitModel.benefitStatses = benefitStats;
-                        benefitModel.LastStatus = GroupbenefitRequestes.First().RequestStatus.Name;
-                        benefitModel.LastRequetedDate = GroupbenefitRequestes.First().CreatedDate;
-
-                        benefitModels.Add(benefitModel);
                     }
-                }
-                List<BenefitAPIModel> benefitAPIModels = new List<BenefitAPIModel>();
-                if (benefitModels.Count != 0)
-                {
-                    benefitModels = benefitModels.OrderByDescending(b => b.LastRequetedDate).ToList();
-
-                    foreach (BenefitModel model in benefitModels)
+                    if (groupEmployeeModels != null)
                     {
-                        BenefitAPIModel benefitAPIModel = CreateBenefitAPIModel(model);
-                        benefitAPIModels.Add(benefitAPIModel);
+                        var groupEmployeeModelGroups = groupEmployeeModels.OrderByDescending(g => g.Group.CreatedDate).GroupBy(g => g.Group.BenefitId).ToList();//.Select(g => g.Select(g => g.Group.Benefit));
+                        foreach (var groups in groupEmployeeModelGroups)
+                        {
+                            List<BenefitRequestModel> GroupbenefitRequestes = new List<BenefitRequestModel>();
+                            BenefitModel benefitModel = GetBenefit(groups.Key);
+
+                            foreach (var group in groups)
+                            {
+                                BenefitRequestModel GroupbenefitRequest = _benefitRequestService.GetBenefitRequestByGroupId(group.Group.Id).Result;
+                                GroupbenefitRequestes.Add(GroupbenefitRequest);
+
+                            }
+                            List<BenefitStats> benefitStats = GetIndividualBenefitStats(GroupbenefitRequestes).ToList();
+                            benefitModel.benefitStatses = benefitStats;
+                            benefitModel.LastStatus = GroupbenefitRequestes.First().RequestStatus.Name;
+                            benefitModel.LastRequetedDate = GroupbenefitRequestes.First().CreatedDate;
+
+                            benefitModels.Add(benefitModel);
+                        }
                     }
-                    return benefitAPIModels;
+                    List<BenefitAPIModel> benefitAPIModels = new List<BenefitAPIModel>();
+                    if (benefitModels.Count != 0)
+                    {
+                        benefitModels = benefitModels.OrderByDescending(b => b.LastRequetedDate).ToList();
+
+                        foreach (BenefitModel model in benefitModels)
+                        {
+                            BenefitAPIModel benefitAPIModel = CreateBenefitAPIModel(model);
+                            benefitAPIModels.Add(benefitAPIModel);
+                        }
+                        return benefitAPIModels;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
                     return null;
                 }
-              
             }
             catch (Exception e)
             {
@@ -423,64 +444,55 @@ namespace MoreForYou.Services.Implementation
                 int employeeAge = 0;
                 bool flag = false;
                 List<EmployeeModel> employeeModels = _employeeService.GetAllEmployees().Result.ToList();
-                    foreach (EmployeeModel employee in employeeModels)
-                    {
-                        employeeWorkDuration = DateTime.Now.Year - employeeModel.JoiningDate.Year;
-                        employeeAge = DateTime.Now.Year - employeeModel.BirthDate.Year;
+                foreach (EmployeeModel employee in employeeModels)
+                {
+                    employeeWorkDuration = DateTime.Now.Year - employeeModel.JoiningDate.Year;
+                    employeeAge = DateTime.Now.Year - employeeModel.BirthDate.Year;
 
-                        if (benefitModel.Year == DateTime.Now.Year)
+                    if (benefitModel.Year == DateTime.Now.Year)
+                    {
+                        if (benefitModel.Collar == -1 || (benefitModel.Collar != -1 && employeeModel.Collar == benefitModel.Collar))
                         {
-                                if (benefitModel.Collar == -1 || (benefitModel.Collar != -1 && employeeModel.Collar == benefitModel.Collar))
+                            if (benefitModel.gender == -1 || (benefitModel.gender != -1 && employeeModel.Gender == benefitModel.gender))
+                            {
+                                if (benefitModel.MaritalStatus == -1 || (benefitModel.MaritalStatus != -1 && employeeModel.MaritalStatus == benefitModel.MaritalStatus))
                                 {
-                                    if (benefitModel.gender == -1 || (benefitModel.gender != -1 && employeeModel.Gender == benefitModel.gender))
+                                    if (benefitModel.WorkDuration == 0 || (benefitModel.WorkDuration != 0 && employeeWorkDuration >= benefitModel.WorkDuration))
                                     {
-                                        if (benefitModel.MaritalStatus == -1 || (benefitModel.MaritalStatus != -1 && employeeModel.MaritalStatus == benefitModel.MaritalStatus))
+                                        if (benefitModel.Age != 0)
                                         {
-                                            if (benefitModel.WorkDuration == 0 || (benefitModel.WorkDuration != 0 && employeeWorkDuration >= benefitModel.WorkDuration))
+                                            if ((benefitModel.AgeSign == ">" && employeeAge > benefitModel.Age) ||
+                                                (benefitModel.AgeSign == "<" && employeeAge < benefitModel.Age) ||
+                                                (benefitModel.AgeSign == "=" && employeeAge == benefitModel.Age))
                                             {
-                                                if (benefitModel.Age != 0)
-                                                {
-                                                    if ((benefitModel.AgeSign == ">" && employeeAge > benefitModel.Age) ||
-                                                        (benefitModel.AgeSign == "<" && employeeAge < benefitModel.Age) ||
-                                                        (benefitModel.AgeSign == "=" && employeeAge == benefitModel.Age))
-                                                    {
-                                                        flag = true;
-                                                    }
-                                                    else
-                                                    {
-                                                        flag = false;
-                                                    }
-                                                }
+                                                flag = true;
+                                            }
+                                            else
+                                            {
+                                                flag = false;
                                             }
                                         }
                                     }
-
                                 }
-                            } 
+                            }
 
-                        if(flag == true)
-                        {
+                        }
+                    }
+
+                    if (flag == true)
+                    {
                         List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupsByEmployeeId(employee.EmployeeNumber).Result;
 
                         var EmployeesGroup = groupEmployeeModels.Where(
-                                                     ge=>ge.Group.RequestStatusId == (int)CommanData.BenefitStatus.Approved ||
+                                                     ge => ge.Group.RequestStatusId == (int)CommanData.BenefitStatus.Approved ||
                                                       ge.Group.RequestStatusId == (int)CommanData.BenefitStatus.InProgress ||
                                                       ge.Group.RequestStatusId == (int)CommanData.BenefitStatus.Pending);
-                            List<GroupEmployeeModel> EmployeeWithPendingGroup = groupEmployeeModels.Where(g => g.EmployeeId == employee.EmployeeNumber && g.Group.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
-                            if (EmployeesGroup != null)
-                            {
-                                EmployeeGroupsCount = EmployeesGroup.ToList().Count;
-                                EmployeePendingGroupsCount = EmployeeWithPendingGroup.Count();
-                                if (EmployeeGroupsCount < benefitModel.Times && EmployeePendingGroupsCount == 0)
-                                {
-                                    Participant participant = new Participant();
-                                    participant.EmployeeNumber = employee.EmployeeNumber;
-                                    participant.FullName = employee.FullName;
-                                    participant.ProfilePicture = employee.ProfilePicture;
-                                    participants.Add(participant);
-                                }
-                            }
-                            else
+                        List<GroupEmployeeModel> EmployeeWithPendingGroup = groupEmployeeModels.Where(g => g.EmployeeId == employee.EmployeeNumber && g.Group.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
+                        if (EmployeesGroup != null)
+                        {
+                            EmployeeGroupsCount = EmployeesGroup.ToList().Count;
+                            EmployeePendingGroupsCount = EmployeeWithPendingGroup.Count();
+                            if (EmployeeGroupsCount < benefitModel.Times && EmployeePendingGroupsCount == 0)
                             {
                                 Participant participant = new Participant();
                                 participant.EmployeeNumber = employee.EmployeeNumber;
@@ -488,9 +500,18 @@ namespace MoreForYou.Services.Implementation
                                 participant.ProfilePicture = employee.ProfilePicture;
                                 participants.Add(participant);
                             }
-
                         }
+                        else
+                        {
+                            Participant participant = new Participant();
+                            participant.EmployeeNumber = employee.EmployeeNumber;
+                            participant.FullName = employee.FullName;
+                            participant.ProfilePicture = employee.ProfilePicture;
+                            participants.Add(participant);
+                        }
+
                     }
+                }
 
                 Participant my = participants.Where(p => p.EmployeeNumber == employeeNumber).First();
                 participants.Remove(my);
@@ -535,7 +556,7 @@ namespace MoreForYou.Services.Implementation
 
                 }
                 User = _employeeService.CreateLoginUser(employeeModel);
-                if(User != null)
+                if (User != null)
                 {
                     homeModel.user = User;
                 }
@@ -545,9 +566,9 @@ namespace MoreForYou.Services.Implementation
                 }
                 foreach (BenefitModel benefitModel in AllBenefitModels)
                 {
-                  BenefitConditionsAndAvailable benefitConditionsAndAvailable = CreateBenefitConditions(benefitModel, employeeModel);
-                   BenefitConditions =  benefitConditionsAndAvailable.BenefitConditions;
-                   BenefitApplicale = benefitConditionsAndAvailable.BenefitApplicable;
+                    BenefitConditionsAndAvailable benefitConditionsAndAvailable = CreateBenefitConditions(benefitModel, employeeModel);
+                    BenefitConditions = benefitConditionsAndAvailable.BenefitConditions;
+                    BenefitApplicale = benefitConditionsAndAvailable.BenefitApplicable;
                     if (BenefitConditions != null)
                     {
                         benefitModel.BenefitConditions = BenefitConditions;
@@ -585,11 +606,11 @@ namespace MoreForYou.Services.Implementation
                         }
                     }
                     var AvailableBenefitModels = AllBenefitAPIModels.Where(b => b.EmployeeCanRedeem == true);
-                    foreach(var benefit in AvailableBenefitModels)
+                    foreach (var benefit in AvailableBenefitModels)
                     {
-                       benefit.TimesEmployeeReceiveThisBenefit = _benefitRequestService.GetTimesEmployeeReceieveThisBenefit(employeeModel.EmployeeNumber, benefit.Id);
+                        benefit.TimesEmployeeReceiveThisBenefit = _benefitRequestService.GetTimesEmployeeReceieveThisBenefit(employeeModel.EmployeeNumber, benefit.Id);
                     }
-                    if(AvailableBenefitModels != null)
+                    if (AvailableBenefitModels != null)
                     {
                         homeModel.AvailableBenefitModels = AvailableBenefitModels.ToList(); ;
 
@@ -609,12 +630,12 @@ namespace MoreForYou.Services.Implementation
                 }
                 return homeModel;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
             }
-           
+
         }
 
         public BenefitAPIModel GetBenefitDetails(long benefitId, EmployeeModel employeeModel)
@@ -630,7 +651,7 @@ namespace MoreForYou.Services.Implementation
                 benefitModels.Add(benefitModel);
                 benefitModels = BenefitsUserCanRedeem(benefitModels, employeeModel);
                 benefitModel = benefitModels.First();
-               BenefitAPIModel benefitAPIModel =  CreateBenefitAPIModel(benefitModel);
+                BenefitAPIModel benefitAPIModel = CreateBenefitAPIModel(benefitModel);
                 return benefitAPIModel;
             }
             catch (Exception e)
@@ -640,7 +661,7 @@ namespace MoreForYou.Services.Implementation
             }
         }
 
-        public  List<Participant> GetEmployeesWhoCanIGiveThisBenefit(long employeeNumber, long benefitId)
+        public List<Participant> GetEmployeesWhoCanIGiveThisBenefit(long employeeNumber, long benefitId)
         {
             EmployeeModel employeeModel = _employeeService.GetEmployee(employeeNumber);
             List<Participant> participants = new List<Participant>();
@@ -648,7 +669,7 @@ namespace MoreForYou.Services.Implementation
             if (employeeModel != null)
             {
                 BenefitModel benefitModel = GetBenefit(benefitId);
-                if(benefitModel.IsAgift == true)
+                if (benefitModel.IsAgift == true)
                 {
                     var employeeModels = _employeeService.GetAllEmployeeWhoCanIGive().Result;
                     if (employeeModels != null)
@@ -694,7 +715,7 @@ namespace MoreForYou.Services.Implementation
             int Closed = ApprovedCount + RejectedCount + CancelledCount;
 
             List<BenefitStats> benefitStatses = new List<BenefitStats>(8);
-            for(int index=1; index<=5; index++)
+            for (int index = 1; index <= 5; index++)
             {
                 BenefitStats benefitStats = new BenefitStats();
                 benefitStats.Name = Enum.GetName(typeof(CommanData.BenefitStatus), index);
@@ -704,7 +725,7 @@ namespace MoreForYou.Services.Implementation
 
             BenefitStats benefitStats1 = new BenefitStats();
             benefitStats1.Name = "Closed";
-            benefitStats1.Count = benefitStatses.Where(s => s.Name == "Cancelled" || s.Name == "Approved" || s.Name == "Rejected").Select(s=>s.Count).Sum();
+            benefitStats1.Count = benefitStatses.Where(s => s.Name == "Cancelled" || s.Name == "Approved" || s.Name == "Rejected").Select(s => s.Count).Sum();
             benefitStatses.Add(benefitStats1);
             BenefitStats benefitStats2 = new BenefitStats();
             benefitStats2.Name = "ALL";
@@ -733,14 +754,14 @@ namespace MoreForYou.Services.Implementation
 
             BenefitStats benefitStats1 = new BenefitStats();
             benefitStats1.Name = "Closed";
-            benefitStats1.Count = benefitStatses.Where(s=>s.Name == "Cancelled" || s.Name == "Approved" || s.Name == "Rejected").Count();
-            benefitStatses.Insert(6,benefitStats1);
+            benefitStats1.Count = benefitStatses.Where(s => s.Name == "Cancelled" || s.Name == "Approved" || s.Name == "Rejected").Count();
+            benefitStatses.Insert(6, benefitStats1);
             BenefitStats benefitStats2 = new BenefitStats();
             benefitStats2.Name = "ALL";
-            benefitStats2.Count = benefitStatses.Where(s => s.Name == "Cancelled" 
-                                                         || s.Name == "Approved" 
-                                                         || s.Name == "Rejected" 
-                                                         || s.Name == "Pending" 
+            benefitStats2.Count = benefitStatses.Where(s => s.Name == "Cancelled"
+                                                         || s.Name == "Approved"
+                                                         || s.Name == "Rejected"
+                                                         || s.Name == "Pending"
                                                          || s.Name == "InProgress").Count();
             benefitStatses.Insert(7, benefitStats2);
 
@@ -759,7 +780,7 @@ namespace MoreForYou.Services.Implementation
             if (benefitModel.DateToMatch == "Any")
             {
                 request.From = DateTime.Today.ToString("yyyy-MM-dd");
-                request.To = DateTime.Today.ToString("yyyy-MM-dd");
+                request.To = DateTime.Today.AddDays(benefitModel.numberOfDays - 1).ToString("yyyy-MM-dd");
             }
             else if (benefitModel.DateToMatch != "Any")
             {
@@ -776,7 +797,7 @@ namespace MoreForYou.Services.Implementation
                 else
                 {
                     request.From = new DateTime(DateTime.Today.Year, benefitModel.CertainDate.Month, benefitModel.CertainDate.Day).ToString("yyyy-MM-dd");
-                    request.To = new   DateTime(DateTime.Today.Year, benefitModel.CertainDate.Month, benefitModel.CertainDate.Day).ToString("yyyy-MM-dd");
+                    request.To = new DateTime(DateTime.Today.Year, benefitModel.CertainDate.Month, benefitModel.CertainDate.Day).ToString("yyyy-MM-dd");
                 }
             }
             request.numberOfDays = benefitModel.numberOfDays;
@@ -785,12 +806,12 @@ namespace MoreForYou.Services.Implementation
             request.BenefitName = benefitModel.Name;
             request.IsAgift = benefitModel.IsAgift;
             request.benefitId = benefitModel.Id;
-            if(benefitModel.RequiredDocuments != null)
+            if (benefitModel.RequiredDocuments != null)
             {
                 request.RequiredDocuments = benefitModel.RequiredDocuments.Split(";");
             }
             request.BenefitType = benefitModel.BenefitType.Name;
-            if (benefitModel.BenefitTypeId ==(int) CommanData.BenefitTypes.Individual)
+            if (benefitModel.BenefitTypeId == (int)CommanData.BenefitTypes.Individual)
             {
                 return request;
             }

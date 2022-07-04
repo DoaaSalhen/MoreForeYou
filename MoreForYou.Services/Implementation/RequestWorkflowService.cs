@@ -131,13 +131,13 @@ namespace MoreForYou.Services.Implementation
 
         public List<RequestWokflowModel> GetRequestWorkflow(long requestId)
         {
-          try
+            try
             {
-               List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.BenefitRequestId == requestId, false, RW => RW.Employee, RW => RW.BenefitRequest, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company).ToList();
+                List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.BenefitRequestId == requestId, false, RW => RW.Employee, RW => RW.BenefitRequest, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company).ToList();
                 List<RequestWokflowModel> requestWokflowModels = _mapper.Map<List<RequestWokflowModel>>(requestWorkflows);
                 return requestWokflowModels;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
@@ -154,7 +154,7 @@ namespace MoreForYou.Services.Implementation
 
                 return result;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return result;
@@ -165,7 +165,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.BenefitRequestId == requestId, false, RW=>RW.Employee, RW => RW.RequestStatus).ToList();
+                List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.BenefitRequestId == requestId, false, RW => RW.Employee, RW => RW.RequestStatus).ToList();
                 List<RequestWokflowModel> requestWokflowModels = _mapper.Map<List<RequestWokflowModel>>(requestWorkflows);
                 return requestWokflowModels;
             }
@@ -183,7 +183,7 @@ namespace MoreForYou.Services.Implementation
                 RequestWorkflow requestWorkflow = _mapper.Map<RequestWorkflow>(model);
                 result = _repository.Update(requestWorkflow);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
             }
@@ -194,11 +194,11 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-               List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.IsVisible == true, false, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest, RW=>RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Group, RW => RW.BenefitRequest.Group.RequestStatus, RW=>RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company).ToList();
+                List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.IsVisible == true, false, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Group, RW => RW.BenefitRequest.Group.RequestStatus, RW => RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company).ToList();
                 List<RequestWokflowModel> requestWokflowModels = _mapper.Map<List<RequestWokflowModel>>(requestWorkflows);
                 return requestWokflowModels;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
@@ -209,11 +209,11 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                RequestWorkflow requestWorkflow = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.BenefitRequestId == requestId, false, RW=>RW.BenefitRequest, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Benefit).First();
+                RequestWorkflow requestWorkflow = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.BenefitRequestId == requestId, false, RW => RW.BenefitRequest, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Benefit).First();
                 RequestWokflowModel requestWokflowModel = _mapper.Map<RequestWokflowModel>(requestWorkflow);
                 return requestWokflowModel;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
@@ -242,9 +242,9 @@ namespace MoreForYou.Services.Implementation
             try
             {
                 ManageRequest manageRequest = new ManageRequest();
-                EmployeeModel employeeModel =  _EmployeeService.GetEmployeeByUserId(userId).Result;
+                EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(userId).Result;
                 UserModel userModel = await _userService.GetUser(userId);
-                AspNetUser user =  _mapper.Map<AspNetUser>(userModel);
+                AspNetUser user = _mapper.Map<AspNetUser>(userModel);
                 List<string> userRoles = _userManager.GetRolesAsync(user).Result.ToList();
                 RequestFilterModel requestFilterModel = new RequestFilterModel();
 
@@ -275,7 +275,7 @@ namespace MoreForYou.Services.Implementation
         }
 
 
-        public List<Request> CreateRequestToApprove (List<RequestWokflowModel> requestWokflowModels) 
+        public List<Request> CreateRequestToApprove(List<RequestWokflowModel> requestWokflowModels)
         {
             try
             {
@@ -284,7 +284,7 @@ namespace MoreForYou.Services.Implementation
 
                 if (requestWokflowModels.Count != 0)
                 {
-                    for( int index =0; index< requestWokflowModels.Count; index ++)
+                    for (int index = 0; index < requestWokflowModels.Count; index++)
                     {
                         Request requestToApprove1 = new Request();
                         requestToApprove1.benefitId = requestWokflowModels[index].BenefitRequest.BenefitId;
@@ -294,7 +294,7 @@ namespace MoreForYou.Services.Implementation
                         requestToApprove1.To = requestWokflowModels[index].BenefitRequest.ExpectedDateTo.ToString("yyyy-MM-dd");
                         requestToApprove1.Requestedat = requestWokflowModels[index].BenefitRequest.CreatedDate.ToString("yyyy-MM-dd");
                         requestToApprove1.Message = requestWokflowModels[index].BenefitRequest.Message;
-                        requestToApprove1.status =CommanData.RequestStatusModels.Where(s=>s.Id == requestWokflowModels[index].BenefitRequest.RequestStatusId).First().Name;
+                        requestToApprove1.status = CommanData.RequestStatusModels.Where(s => s.Id == requestWokflowModels[index].BenefitRequest.RequestStatusId).First().Name;
                         requestToApprove1.BenefitType = requestWokflowModels[index].BenefitRequest.Benefit.BenefitType.Name;
                         requestToApprove1.EmployeeCanResponse = requestWokflowModels[index].canResponse;
 
@@ -312,16 +312,16 @@ namespace MoreForYou.Services.Implementation
                         if (requestWokflowModels[index].BenefitRequest.Group != null)
                         {
                             requestToApprove1.GroupName = requestWokflowModels[index].BenefitRequest.Group.Name;
-                            List<EmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupParticipants((long)requestWokflowModels[index].BenefitRequest.GroupId).Result.Select(eg=>eg.Employee).ToList();
+                            List<EmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupParticipants((long)requestWokflowModels[index].BenefitRequest.GroupId).Result.Select(eg => eg.Employee).ToList();
                             if (groupEmployeeModels != null)
                             {
                                 List<LoginUser> employeesData = CreateEmployeeData(groupEmployeeModels);
                                 requestToApprove1.FullParticipantsData = employeesData;
                             }
                         }
-                        if(requestWokflowModels[index].BenefitRequest.SendTo != 0)
+                        if (requestWokflowModels[index].BenefitRequest.SendTo != 0)
                         {
-                           EmployeeModel employeeModel = _EmployeeService.GetEmployee(requestWokflowModels[index].BenefitRequest.SendTo);
+                            EmployeeModel employeeModel = _EmployeeService.GetEmployee(requestWokflowModels[index].BenefitRequest.SendTo);
                             List<EmployeeModel> employeeModels = new List<EmployeeModel>();
                             employeeModels.Add(employeeModel);
                             requestToApprove1.SendToModel = CreateEmployeeData(employeeModels).First();
@@ -344,7 +344,7 @@ namespace MoreForYou.Services.Implementation
             {
                 List<LoginUser> employeesData = new List<LoginUser>();
                 groupEmployeeModels.ForEach(eg => eg.Email = _userManager.FindByIdAsync(eg.UserId).Result.Email);
-                foreach(var groupEmployeeModel in groupEmployeeModels  )
+                foreach (var groupEmployeeModel in groupEmployeeModels)
                 {
                     LoginUser employeeData = new LoginUser();
                     employeeData.EmployeeNumber = groupEmployeeModel.EmployeeNumber;
@@ -356,12 +356,12 @@ namespace MoreForYou.Services.Implementation
                     employeeData.JoinDate = groupEmployeeModel.JoiningDate.ToString("yyyy-MM-dd");
                     employeeData.BirthDate = groupEmployeeModel.BirthDate.ToString("yyyy-MM-dd");
                     employeeData.Email = groupEmployeeModel.Email;
-                    employeeData.Collar = CommanData.Collars.Where(c=>c.Id ==groupEmployeeModel.Collar).First().Name;
+                    employeeData.Collar = CommanData.Collars.Where(c => c.Id == groupEmployeeModel.Collar).First().Name;
                     employeeData.Company = groupEmployeeModel.Company.Code;
                     employeeData.WorkDuration = CalculateWorkDuration(Convert.ToDateTime(employeeData.JoinDate));
                     employeesData.Add(employeeData);
                 }
-                
+
                 return employeesData;
             }
             catch (Exception e)
@@ -399,7 +399,7 @@ namespace MoreForYou.Services.Implementation
 
         public List<RequestWokflowModel> CreateWarningMessage(List<RequestWokflowModel> requestWokflowModels)
         {
-            try 
+            try
             {
                 foreach (var request in requestWokflowModels)
                 {
@@ -431,7 +431,7 @@ namespace MoreForYou.Services.Implementation
 
                 return requestWokflowModels;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
@@ -458,14 +458,14 @@ namespace MoreForYou.Services.Implementation
             return requestWokflowModels;
         }
 
-        public string CalculateWorkDuration (DateTime joinDate)
+        public string CalculateWorkDuration(DateTime joinDate)
         {
             string workDuration = "";
             TimeSpan diff = DateTime.Today - joinDate;
             int days = diff.Days;
             int months = days / 30;
             int years = (int)(days / (356.25));
-            if(years < 1)
+            if (years < 1)
             {
                 if (months < 1)
                 {
@@ -524,12 +524,12 @@ namespace MoreForYou.Services.Implementation
             try
             {
                 List<BenefitRequestModel> benefitRequestModels = new List<BenefitRequestModel>();
-                if(benefitTypeId == (int)CommanData.BenefitTypes.Individual)
+                if (benefitTypeId == (int)CommanData.BenefitTypes.Individual)
                 {
                     benefitRequestModels = _benefitRequestService.GetBenefitRequestByEmployeeId(employeeNumber, BenefitId).Result;
 
                 }
-                else if(benefitTypeId == (int)CommanData.BenefitTypes.Group)
+                else if (benefitTypeId == (int)CommanData.BenefitTypes.Group)
                 {
                     List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupsByEmployeeId(employeeNumber).Result;
                     List<GroupModel> groupModels = groupEmployeeModels.Where(g => g.Group.BenefitId == BenefitId).Select(g => g.Group).ToList();
@@ -550,15 +550,15 @@ namespace MoreForYou.Services.Implementation
                     {
                         //if (model.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled)
                         //{
-                            model.RequestWokflowModels = GetRequestWorkflow(model.Id);
-                            var HRWorkflow = model.RequestWokflowModels.Where(rw => rw.RoleId == HRRoleId);
-                            if (HRWorkflow.Any())
-                            {
-                                var HRmodel = model.RequestWokflowModels.Where(rw => rw.RoleId.Contains(HRRoleId)).First();
-                                HRmodel.Employee.FullName = "HR";
-                                model.RequestWokflowModels.RemoveAll(rw => rw.RoleId == HRRoleId);
-                                model.RequestWokflowModels.Add(HRmodel);
-                            }
+                        model.RequestWokflowModels = GetRequestWorkflow(model.Id);
+                        var HRWorkflow = model.RequestWokflowModels.Where(rw => rw.RoleId == HRRoleId);
+                        if (HRWorkflow.Any())
+                        {
+                            var HRmodel = model.RequestWokflowModels.Where(rw => rw.RoleId.Contains(HRRoleId)).First();
+                            HRmodel.Employee.FullName = "HR";
+                            model.RequestWokflowModels.RemoveAll(rw => rw.RoleId == HRRoleId);
+                            model.RequestWokflowModels.Add(HRmodel);
+                        }
                         //}
                         if (model.RequestStatusId == (int)CommanData.BenefitStatus.Pending)
                         {
@@ -635,20 +635,20 @@ namespace MoreForYou.Services.Implementation
                             employeeModels.Add(employeeModel);
                             requestToApprove1.SendToModel = CreateEmployeeData(employeeModels).First();
                         }
-                        if(requestToApprove1.status != "Cancelled")
+                        if (requestToApprove1.status != "Cancelled")
                         {
                             List<RequestWorkFlowAPI> requestWorkFlowAPIs = new List<RequestWorkFlowAPI>();
                             requestWorkFlowAPIs = AddWorkflowToRequest(benefitRequestModels[index]);
                             requestToApprove1.RequestWorkFlowAPIs = requestWorkFlowAPIs;
                         }
-                        
+
                         requestsToApprove.Add(requestToApprove1);
                     }
                     return requestsToApprove;
                 }
                 return null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
@@ -669,7 +669,7 @@ namespace MoreForYou.Services.Implementation
                 requestWorkFlowAPI.Status = Enum.GetName(typeof(CommanData.BenefitStatus), requestWokflowModel.RequestStatusId);
                 return requestWorkFlowAPI;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;
@@ -716,7 +716,7 @@ namespace MoreForYou.Services.Implementation
             }
             else if (benefitRequestModel.RequestStatusId == (int)CommanData.BenefitStatus.Cancelled)
             {
-                length = benefitRequestModel.RequestWokflowModels.Count -1;
+                length = benefitRequestModel.RequestWokflowModels.Count - 1;
             }
             //else if (benefitRequestModel.RequestStatusId == (int)CommanData.BenefitStatus.Approved ||
             //    (benefitRequestModel.RequestStatusId == (int)CommanData.BenefitStatus.Rejected))
@@ -752,7 +752,7 @@ namespace MoreForYou.Services.Implementation
                 {
                     employeeModel = _EmployeeService.GetDepartmentManager(benefitRequestModel.Employee.DepartmentId);
                 }
-                
+
                 RequestWorkFlowAPI requestWorkFlowAPI = CreateRequestWorkFlowAPIBasic(employeeModel, status);
                 requestWorkFlowAPIs.Add(requestWorkFlowAPI);
             }
@@ -802,7 +802,7 @@ namespace MoreForYou.Services.Implementation
             {
                 NewBenefitRequestModel.SendTo = request.SendToId;
             }
-            BenefitRequestModel addedRequest =_benefitRequestService.CreateBenefitRequest(NewBenefitRequestModel);
+            BenefitRequestModel addedRequest = _benefitRequestService.CreateBenefitRequest(NewBenefitRequestModel);
             if (addedRequest != null)
             {
                 //if (requestDocumentModels != null)
@@ -818,7 +818,7 @@ namespace MoreForYou.Services.Implementation
                 newBenefitRequestModel.Benefit = benefitModel;
                 if (newBenefitRequestModel.Benefit.HasWorkflow)
                 {
-                     result = SendReuestToWhoIsConcern(addedRequest.Id, 1).Result;
+                    result = SendReuestToWhoIsConcern(addedRequest.Id, 1).Result;
                     if (result.Contains("successful Process"))
                     {
                         result = "Success Process, you added new request for " + benefitModel.Name
@@ -854,7 +854,7 @@ namespace MoreForYou.Services.Implementation
                 filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                  await ImageName.CopyToAsync(fileStream);
+                    await ImageName.CopyToAsync(fileStream);
                 }
 
                 //using (var dataStream = new MemoryStream())
@@ -950,8 +950,8 @@ namespace MoreForYou.Services.Implementation
 
         public async Task<string> ConfirmGroupRequest(Request request, string userId, BenefitModel benefitModel)
         {
-            EmployeeModel CurrentEmployee = await  _EmployeeService.GetEmployeeByUserId(userId);
-            string[] insertedEmployeeNumbersString = request.Participants.Split(";");
+            EmployeeModel CurrentEmployee = await _EmployeeService.GetEmployeeByUserId(userId);
+            string[] insertedEmployeeNumbersString = request.SelectedEmployeeNumbers.Split(";");
             insertedEmployeeNumbersString[insertedEmployeeNumbersString.Length - 1] = CurrentEmployee.EmployeeNumber.ToString();
             //BenefitModel benefitModel = _BenefitService.GetBenefit(groupModel.BenefitRequestModel.Benefit.Id);
             int GroupMembersCount = insertedEmployeeNumbersString.Length;
@@ -1021,7 +1021,7 @@ namespace MoreForYou.Services.Implementation
                     if (newBenefitRequestModel != null)
                     {
                         result = SendGroupRequestToHR(newBenefitRequestModel);
-                        if(result == true)
+                        if (result == true)
                         {
                             Message = "Success Process, your request has been sent";
 
@@ -1047,7 +1047,7 @@ namespace MoreForYou.Services.Implementation
                 Message = "Failed Process, Group Members does not match";
             }
 
-            
+
             return Message;
         }
 
@@ -1287,12 +1287,12 @@ namespace MoreForYou.Services.Implementation
             string message = "";
             if (files.Count != 0)
             {
-            
+
                 string filePath = "";
                 int count = 0;
                 foreach (var file in files)
                 {
-                    if(file.Length > 0)
+                    if (file.Length > 0)
                     {
                         RequestDocumentModel requestDocumentModel = new RequestDocumentModel();
                         filePath = UploadedImageAsync(file, "BenefitRequestFiles").Result;
@@ -1305,9 +1305,9 @@ namespace MoreForYou.Services.Implementation
                             count++;
                         }
                     }
-                   
+
                 }
-                if(count == files.Count)
+                if (count == files.Count)
                 {
                     message = "Success Process, you upload " + count + "files";
                 }

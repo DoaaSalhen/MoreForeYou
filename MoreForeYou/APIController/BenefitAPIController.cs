@@ -151,10 +151,10 @@ namespace MoreForYou.APIController
             {
                 //AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
                 EmployeeModel CurrentEmployee = _EmployeeService.GetEmployee(EmployeeNumber);
-                List<BenefitAPIModel> benefitModels = _BenefitService.GetMyBenefits(CurrentEmployee.EmployeeNumber).ToList();
+                List<BenefitAPIModel> benefitModels = _BenefitService.GetMyBenefits(CurrentEmployee.EmployeeNumber);
                 if(benefitModels != null)
                 {
-                    return Ok(new { Message = "Sucessful Process", Data = benefitModels });
+                    return Ok(new { Message = "Sucessful Process", Data = benefitModels.ToList() });
 
                 }
                 else
@@ -375,23 +375,32 @@ namespace MoreForYou.APIController
 
         [HttpPost("ConfirmRequest")]
         //[ValidateAntiForgeryToken]
-        public async Task<ActionResult> ConfirmRequest(Request request)
+        public async Task<ActionResult> ConfirmRequest(RequestAPI request1)
         {
             try
             {
                 string result = "";
-                AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
-                BenefitModel benefitModel = _BenefitService.GetBenefit(request.benefitId);
-                if (benefitModel.BenefitTypeId == (int)CommanData.BenefitTypes.Individual)
+                BenefitModel benefitModel = _BenefitService.GetBenefit(request1.benefitId);
+                Request request = _benefitRequestService.CreateRequestModel(request1, benefitModel.BenefitTypeId, benefitModel.IsAgift);
+                if (request != null)
                 {
-                   result = _requestWorkflowService.AddIndividualRequest(request, CurrentUser.Id, benefitModel);
+                    EmployeeModel employeeModel = _EmployeeService.GetEmployee(request.EmployeeNumber);
+                    if (benefitModel.BenefitTypeId == (int)CommanData.BenefitTypes.Individual)
+                    {
+                        result = _requestWorkflowService.AddIndividualRequest(request, employeeModel.UserId, benefitModel);
 
+                    }
+                    else if (benefitModel.BenefitTypeId == (int)CommanData.BenefitTypes.Group)
+                    {
+                        result = _requestWorkflowService.ConfirmGroupRequest(request, employeeModel.UserId, benefitModel).Result;
+
+                    }
                 }
-                else if(benefitModel.BenefitTypeId == (int)CommanData.BenefitTypes.Group)
+                else
                 {
-                    result = _requestWorkflowService.ConfirmGroupRequest(request, CurrentUser.Id, benefitModel).Result;
-
+                    return BadRequest(new { Message = "Failed Process", Data = 0 });
                 }
+
                 if (result.Contains("Success Process"))
                 {
                     return Ok(new { Message = "Sucessful Process", Data = request });
@@ -423,6 +432,23 @@ namespace MoreForYou.APIController
             }
         }
 
+        [HttpPost("RequestCancel")]
+        public ActionResult RequestCancel(long id, long benefitId, long employeeNumber)
+        {
+            string message = _requestWorkflowService.CancelMyRequest(id);
+            if (message == "Success Process")
+            {
+                return Ok(new { Message = "Sucess process, your request with number " + id + " has been cancelled", Data = true });
+                //BenefitRequestModel benefitRequestModel = _benefitRequestService.GetBenefitRequest(id);
+                //RequestWokflowModel requestWokflowModel = _requestWorkflowService.GetRequestWorkflow(id).First();
+                //bool result = SendNotification(benefitRequestModel, requestWokflowModel, "RequestCancel").Result;
+
+            }
+            else
+            {
+                return BadRequest(new { Message = message, Data = false });
+            }
+        }
 
         [HttpPost("updatePrfilePicture")]
         public async Task<IActionResult> updatePrfilePicture(string userId, IFormFile file)
@@ -448,6 +474,9 @@ namespace MoreForYou.APIController
                 return BadRequest(new { Message = "Failed Process", Data = false });
             }
         }
+
+
+
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]

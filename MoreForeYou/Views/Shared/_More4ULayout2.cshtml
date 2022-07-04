@@ -120,18 +120,18 @@
                             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                                 <ul class="navbar-nav ml-auto main-nav ">
                                     <li class="nav-item active">
-                                        <a class="nav-link" href="Benefit/ShowBenefits">Home</a>
+                                        <a class="nav-link"  asp-controller="Benefit" asp-action="ShowBenefits">Home</a>
                                     </li>
                                     <li class="nav-item active">
-                                        <a class="nav-link" href="Benefit/ShowMyBenefits">MyBenefits</a>
+                                        <a class="nav-link"  asp-controller="Benefit" asp-action="ShowMyBenefits">MyBenefits</a>
                                     </li>
                                     <li class="nav-item active">
-                                        <a class="nav-link" href="/Privilege/Index">Privileges</a>
+                                        <a class="nav-link"  asp-controller="Privilege" asp-action="Index">Privileges</a>
                                     </li>
                                     @if (roles.Count != 0)
                                     {
                                         <li class="nav-item active">
-                                            <a class="nav-link" href="/Benefit/ShowRequests">Manage Requests</a>
+                                            <a class="nav-link"  asp-controller="Benefit" asp-action="ShowRequests">Manage Requests</a>
                                         </li>
 }
                                     <li class="nav-item active">
@@ -148,13 +148,13 @@
                                             </a>
                                             Dropdown list
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="Employee/Index">Employee</a>
-                                                <a class="dropdown-item" href="Department/Index">Department</a>
-                                                <a class="dropdown-item" href="Position/Index">Position</a>
-                                                <a class="dropdown-item" href="Nationality/Index">Nationality</a>
-                                                <a class="dropdown-item" href="Company/Index">Company</a>
-                                                <a class="dropdown-item" href="Privilege/Index">Privileges</a>
-                                                <a class="dropdown-item" href="Employee/MySetting">MySetting</a>
+                                                <a class="dropdown-item"  asp-controller="Employee" asp-action="Index">Employee</a>
+                                                <a class="dropdown-item"  asp-controller="Department" asp-action="Index">Department</a>
+                                                <a class="dropdown-item"  asp-controller="Position" asp-action="Index">Position</a>
+                                                <a class="dropdown-item"  asp-controller="Nationality" asp-action="Index">Nationality</a>
+                                                <a class="dropdown-item"  asp-controller="Company" asp-action="Index">Company</a>
+                                                <a class="dropdown-item"  asp-controller="Privilege" asp-action="Index">Privileges</a>
+                                                <a class="dropdown-item"  asp-controller="Employee" asp-action="MySetting">MySetting</a>
 
                                             </div>
                                         </li>

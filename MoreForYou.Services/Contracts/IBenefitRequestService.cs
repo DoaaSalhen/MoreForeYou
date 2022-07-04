@@ -22,6 +22,7 @@ namespace MoreForYou.Services.Contracts
         int GetTimesEmployeeReceieveThisBenefit(long employeeNumber, long benefitId);
         Request CreateRequestAPIModel(BenefitRequestModel benefitRequestModel);
         //Task<string> SendReuestToWhoIsConcern(long benefitRequetId, int orderNumber);
+        Request CreateRequestModel(RequestAPI requestAPI, long benefitTypeId, bool isGift);
 
     }
 }
