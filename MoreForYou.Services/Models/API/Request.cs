@@ -43,14 +43,13 @@ namespace MoreForYou.Services.Models.API
         public string WarningMessage { get; set; }
 
         public bool EmployeeCanResponse { get; set; }
-        public string Requestedat { get; set; }
+        public DateTime Requestedat { get; set; }
 
         public List<RequestWorkFlowAPI> RequestWorkFlowAPIs { get; set; }
 
         public List<Participant> ParticipantsData { get; set; }
         public List<LoginUser> FullParticipantsData { get; set; }
-        //public IFormFile[] Documents { get; set; }
-
+        public string[] Documents { get; set; }
         public int numberOfDays { get; set; }
 
         public string DateToMatch { get; set; }
@@ -66,6 +65,7 @@ namespace MoreForYou.Services.Models.API
         public bool IsAgift { get; set; }
 
         public string[] DocumentsPath { get; set; }
+        public MyAction MyAction { get; set; }
 
     }
 
@@ -82,6 +82,7 @@ namespace MoreForYou.Services.Models.API
         public string Notes { get; set; }
 
         public bool employeeCanResponse { get; set; }
+
     }
 
     public class MyRequests
@@ -109,7 +110,7 @@ namespace MoreForYou.Services.Models.API
 
         public string SelectedEmployeeNumbers { get; set; }
 
-        public long SendToId { get; set; }
+        public long? SendToId { get; set; }
 
         public string[] Documents { get; set; }
 
@@ -117,5 +118,14 @@ namespace MoreForYou.Services.Models.API
 
         public long EmployeeNumber { get; set; }
 
+    }
+
+    public class MyAction
+    {
+        public string action { get; set; }
+
+        public string Notes { get; set; }
+
+        public DateTime ReplayDate { get; set; }
     }
 }

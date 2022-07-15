@@ -102,11 +102,11 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                Employee employee = _repository.Find(e => e.EmployeeNumber == employeeNumber && e.IsVisible == true,false, e=>e.Department, e => e.Position, e => e.Company).First();
+                Employee employee = _repository.Find(e => e.EmployeeNumber == employeeNumber && e.IsVisible == true, false, e => e.Department, e => e.Position, e => e.Company, e => e.Nationality, e => e.Supervisor).First();
                 EmployeeModel employeeModel = _mapper.Map<EmployeeModel>(employee);
                 return employeeModel;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return null;

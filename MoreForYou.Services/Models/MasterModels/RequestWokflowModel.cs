@@ -48,7 +48,7 @@ namespace MoreForYou.Services.Models.MasterModels
         public string ConfirmedDateFromString { get; set; }
         public string ConfirmedDateToString { get; set; }
         public string RoleName { get; set; }
-        public string[] DocumentsPath { get; set; }
+        public string[] Documents { get; set; }
 
 
     }

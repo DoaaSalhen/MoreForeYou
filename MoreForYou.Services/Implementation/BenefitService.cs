@@ -139,26 +139,28 @@ namespace MoreForYou.Services.Implementation
             int employeeAge = 0;
             int groupBenefitTimes = 0;
             int groupHoldRequest = 0;
+            List<GroupEmployeeModel> employeeBenefitGroup = new List<GroupEmployeeModel>();
             foreach (BenefitModel benefitModel in benefitModels)
             {
                 employeeWorkDuration = DateTime.Now.Year - employeeModel.JoiningDate.Year;
                 employeeAge = DateTime.Now.Year - employeeModel.BirthDate.Year;
                 List<BenefitRequestModel> employeeBenefitRequestModels = _benefitRequestService.GetBenefitRequestByEmployeeId(employeeModel.EmployeeNumber, benefitModel.Id).Result.Where(r => r.RequestStatusId == (int)CommanData.BenefitStatus.Approved || r.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).ToList();
+
                 var employeeGroups = _groupEmployeeService.GetGroupsByEmployeeId(employeeModel.EmployeeNumber).Result;
                 if (employeeGroups != null)
                 {
-                    var employeeBenefitGroup = employeeGroups.Where(eg => eg.Group.BenefitId == benefitModel.Id);
+                    employeeBenefitGroup = employeeGroups.Where(eg => eg.Group.BenefitId == benefitModel.Id) != null ? employeeGroups.Where(eg => eg.Group.BenefitId == benefitModel.Id).ToList() : null;
                     if (employeeBenefitGroup != null)
                     {
-                        groupBenefitTimes = employeeBenefitGroup.ToList().Count;
+                        groupBenefitTimes = employeeBenefitGroup.Where(eg => eg.Group.RequestStatusId == (int)CommanData.BenefitStatus.Approved).ToList().Count;
                         groupHoldRequest = employeeBenefitGroup.Where(r => r.Group.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.Group.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).Count();
                     }
 
                 }
-                if (employeeBenefitRequestModels.Count > 0)
+                if (employeeBenefitRequestModels.Count > 0 || employeeBenefitGroup != null)
                 {
-                    times = employeeBenefitRequestModels.Count + groupBenefitTimes;
-                    HoldedRequests = employeeBenefitRequestModels.Where(r => r.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).Count();
+                    times = employeeBenefitRequestModels.Where(r => r.RequestStatusId == (int)CommanData.BenefitStatus.Approved).Count() + groupBenefitTimes;
+                    HoldedRequests = employeeBenefitRequestModels.Where(r => r.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.RequestStatusId == (int)CommanData.BenefitStatus.InProgress).Count() + groupHoldRequest;
                 }
 
                 benefitModel.EmployeeCanRedeem = false;
@@ -208,13 +210,17 @@ namespace MoreForYou.Services.Implementation
                 //BenefitConditions.Add("Age " + benefitModel.AgeSign + benefitModel.Age);
                 BenefitConditions.Add("Age", "Age " + benefitModel.AgeSign + benefitModel.Age);
                 int employeeAge = DateTime.Now.Year - employeeModel.BirthDate.Year;
-                if (employeeAge >= benefitModel.Age)
+                if ((benefitModel.AgeSign == ">" && employeeAge > benefitModel.Age) ||
+                                                (benefitModel.AgeSign == "<" && employeeAge < benefitModel.Age) ||
+                                                (benefitModel.AgeSign == "=" && employeeAge == benefitModel.Age))
                 {
                     ConditionsApplicable.Add("Age", true);
+
                 }
                 else
                 {
                     ConditionsApplicable.Add("Age", false);
+
                 }
             }
             //else
@@ -339,7 +345,12 @@ namespace MoreForYou.Services.Implementation
                 benefitAPIModel.MinParticipant = model.MinParticipant;
                 benefitAPIModel.IsAgift = model.IsAgift;
                 benefitAPIModel.LastStatus = model.LastStatus;
-                benefitAPIModel.benefitStatses = model.benefitStatses;
+                //benefitAPIModel.benefitStatses = model.benefitStatses;
+                benefitAPIModel.totalRequestsCount = model.totalRequestsCount;
+                if (model.RequiredDocumentsArray != null)
+                {
+                    benefitAPIModel.RequiredDocumentsArray = model.RequiredDocumentsArray;
+                }
                 return benefitAPIModel;
             }
             catch (Exception e)
@@ -371,8 +382,9 @@ namespace MoreForYou.Services.Implementation
                             BenefitModel benefitModel = GetBenefit(group.Key);
 
                             List<BenefitRequestModel> benefitRequestModels2 = group.AsEnumerable().ToList();
-                            List<BenefitStats> benefitStats = GetIndividualBenefitStats(benefitRequestModels2).ToList();
-                            benefitModel.benefitStatses = benefitStats;
+                            //List<BenefitStats> benefitStats = GetIndividualBenefitStats(benefitRequestModels2).ToList();
+                            //benefitModel.benefitStatses = benefitStats;
+                            benefitModel.totalRequestsCount = benefitRequestModels2.Count;
                             benefitModel.LastStatus = group.First().RequestStatus.Name;
                             benefitModel.LastRequetedDate = group.First().CreatedDate;
                             benefitModels.Add(benefitModel);
@@ -392,8 +404,8 @@ namespace MoreForYou.Services.Implementation
                                 GroupbenefitRequestes.Add(GroupbenefitRequest);
 
                             }
-                            List<BenefitStats> benefitStats = GetIndividualBenefitStats(GroupbenefitRequestes).ToList();
-                            benefitModel.benefitStatses = benefitStats;
+                            //List<BenefitStats> benefitStats = GetIndividualBenefitStats(GroupbenefitRequestes).ToList();
+                            benefitModel.totalRequestsCount = GroupbenefitRequestes.Count;
                             benefitModel.LastStatus = GroupbenefitRequestes.First().RequestStatus.Name;
                             benefitModel.LastRequetedDate = GroupbenefitRequestes.First().CreatedDate;
 
@@ -539,8 +551,6 @@ namespace MoreForYou.Services.Implementation
                 LoginUser User = new LoginUser();
                 List<BenefitModel> benefitModels = GetAllBenefits().Result;
                 AllBenefitModels = BenefitsUserCanRedeem(benefitModels, employeeModel);
-                //AllBenefitModels.ForEach(b => b.MinParticipant = 1);
-                //AllBenefitModels.ForEach(b => b.MaxParticipant = 1);
 
                 var requests = _requestWorkflowService.GetRequestWorkflowByEmployeeNumber(employeeModel.EmployeeNumber);
                 if (requests.Count != 0)
@@ -567,23 +577,30 @@ namespace MoreForYou.Services.Implementation
                 foreach (BenefitModel benefitModel in AllBenefitModels)
                 {
                     BenefitConditionsAndAvailable benefitConditionsAndAvailable = CreateBenefitConditions(benefitModel, employeeModel);
-                    BenefitConditions = benefitConditionsAndAvailable.BenefitConditions;
-                    BenefitApplicale = benefitConditionsAndAvailable.BenefitApplicable;
-                    if (BenefitConditions != null)
+                    //BenefitConditions = benefitConditionsAndAvailable.BenefitConditions;
+                    //BenefitApplicale = benefitConditionsAndAvailable.BenefitApplicable;
+                    benefitModel.BenefitConditions = benefitConditionsAndAvailable.BenefitConditions;
+                    benefitModel.BenefitApplicable = benefitConditionsAndAvailable.BenefitApplicable;
+
+                    //if (BenefitConditions != null)
+                    //{
+                    //    benefitModel.BenefitConditions = BenefitConditions;
+                    //}
+                    //else
+                    //{
+                    //    benefitModel.BenefitConditions = new Dictionary<string, string>();
+                    //}
+                    //if (BenefitApplicale != null)
+                    //{
+                    //    benefitModel.BenefitApplicable = BenefitApplicale;
+                    //}
+                    //else
+                    //{
+                    //    benefitModel.BenefitApplicable = new Dictionary<string, bool>();
+                    //}
+                    if (benefitModel.RequiredDocuments != null)
                     {
-                        benefitModel.BenefitConditions = BenefitConditions;
-                    }
-                    else
-                    {
-                        benefitModel.BenefitConditions = new Dictionary<string, string>();
-                    }
-                    if (BenefitApplicale != null)
-                    {
-                        benefitModel.BenefitApplicable = BenefitApplicale;
-                    }
-                    else
-                    {
-                        benefitModel.BenefitApplicable = new Dictionary<string, bool>();
+                        benefitModel.RequiredDocumentsArray = benefitModel.RequiredDocuments.Split(";");
                     }
                     BenefitWorkflows = _benefitWorkflowService.CreateBenefitWorkFlow(benefitModel);
                     if (BenefitWorkflows != null)
@@ -602,6 +619,9 @@ namespace MoreForYou.Services.Implementation
                         benefitAPIModel = CreateBenefitAPIModel(benefitModel);
                         if (benefitAPIModel != null)
                         {
+                            benefitAPIModel.HasHoldingRequests = _benefitRequestService.ISEmployeeHasHoldingRequestsForthisBenefit(employeeModel.EmployeeNumber, benefitModel.Id);
+
+
                             AllBenefitAPIModels.Add(benefitAPIModel);
                         }
                     }
@@ -642,9 +662,28 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
+                Dictionary<string, string> BenefitConditions = new Dictionary<string, string>();
+                Dictionary<string, bool> BenefitApplicale = new Dictionary<string, bool>();
                 BenefitModel benefitModel = GetBenefit(benefitId);
                 BenefitConditionsAndAvailable benefitConditionsAndAvailable = CreateBenefitConditions(benefitModel, employeeModel);
                 benefitModel.BenefitConditions = benefitConditionsAndAvailable.BenefitConditions;
+                benefitModel.BenefitApplicable = benefitConditionsAndAvailable.BenefitApplicable;
+                //if (BenefitConditions != null)
+                //{
+                //    benefitModel.BenefitConditions = BenefitConditions;
+                //}
+                //else
+                //{
+                //    benefitModel.BenefitConditions = new Dictionary<string, string>();
+                //}
+                //if (BenefitApplicale != null)
+                //{
+                //    benefitModel.BenefitApplicable = BenefitApplicale;
+                //}
+                //else
+                //{
+                //    benefitModel.BenefitApplicable = new Dictionary<string, bool>();
+                //}
 
                 benefitModel.BenefitWorkflows = _benefitWorkflowService.CreateBenefitWorkFlow(benefitModel);
                 List<BenefitModel> benefitModels = new List<BenefitModel>();

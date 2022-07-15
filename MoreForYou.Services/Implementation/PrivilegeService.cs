@@ -3,6 +3,7 @@ using Data.Repository;
 using Microsoft.Extensions.Logging;
 using MoreForYou.Models.Models.MasterModels;
 using MoreForYou.Services.Contracts;
+using MoreForYou.Services.Models.API;
 using MoreForYou.Services.Models.MasterModels;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,22 @@ namespace MoreForYou.Services.Implementation
                 _logger.LogError(e.ToString());
             }
             return Task<bool>.FromResult<bool>(false);
+        }
+
+        public List<PriviligeAPIModel> CreatePriviligeAPIModel(List<PrivilegeModel> privilegeModels)
+        {
+            List<PriviligeAPIModel> priviligeAPIModels = new List<PriviligeAPIModel>();
+            foreach (var privilige in privilegeModels)
+            {
+                PriviligeAPIModel priviligeAPIModel = new PriviligeAPIModel();
+                priviligeAPIModel.Name = privilige.Name;
+                priviligeAPIModel.Description = privilige.Description;
+                priviligeAPIModel.Image = privilige.Image;
+                priviligeAPIModel.Priority = privilige.Priority;
+                priviligeAPIModels.Add(priviligeAPIModel);
+            }
+
+            return priviligeAPIModels;
         }
     }
 }

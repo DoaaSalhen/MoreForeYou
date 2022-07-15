@@ -52,3 +52,4 @@ C:\_cemex\_projects\_more4u\MoreForeYou\Data.Repository\obj\Debug\netcoreapp3.1\
 C:\_cemex\_projects\_more4u\MoreForeYou\Data.Repository\obj\Debug\netcoreapp3.1\Data.Repository.dll
 C:\_cemex\_projects\_more4u\MoreForeYou\Data.Repository\obj\Debug\netcoreapp3.1\Data.Repository.pdb
 C:\_cemex\_projects\_more4u\MoreForeYou\Data.Repository\obj\Debug\netcoreapp3.1\Data.Repository.genruntimeconfig.cache
+C:\_cemex\_projects\_more4u\MoreForeYou\Data.Repository\obj\Debug\netcoreapp3.1\Data.Repository.csproj.AssemblyReference.cache

@@ -36,6 +36,8 @@ namespace MoreForYou.Services.Models.API
         public long PendingRequestsCount { get; set; }
 
         public bool IsTheGroupCreator { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 
 

@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_APPLayout.cshtml";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
 }
 
@@ -12,8 +12,8 @@
 <hr />
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-lg-12">
-            <div class="card">
+        <div class="col-lg-8">
+            <div class="card" style="box-shadow:10px 20px 20px rgba(0, 0, 0, 0.5)">
                 <div class="card-body">
                     <div class="form-validation">
                         <form asp-action="Edit" asp-controller="Employee">
@@ -104,10 +104,10 @@
         </div>
     </div>
 </div>
-                    <div>
-                        <a asp-action="Index">Back to List</a>
-                    </div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 
-                    @section Scripts {
-                        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-                    }
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

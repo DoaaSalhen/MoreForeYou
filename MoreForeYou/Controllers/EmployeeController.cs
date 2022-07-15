@@ -400,24 +400,24 @@ namespace MoreForYou.Controllers
             return View(employeeModel);
         }
 
-        public async Task<ActionResult> MySetting()
-        {
-            AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
-            EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(CurrentUser.Id);
+        //public async Task<ActionResult> MySetting()
+        //{
+        //    AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
+        //    EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(CurrentUser.Id);
 
-            UserSetting userSetting = new UserSetting();
-            userSetting.imagePath = employeeModel.ProfilePicture;
-            userSetting.userId = employeeModel.UserId;
-            userSetting.employeeName = employeeModel.FullName;
-            return View(userSetting);
-        }
+        //    UserSetting userSetting = new UserSetting();
+        //    userSetting.imagePath = employeeModel.ProfilePicture;
+        //    userSetting.userId = employeeModel.UserId;
+        //    userSetting.employeeName = employeeModel.FullName;
+        //    return View(userSetting);
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePasswoard(UserSetting model)
-        {
-            EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(model.userId);
-            return View(employeeModel);
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> ChangePasswoard(UserSetting model)
+        //{
+        //    EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(model.userId);
+        //    return View(employeeModel);
+        //}
     }
 }

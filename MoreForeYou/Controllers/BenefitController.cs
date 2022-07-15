@@ -587,7 +587,7 @@ namespace MoreForYou.Controllers
                 {
                     result = _requestWorkflowService.ConfirmGroupRequest(request, CurrentUser.Id, benefitModel).Result;
                 }
-                if (result.Contains("Sucess Process"))
+                if (result.Contains("Success Process"))
                 {
                     return RedirectToAction("ShowMyBenefitRequests", new { BenefitId = request.benefitId });
                 }
@@ -753,9 +753,7 @@ namespace MoreForYou.Controllers
                 BenefitRequestModel newBenefitRequestModel = _benefitRequestService.CreateBenefitRequest(benefitRequestModel);
                 if (newBenefitRequestModel != null)
                 {
-
                     RequestWokflowModel requestWokflowModel = new RequestWokflowModel();
-                    //requestWokflowModel
                 }
                 if (newGroupModel.RequestStatusId == (int)CommanData.BenefitStatus.Pending)
                 {
@@ -967,7 +965,7 @@ namespace MoreForYou.Controllers
                     {
                         requestWokflowModels = _requestWorkflowService.GetRequestWorkflowByEmployeeNumber(employeeModel.EmployeeNumber).Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
                     }
-                    manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id).Result;
+                    manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id, manageRequest).Result;
                     if (requestWokflowModels.Count != 0)
                     {
                         foreach (var request in requestWokflowModels)
@@ -977,12 +975,13 @@ namespace MoreForYou.Controllers
                                 List<RequestDocumentModel> requestDocumentModels = _requestDocumentService.GetRequestDocuments(request.BenefitRequestId);
                                 if (requestDocumentModels != null)
                                 {
-                                    string[] documents = new string[requestDocumentModels.Count];
-                                    for (int index = 0; index < requestDocumentModels.Count; index++)
-                                    {
-                                        documents[index] = string.Concat("/BenefitRequestFiles/", requestDocumentModels[index].fileName);
-                                        request.DocumentsPath = documents;
-                                    }
+                                    //string[] documents = new string[requestDocumentModels.Count];
+                                    //for (int index = 0; index < requestDocumentModels.Count; index++)
+                                    //{
+                                    //    documents[index] = string.Concat("/BenefitRequestFiles/", requestDocumentModels[index].fileName);
+                                    //    request.Documents = documents;
+                                    //}
+                                    request.Documents = requestDocumentModels.Select(d => d.fileName).ToArray();
                                 }
                             }
                         }
@@ -1023,7 +1022,14 @@ namespace MoreForYou.Controllers
                             requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows();
                         }
                         requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled).ToList();
-                        manageRequest.DepartmentModels = _departmentService.GetAllDepartments();
+                        //List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                        //foreach (var dept in departmentModels)
+                        //{
+                        //    DepartmentAPI departmentAPI = new DepartmentAPI();
+                        //    departmentAPI.Id = dept.Id;
+                        //    departmentAPI.Name = dept.Name;
+                        //    manageRequest.DepartmentModels.Add(departmentAPI);
+                        //}
                     }
                     else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
                     {
@@ -1072,7 +1078,7 @@ namespace MoreForYou.Controllers
                         }
                         requestWokflowModels = _requestWorkflowService.EmployeeCanResponse(requestWokflowModels);
                         requestWokflowModels = _requestWorkflowService.CreateWarningMessage(requestWokflowModels);
-                        manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id).Result;
+                        manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id, manageRequest).Result;
                         manageRequest.Requests = _requestWorkflowService.CreateRequestToApprove(requestWokflowModels);
                     }
 
@@ -1089,9 +1095,6 @@ namespace MoreForYou.Controllers
                 return null;
             }
         }
-
-
-
         public async Task<ActionResult> RequestResponse(long RequestId)
         {
             try
@@ -1257,8 +1260,6 @@ namespace MoreForYou.Controllers
                 _logger.LogError(e.ToString());
                 return false;
             }
-
-
         }
 
         [HttpPost]
@@ -1442,8 +1443,6 @@ namespace MoreForYou.Controllers
             }
             return newNotificationModel;
         }
-
-
         public async Task<bool> SendToSpecificUser(string message, RequestWokflowModel model, string requestType, string employeeName, string userId)
         {
             var connections = _userConnectionManager.GetUserConnections(model.Employee.UserId);
@@ -1475,11 +1474,6 @@ namespace MoreForYou.Controllers
                 }
             }
             return true;
-        }
-
-        public ActionResult RedeemRequest()
-        {
-            return View();
         }
 
         public async Task<bool> SendNotification(BenefitRequestModel benefitRequestModel, RequestWokflowModel DBRequestWorkflowModel, string type)
@@ -1566,7 +1560,6 @@ namespace MoreForYou.Controllers
             }
         }
 
-
         public async Task<bool> SendNotificationToGroupMembers(List<GroupEmployeeModel> groupEmployeeModels, RequestWokflowModel DBRequestWorkflowModel, BenefitRequestModel benefitRequestModel, string notificationMessage, string type)
         {
             try
@@ -1596,7 +1589,6 @@ namespace MoreForYou.Controllers
             }
 
         }
-
 
         public JsonResult GetEmployeesCanRedeemThisGroupBenefit(string text, long benefitId)
         {
@@ -1631,6 +1623,161 @@ namespace MoreForYou.Controllers
 
             //return Json(new SelectList(participants, "EmployeeNumber", "FullName"));
 
+        }
+        public async Task<ActionResult> ShowAdminRequests()
+        {
+            try
+            {
+                AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
+                EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(CurrentUser.Id).Result;
+                List<string> userRoles = _userManager.GetRolesAsync(CurrentUser).Result.ToList();
+                List<RequestWokflowModel> requestWokflowModels = new List<RequestWokflowModel>();
+                ManageRequest manageRequest = new ManageRequest();
+                //if (userRoles != null)
+                //{
+                //    if (userRoles.Contains("Admin"))
+                //    {
+                //        requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
+                //    }
+                //    else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
+                //    {
+                //        requestWokflowModels = _requestWorkflowService.GetRequestWorkflowByEmployeeNumber(employeeModel.EmployeeNumber).Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
+                //    }
+                //if (requestWokflowModels.Count != 0)
+                //{
+                //    foreach (var request in requestWokflowModels)
+                //    {
+                //        if (request.BenefitRequest.Benefit.RequiredDocuments != null)
+                //        {
+                //            List<RequestDocumentModel> requestDocumentModels = _requestDocumentService.GetRequestDocuments(request.BenefitRequestId);
+                //            if (requestDocumentModels != null)
+                //            {
+                //                //string[] documents = new string[requestDocumentModels.Count];
+                //                //for (int index = 0; index < requestDocumentModels.Count; index++)
+                //                //{
+                //                //    documents[index] = string.Concat("/BenefitRequestFiles/", requestDocumentModels[index].fileName);
+                //                //    request.Documents = documents;
+                //                //}
+                //                request.Documents = requestDocumentModels.Select(d => d.fileName).ToArray();
+                //            }
+                //        }
+                //    }
+                //requestWokflowModels = _requestWorkflowService.EmployeeCanResponse(requestWokflowModels);
+                //requestWokflowModels = _requestWorkflowService.CreateWarningMessage(requestWokflowModels);
+                //manageRequest.Requests = _requestWorkflowService.CreateRequestToApprove(requestWokflowModels);
+                //}
+                //}
+                manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id, manageRequest).Result;
+
+                return View(manageRequest);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return null;
+            }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ShowAdminRequests(ManageRequest manageRequest)
+        {
+            try
+            {
+                AspNetUser CurrentUser = await _userManager.GetUserAsync(User);
+                EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(CurrentUser.Id).Result;
+                List<string> userRoles = _userManager.GetRolesAsync(CurrentUser).Result.ToList();
+                List<RequestWokflowModel> requestWokflowModels = new List<RequestWokflowModel>();
+                if (userRoles != null)
+                {
+                    if (userRoles.Contains("Admin"))
+                    {
+                        if (manageRequest.SelectedDepartmentId != -1)
+                        {
+                            requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.BenefitRequest.Employee.DepartmentId == manageRequest.SelectedDepartmentId).ToList();
+                        }
+                        else
+                        {
+                            requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows();
+                        }
+                        requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled).ToList();
+                        //List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                        //foreach (var dept in departmentModels)
+                        //{
+                        //    DepartmentAPI departmentAPI = new DepartmentAPI();
+                        //    departmentAPI.Id = dept.Id;
+                        //    departmentAPI.Name = dept.Name;
+                        //    manageRequest.DepartmentModels.Add(departmentAPI);
+                        //}
+                    }
+                    else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
+                    {
+
+                        requestWokflowModels = _requestWorkflowService.GetRequestWorkflowByEmployeeNumber(employeeModel.EmployeeNumber);
+                        requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled).ToList();
+                    }
+                    if (requestWokflowModels.Count != 0)
+                    {
+                        if (manageRequest.SelectedAll == false)
+                        {
+
+
+                            if (manageRequest.employeeNumberSearch != 0)
+                            {
+                                requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.EmployeeId == manageRequest.employeeNumberSearch).ToList();
+
+                            }
+
+                            if (manageRequest.SelectedRequestStatus != -1)
+                            {
+                                requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId == manageRequest.SelectedRequestStatus).ToList();
+                            }
+                            if (manageRequest.SelectedTimingId != -1)
+                            {
+                                if (manageRequest.SelectedTimingId == 1)
+                                {
+                                    requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.RequestDate == DateTime.Today).ToList();
+                                }
+                                else if (manageRequest.SelectedTimingId == 2)
+                                {
+                                    requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.RequestDate == DateTime.Today.AddDays(-1)).ToList();
+                                }
+                                else if (manageRequest.SelectedTimingId == 3)
+                                {
+                                    int days = DateTime.Now.DayOfWeek - DayOfWeek.Sunday;
+                                    DateTime pastDate = DateTime.Now.AddDays(-(days + 7));
+                                    requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.RequestDate >= pastDate && rw.BenefitRequest.RequestDate <= pastDate.AddDays(7)).ToList();
+                                }
+                                else if (manageRequest.SelectedTimingId == 4)
+                                {
+
+                                    requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.RequestDate.Month == DateTime.Today.Month - 1).ToList();
+                                }
+                            }
+                            if (manageRequest.SelectedBenefitType != -1)
+                            {
+                                requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.Benefit.BenefitTypeId == manageRequest.SelectedBenefitType).ToList();
+                            }
+                        }
+                        //requestWokflowModels = _requestWorkflowService.EmployeeCanResponse(requestWokflowModels);
+                        //requestWokflowModels = _requestWorkflowService.CreateWarningMessage(requestWokflowModels);
+                        manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id, manageRequest).Result;
+                        manageRequest.Requests = _requestWorkflowService.CreateRequestToApprove(requestWokflowModels);
+                    }
+
+                }
+                else
+                {
+                    ViewBag.Error = "You do not have any requests";
+                }
+                return View(manageRequest);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return null;
+            }
         }
     }
 

@@ -31,7 +31,7 @@ namespace MoreForYou.APIController
         private readonly IRoleService _roleService;
         public LoginAPIController(IBenefitService BenefitService,
             IBenefitWorkflowService BenefitWorkflowService,
-         
+
             UserManager<AspNetUser> userManager,
              SignInManager<AspNetUser> signInManager,
             IEmployeeService EmployeeService,
@@ -69,9 +69,23 @@ namespace MoreForYou.APIController
                     if (result.Succeeded)
                     {
                         EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(aspNetUser.Id);
+
                         HomeModel homeModel = _BenefitService.ShowAllBenefits(employeeModel);
                         homeModel.user.Email = aspNetUser.Email;
 
+                        List<string> userRoles = _userManager.GetRolesAsync(aspNetUser).Result.ToList();
+                        List<RequestWokflowModel> requestWokflowModels = new List<RequestWokflowModel>();
+                        if (userRoles != null)
+                        {
+                            if (userRoles.Contains("Admin"))
+                            {
+                                homeModel.user.IsAdmin = true;
+                            }
+                            else
+                            {
+                                homeModel.user.IsAdmin = false;
+                            }
+                        }
                         return Ok(new { Message = "Sucessful login", Data = homeModel });
 
                     }
@@ -99,10 +113,10 @@ namespace MoreForYou.APIController
             bool result = false;
             if (user != null)
             {
-              EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(userId).Result;
+                EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(userId).Result;
                 employeeModel.UserToken = newToken;
-               result = _EmployeeService.UpdateEmployee(employeeModel).Result;
-                
+                result = _EmployeeService.UpdateEmployee(employeeModel).Result;
+
             }
             if (result == true)
             {
@@ -115,7 +129,44 @@ namespace MoreForYou.APIController
         }
 
 
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult> ChangePassword(UserSetting userSetting)
+        {
+            EmployeeModel employee = _EmployeeService.GetEmployee(userSetting.employeeNumber);
+            if (employee != null)
+            {
+                AspNetUser aspNetUser = await _userManager.FindByIdAsync(employee.UserId);
+                if (aspNetUser != null)
+                {
+                    var result = await _signInManager.CheckPasswordSignInAsync(aspNetUser, userSetting.oldPassword, true);
+                    if (result.Succeeded)
+                    {
+                        var result2 = await _userManager.ChangePasswordAsync(aspNetUser, userSetting.oldPassword, userSetting.newPassword);
+                        if (result2.Succeeded)
+                        {
+                            return Ok(new { Message = "sucess process, your Password has been changed", Data = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { Message = "Failed Process", Data = false });
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(new { Message = "Invaild data", Data = false });
+                    }
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Invaild data", Data = false });
+                }
+            }
+            else
+            {
+                return BadRequest(new { Message = "Invaild data", Data = false });
+            }
 
+        }
 
 
 

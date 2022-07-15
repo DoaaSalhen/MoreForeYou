@@ -52,7 +52,7 @@
                                                     <li class="list-inline-item">
                                                         <i class="fa fa-cube"></i>   @benefit.BenefitType
                                                     </li>
-                                                    <li class="list-inline-item"><i class="fa fa-layers-counter"></i>@benefit.benefitStatses[6].Count</li>
+                                                    <li class="list-inline-item"><i class="fa fa-layers-counter"></i>@benefit.totalRequestsCount</li>
                                                 </ul>
                                                 <p class="pr-5">@benefit.Description</p>
                                             </div>
@@ -60,7 +60,7 @@
                                         <div class="col-lg-6 align-self-center">
                                             <div class="product-ratings float-lg-right pb-3">
                                                 <div class="list-inline">
-                                                    @benefit.LastStatus
+                                                    @benefit.totalRequestsCount
                                                 </div>
                                             </div>
                                             @if (benefit.BenefitType == "Individual")
@@ -88,7 +88,7 @@
         }
         else
         {
-        <div> You do not have any benefits yet</div>
+            <div> You do not have any benefits yet</div>
         }
     </div>
 </section>

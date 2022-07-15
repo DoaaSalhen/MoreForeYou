@@ -17,7 +17,7 @@ namespace MoreForYou.Services.Models.MasterModels
         //[MaxLength]
         //public byte[] DataFiles { get; set; }
         [Required]
-        [MaxLength(100)]
+        [MaxLength]
         public string fileName { get; set; }
 
         public long BenefitRequestId { get; set; }

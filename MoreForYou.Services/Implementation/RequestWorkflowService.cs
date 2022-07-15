@@ -209,7 +209,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                RequestWorkflow requestWorkflow = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.BenefitRequestId == requestId, false, RW => RW.BenefitRequest, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Benefit).First();
+                RequestWorkflow requestWorkflow = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.BenefitRequestId == requestId, false, RW => RW.BenefitRequest, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType).First();
                 RequestWokflowModel requestWokflowModel = _mapper.Map<RequestWokflowModel>(requestWorkflow);
                 return requestWokflowModel;
             }
@@ -237,11 +237,12 @@ namespace MoreForYou.Services.Implementation
 
 
 
-        public async Task<ManageRequest> CreateManageRequestFilter(string userId)
+        public async Task<ManageRequest> CreateManageRequestFilter(string userId, ManageRequest manageRequest)
         {
             try
             {
-                ManageRequest manageRequest = new ManageRequest();
+                //ManageRequest manageRequest = new ManageRequest();
+                manageRequest.DepartmentModels = new List<DepartmentAPI>();
                 EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(userId).Result;
                 UserModel userModel = await _userService.GetUser(userId);
                 AspNetUser user = _mapper.Map<AspNetUser>(userModel);
@@ -260,8 +261,18 @@ namespace MoreForYou.Services.Implementation
                     manageRequest.employeeNumberSearch = 0;
                     if (userRoles.Contains("Admin"))
                     {
-                        manageRequest.DepartmentModels = _departmentService.GetAllDepartments();
-                        manageRequest.DepartmentModels.Insert(0, new DepartmentModel { Id = -1, Name = "Department" });
+                        List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                        foreach (var dept in departmentModels)
+                        {
+                            DepartmentAPI departmentAPI = new DepartmentAPI();
+                            departmentAPI.Id = dept.Id;
+                            departmentAPI.Name = dept.Name;
+                            manageRequest.DepartmentModels.Add(departmentAPI);
+                        }
+                        manageRequest.DepartmentModels.Insert(0, new DepartmentAPI { Id = -1, Name = "Department" });
+
+                        //manageRequest.DepartmentModels = _departmentService.GetAllDepartments();
+                        //manageRequest.DepartmentModels.Insert(0, new DepartmentModel { Id = -1, Name = "Department" });
                     }
 
                 }
@@ -292,7 +303,7 @@ namespace MoreForYou.Services.Implementation
                         requestToApprove1.RequestNumber = requestWokflowModels[index].BenefitRequestId;
                         requestToApprove1.From = requestWokflowModels[index].BenefitRequest.ExpectedDateFrom.ToString("yyyy-MM-dd");
                         requestToApprove1.To = requestWokflowModels[index].BenefitRequest.ExpectedDateTo.ToString("yyyy-MM-dd");
-                        requestToApprove1.Requestedat = requestWokflowModels[index].BenefitRequest.CreatedDate.ToString("yyyy-MM-dd");
+                        requestToApprove1.Requestedat = requestWokflowModels[index].BenefitRequest.CreatedDate;
                         requestToApprove1.Message = requestWokflowModels[index].BenefitRequest.Message;
                         requestToApprove1.status = CommanData.RequestStatusModels.Where(s => s.Id == requestWokflowModels[index].BenefitRequest.RequestStatusId).First().Name;
                         requestToApprove1.BenefitType = requestWokflowModels[index].BenefitRequest.Benefit.BenefitType.Name;
@@ -302,9 +313,14 @@ namespace MoreForYou.Services.Implementation
                         {
                             requestToApprove1.WarningMessage = requestWokflowModels[index].BenefitRequest.WarningMessage;
                         }
-                        if (requestWokflowModels[index].DocumentsPath != null)
+                        //if (requestWokflowModels[index].Documents != null)
+                        //{
+                        //    requestToApprove1.Documents = requestWokflowModels[index].Documents;
+                        //}
+                        // var documents = _requestDocumentService.GetRequestDocuments(requestWokflowModels[index].BenefitRequestId);
+                        if (requestWokflowModels[index].Documents != null)
                         {
-                            requestToApprove1.DocumentsPath = requestWokflowModels[index].DocumentsPath;
+                            requestToApprove1.Documents = requestWokflowModels[index].Documents;
                         }
                         List<EmployeeModel> employeeModels1 = new List<EmployeeModel>();
                         employeeModels1.Add(requestWokflowModels[index].BenefitRequest.Employee);
@@ -325,6 +341,18 @@ namespace MoreForYou.Services.Implementation
                             List<EmployeeModel> employeeModels = new List<EmployeeModel>();
                             employeeModels.Add(employeeModel);
                             requestToApprove1.SendToModel = CreateEmployeeData(employeeModels).First();
+                        }
+
+                        if (requestWokflowModels[index].canResponse == false && requestWokflowModels[index].RequestStatusId != (int)CommanData.BenefitStatus.Cancelled)
+                        {
+                            MyAction myAction = new MyAction();
+                            myAction.action = Enum.GetName(typeof(CommanData.BenefitStatus), requestWokflowModels[index].RequestStatusId);
+                            if (requestWokflowModels != null)
+                            {
+                                myAction.Notes = requestWokflowModels[index].Notes;
+                            }
+                            myAction.ReplayDate = requestWokflowModels[index].ReplayDate;
+                            requestToApprove1.MyAction = myAction;
                         }
                         requestsToApprove.Add(requestToApprove1);
                     }
@@ -508,7 +536,28 @@ namespace MoreForYou.Services.Implementation
 
                 if (cancelResult == true)
                 {
-                    message = "Success Process";
+                    if (DBBenefitRequestModel.Benefit.BenefitTypeId != (int)CommanData.BenefitTypes.Group)
+                    {
+                        message = "Success Process";
+                    }
+                    else
+                    {
+                        var group = _groupService.GetGroup((long)DBBenefitRequestModel.GroupId);
+                        group.RequestStatusId = (int)CommanData.BenefitStatus.Cancelled;
+                        cancelResult = _groupService.UpdateGroup(group);
+                        if (cancelResult == true)
+                        {
+                            message = "Success Process";
+                        }
+                        else
+                        {
+                            message = "Problem in Cancelling your Group";
+                        }
+                    }
+                }
+                else
+                {
+                    message = "Problem in Cancelling your request";
                 }
             }
             else
@@ -602,7 +651,7 @@ namespace MoreForYou.Services.Implementation
                         requestToApprove1.RequestNumber = benefitRequestModels[index].Id;
                         requestToApprove1.From = benefitRequestModels[index].ExpectedDateFrom.ToString("yyyy-MM-dd");
                         requestToApprove1.To = benefitRequestModels[index].ExpectedDateTo.ToString("yyyy-MM-dd");
-                        requestToApprove1.Requestedat = benefitRequestModels[index].CreatedDate.ToString("yyyy-MM-dd");
+                        requestToApprove1.Requestedat = benefitRequestModels[index].CreatedDate;
                         requestToApprove1.Message = benefitRequestModels[index].Message;
                         requestToApprove1.status = CommanData.RequestStatusModels.Where(s => s.Id == benefitRequestModels[index].RequestStatusId).First().Name;
                         requestToApprove1.BenefitType = benefitRequestModels[index].Benefit.BenefitType.Name;
@@ -665,7 +714,7 @@ namespace MoreForYou.Services.Implementation
                 requestWorkFlowAPI.EmployeeName = requestWokflowModel.Employee.FullName;
                 requestWorkFlowAPI.employeeCanResponse = requestWokflowModel.canResponse;
                 requestWorkFlowAPI.Notes = requestWokflowModel.Notes;
-                requestWorkFlowAPI.ReplayDate = requestWorkFlowAPI.ReplayDate;
+                requestWorkFlowAPI.ReplayDate = requestWokflowModel.ReplayDate;
                 requestWorkFlowAPI.Status = Enum.GetName(typeof(CommanData.BenefitStatus), requestWokflowModel.RequestStatusId);
                 return requestWorkFlowAPI;
             }
@@ -786,18 +835,18 @@ namespace MoreForYou.Services.Implementation
                 NewBenefitRequestModel.ExpectedDateTo = Convert.ToDateTime(request.To);
 
             }
-            //if (request.Documents != null)
-            //{
-            //    string filePath = "";
-            //    foreach (var file in request.Documents)
-            //    {
-            //        RequestDocumentModel requestDocumentModel = new RequestDocumentModel();
-            //        filePath = UploadedImageAsync(file, @"C:\inetpub\wwwroot\_more4u\wwwroot\BenefitRequestFiles").Result;
-            //        requestDocumentModel.fileName = filePath;
-            //        requestDocumentModel.FileType = file.ContentType;
-            //        requestDocumentModels.Add(requestDocumentModel);
-            //    }
-            //}
+            if (request.Documents != null)
+            {
+                string filePath = "";
+                foreach (var file in request.Documents)
+                {
+                    RequestDocumentModel requestDocumentModel = new RequestDocumentModel();
+                    //filePath = UploadedImageAsync(file, @"C:\inetpub\wwwroot\_more4u\wwwroot\BenefitRequestFiles").Result;
+                    requestDocumentModel.fileName = file;
+                    requestDocumentModel.FileType = "image";
+                    requestDocumentModels.Add(requestDocumentModel);
+                }
+            }
             if (request.SendToId != 0)
             {
                 NewBenefitRequestModel.SendTo = request.SendToId;
@@ -805,14 +854,14 @@ namespace MoreForYou.Services.Implementation
             BenefitRequestModel addedRequest = _benefitRequestService.CreateBenefitRequest(NewBenefitRequestModel);
             if (addedRequest != null)
             {
-                //if (requestDocumentModels != null)
-                //{
-                //    foreach (var document in requestDocumentModels)
-                //    {
-                //        document.BenefitRequestId = addedRequest.Id;
-                //        _requestDocumentService.CreateRequestDocument(document);
-                //    }
-                //}
+                if (requestDocumentModels != null)
+                {
+                    foreach (var document in requestDocumentModels)
+                    {
+                        document.BenefitRequestId = addedRequest.Id;
+                        _requestDocumentService.CreateRequestDocument(document);
+                    }
+                }
 
                 BenefitRequestModel newBenefitRequestModel = new BenefitRequestModel();
                 newBenefitRequestModel.Benefit = benefitModel;
@@ -852,7 +901,7 @@ namespace MoreForYou.Services.Implementation
                 string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, path);
                 uniqueFileName = Guid.NewGuid().ToString() + "_" + ImageName.FileName;
                 filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var fileStream = new FileStream("https://drive.google.com/drive/folders/1pDks3wN8UU2vAiJlUS9-vRMdiI_ln5Yb/test.png", FileMode.Create))
                 {
                     await ImageName.CopyToAsync(fileStream);
                 }
@@ -913,10 +962,10 @@ namespace MoreForYou.Services.Implementation
                             {
                                 RequestWokflowModel requestWokflowModel1 = GetRequestWorkflowByEmployeeNumber(requestWorkflow.Result.EmployeeId, requestWorkflow.Result.BenefitRequestId);
                                 message = "successful Process, your request will be proceed";
-                                //bool result = SendNotification(benefitRequestModel, requestWokflowModel1, "Request").Result;
+                                bool result = SendNotification(benefitRequestModel, requestWokflowModel1, "Request").Result;
 
 
-                                //NotificationModel notificationModel = CreateNotification("Request", requestWokflowModel1);
+                                // NotificationModel notificationModel = CreateNotification("Request", requestWokflowModel1);
                                 //await SendToSpecificUser(requestWokflowModel1, "Request");
                             }
                             else
@@ -967,6 +1016,7 @@ namespace MoreForYou.Services.Implementation
                 groupModel.IsVisible = true;
                 groupModel.CreatedBy = CurrentEmployee.Id;
                 groupModel.ExpectedDateFrom = Convert.ToDateTime(request.From);
+                groupModel.ExpectedDateTo = Convert.ToDateTime(request.To);
                 groupModel.Message = request.Message;
                 groupModel.Name = request.GroupName;
                 if (request.To == null)
@@ -1135,7 +1185,7 @@ namespace MoreForYou.Services.Implementation
                                 RequestWokflowModel newRequestWokflowModel = DBRequestWorkflowModel;
                                 newRequestWokflowModel.BenefitRequest.Employee = employee;
                                 notificationMessage = benefitRequestModel.Employee.FullName + "send a new gift to you from" + benefitRequestModel.Benefit.Name + "benefit";
-                                notificationModel = CreateNotification(type, newRequestWokflowModel.BenefitRequest.SendTo, benefitRequestModel.Id, notificationMessage, 0);
+                                notificationModel = CreateNotification(type, newRequestWokflowModel.BenefitRequest.SendTo, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
                                 await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
                             }
                         }
@@ -1295,7 +1345,7 @@ namespace MoreForYou.Services.Implementation
                     if (file.Length > 0)
                     {
                         RequestDocumentModel requestDocumentModel = new RequestDocumentModel();
-                        filePath = UploadedImageAsync(file, "BenefitRequestFiles").Result;
+                        filePath = UploadedImageAsync(file, "https://drive.google.com/drive/folders/1pDks3wN8UU2vAiJlUS9-vRMdiI_ln5Yb").Result;
                         requestDocumentModel.fileName = filePath;
                         requestDocumentModel.FileType = file.ContentType;
                         requestDocumentModel.BenefitRequestId = requestNumber;
@@ -1320,5 +1370,48 @@ namespace MoreForYou.Services.Implementation
             return Task<string>.FromResult(message);
         }
 
+
+        public List<Gift> GetMyGifts(long employeeNumber)
+        {
+            List<Gift> myGifts = new List<Gift>();
+            List<BenefitRequestModel> benefitRequestModels = _benefitRequestService.GetRequestsSendToMe(employeeNumber);
+            if (benefitRequestModels.Count > 0)
+            {
+                foreach (var request in benefitRequestModels)
+                {
+                    List<RequestWokflowModel> requestWokflowModels = GetRequestWorkflow(request.Id);
+                    requestWokflowModels = requestWokflowModels.OrderByDescending(w => w.ReplayDate).ToList();
+                    Gift gift = new Gift();
+                    gift.BenefitCard = request.Benefit.BenefitCard;
+                    gift.BenefitName = request.BenefitName;
+                    gift.EmployeeName = request.Employee.FullName;
+                    gift.EmployeeNumber = request.EmployeeId;
+                    gift.EmployeeDepartment = request.Employee.Department.Name;
+                    gift.EmployeeEmail = request.Employee.Email;
+                    gift.Date = requestWokflowModels[0].ReplayDate;
+                    myGifts.Add(gift);
+                }
+            }
+            return myGifts;
+        }
+
+
+
+
+        public ManageRequest CreateManageRequestModel(RequestSearch requestSearch)
+        {
+            ManageRequest manageRequest = new ManageRequest();
+
+            manageRequest.employeeNumberSearch = requestSearch.employeeNumberSearch;
+            manageRequest.SelectedAll = requestSearch.SelectedAll;
+            manageRequest.SelectedBenefitType = requestSearch.SelectedBenefitType;
+            manageRequest.SelectedDepartmentId = requestSearch.SelectedDepartmentId;
+            manageRequest.SelectedRequestStatus = requestSearch.SelectedRequestStatus;
+            manageRequest.SelectedTimingId = requestSearch.SelectedTimingId;
+            manageRequest.SearchDateFrom = requestSearch.SearchDateFrom;
+            manageRequest.SearchDateTo = requestSearch.SearchDateTo;
+            manageRequest.HasWarningMessage = requestSearch.HasWarningMessage;
+            return manageRequest;
+        }
     }
 }

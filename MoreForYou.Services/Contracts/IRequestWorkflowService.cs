@@ -20,7 +20,7 @@ namespace MoreForYou.Services.Contracts
         RequestWokflowModel GetRequestWorkflowByEmployeeNumber(long employeeNumber, long requestId);
 
         List<RequestWokflowModel> GetGroupRequestWorkflowByEmployeeNumber(long employeeNumber);
-        Task<ManageRequest> CreateManageRequestFilter(string userId);
+        Task<ManageRequest> CreateManageRequestFilter(string userId, ManageRequest manageRequest);
         List<Request> CreateRequestToApprove(List<RequestWokflowModel> requestWokflowModels);
         List<RequestWokflowModel> CreateWarningMessage(List<RequestWokflowModel> requestWokflowModels);
         List<RequestWokflowModel> EmployeeCanResponse(List<RequestWokflowModel> requestWokflowModels);
@@ -42,7 +42,8 @@ namespace MoreForYou.Services.Contracts
         Task<bool> SendToSpecificUser(string message, RequestWokflowModel model, string requestType, string employeeName, string userId);
 
         Task<string> AddDocumentsToRequest(long requestNumber, List<IFormFile> files);
-
+        ManageRequest CreateManageRequestModel(RequestSearch requestSearch);
+        List<Gift> GetMyGifts(long employeeNumber);
 
 
     }

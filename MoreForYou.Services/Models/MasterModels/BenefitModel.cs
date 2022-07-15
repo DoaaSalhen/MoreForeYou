@@ -105,7 +105,11 @@ namespace MoreForYou.Services.Models.MasterModels
         public int BenefitReturn { get; set; }
         public Dictionary<string, bool> BenefitApplicable { get; set; }
 
+        public string[] RequiredDocumentsArray { get; set; }
 
+        public int totalRequestsCount { get; set; }
+
+        public bool HasHoldingRequests { get; set; }
     }
 
     public class RoleOrder

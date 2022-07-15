@@ -57,7 +57,7 @@ else if (ViewBag.Error != null)
     $(document).ready(function () {
         $('#SupervisorId').change(function () {
             var ddlsource = "#SupervisorId";
-            var url = '@Url.Content("~/")' + "Benefit/SupervisorFilter";
+            var url = '@Url.Content("~/")' + "more4u/Benefit/SupervisorFilter";
             $.getJSON(url, { id: $(ddlsource).val() }, function (data) {
                 if (data != null) {
                     $('#SupervisorName').empty();
@@ -103,10 +103,9 @@ else if (ViewBag.Error != null)
             else {
                 document.getElementById("Message").removeAttribute('required');
             }
-
-
-
             document.getElementById("To").value = formatDate(from);
+            document.getElementById("ToInfo").innerText = "you are selected from " + document.getElementById("From").value + " To "
+                + document.getElementById("To").value;
         }
     }
 
@@ -132,84 +131,113 @@ else if (ViewBag.Error != null)
 
     }
 </script>
-<div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0" style="margin:auto">
-    <!-- Edit Profile Welcome Text -->
-    <div class="widget welcome-message">
-        <h2>@Model.BenefitName</h2>
-        @*<p>@Model.Benefit.Description</p>*@
-    </div>
-    <!-- Edit Personal Info -->
-    <form asp-action="ConfirmRequest" method="post" enctype="multipart/form-data">
-        <input type="hidden" id="benefitId" name="benefitId" asp-for="@Model.benefitId" />
-        <input type="hidden" id="benefitDateToMatch" asp-for="@Model.DateToMatch" />
-        <input type="hidden" id="defaultExpectedFrom" asp-for="@Model.From" />
-        <input type="hidden" id="year" asp-for="@Model.Year" />
-        <input type="hidden" id="numberOfDays" asp-for="@Model.numberOfDays" />
-        <div class="row">
-            <div class="col-lg-6 col-md-6">
-                <div class="widget personal-info">
-                    @*<h3 class="widget-header user">Edit Personal Information</h3>*@
-                    <!-- First Name -->
-                    @if (Model.numberOfDays > 1)
-                    {
-                        <div class="form-group">
-                            <label>From</label>
-                            <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">
-                        </div>
-                    }
-                    <div class="form-group">
-                        <label>Message</label>
-                        <textarea class="form-control" id="Message" asp-for="Message"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <!-- Change Password -->
-                <div class="widget change-password">
-                    @*<h3 class="widget-header user">Edit Password</h3>*@
-                    <!-- Current Password -->
-                    <div class="form-group">
-                        <label for="current-password">To</label>
-                        <input class="form-control" id="To" type="date" asp-for="To" onclick="setYear(@Model.Year)">
-                    </div>
-                    @*@if (Model.RequiredDocuments != null)
-                    {
-                        for(int index=0; index<Model.RequiredDocuments.Length; index++)
-                        {
-                        <div class="form-group choose-file d-inline-flex">
-                            <i class="fa fa-file text-center px-3"></i>
-                            <input  class="form-control-file mt-2 pt-1"  asp-for="@Model.Documents[index]" name="Documents" required>
-                        </div>
-                        }
-                        
-                    }*@
-                    @if (Model.IsAgift == true)
-                    {
-                        <div class="form-group">
-                            <label>SendTo</label>
-                            <input id="SupervisorId" asp-for="SendToId" name="SendToId">
-                        </div>
-                        <div class="form-group">
-                            <label>Send To:</label>
-                            <input disabled id="SupervisorName" name="SupervisorName">
-                        </div>
-                    }
-                    <!-- File chooser -->
+<section class="blog section">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card">
 
+                    <div class="card-body" style="box-shadow: 8px 8px 8px 8px rgba(0, 0, 0, .2); margin:auto">
+                        @*<h4 class="card-title">Benefits</h4>*@
+                        <div class="active-member">
+                            @*<div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">*@
+                            <!-- Article 01 -->
+                            <article>
+                                <!-- Edit Profile Welcome Text -->
+                                <div class="widget welcome-message">
+                                    <h2>@Model.BenefitName</h2>
+                                    <img src="~/images/BenefitCards/5a4a8215-5263-4442-bb11-69eb9191a8e3_BD.png" alt="Card image cap" />
+                                    @*<p>@Model.Benefit.Description</p>*@
+                                </div>
+                                <!-- Edit Personal Info -->
+                                <div class="widget welcome-message col-lg-12">
 
-                    <input type="submit" class="btn btn-transparent" value="Send Request">
+                                    <form asp-action="ConfirmRequest" method="post" enctype="multipart/form-data" style="margin:auto">
+                                        <input type="hidden" id="benefitId" name="benefitId" asp-for="@Model.benefitId" />
+                                        <input type="hidden" id="benefitDateToMatch" asp-for="@Model.DateToMatch" />
+                                        <input type="hidden" id="defaultExpectedFrom" asp-for="@Model.From" />
+                                        <input type="hidden" id="year" asp-for="@Model.Year" />
+                                        <input type="hidden" id="numberOfDays" asp-for="@Model.numberOfDays" />
+                                        <div class="row" style="margin:auto">
+                                            <div class="col-lg-12">
+                                                <div>
+                                                    @*<h3 class="widget-header user">Edit Personal Information</h3>*@
+                                                    <!-- First Name -->
+                                                    @if (Model.IsAgift == true)
+                                                    {
+                                                        <div class="form-group">
+                                                            <label>SendTo</label>
+                                                            <input id="SupervisorId" class=" form-control" asp-for="SendToId" name="SendToId">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Send To:</label>
+                                                            <input disabled id="SupervisorName" class=" form-control" name="SupervisorName">
+                                                        </div>
+                                                    }
+                                                    @if (Model.numberOfDays > 1)
+                                                    {
+                                                        <div class="form-group">
+                                                            <label>From</label>
+                                                            <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group">
+                                                            <label>Date</label>
+                                                            <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">
+                                                        </div>
+                                                    }
+                                                    <div class="form-group">
+                                                        <span id="ToInfo" style="color:red; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
+                                                            you are selected from @Model.From To  @Model.To
+                                                        </span>
+                                                        <input class="form-control" id="To" type="hidden" asp-for="To" onclick="setYear(@Model.Year)">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Message</label>
+                                                        <textarea class="form-control" id="Message" asp-for="Message"></textarea>
+                                                    </div>
+                                                </div>
+                                                @*</div>
+                                                    <div class="col-lg-6 col-md-6">*@
+                                                <!-- Change Password -->
+                                                @*<div class="widget change-password">*@
+                                                @*<h3 class="widget-header user">Edit Password</h3>*@
+                                                <!-- Current Password -->
+                                                @*<div class="form-group">
+                                                        <label for="current-password">To</label>
+                                                        <input class="form-control" id="To" type="date" asp-for="To" onclick="setYear(@Model.Year)">
+                                                    </div>*@
+                                                @if (Model.RequiredDocuments != null)
+                                                {
+                                                    for (int index = 0; index < Model.RequiredDocuments.Length; index++)
+                                                    {
+                                                        <div class="form-group choose-file d-inline-flex">
+                                                            <i class="fa fa-file text-center px-3"></i>
+                                                            <input class="form-control-file" type="file" asp-for="@Model.Documents[index]" name="Documents" required>
+                                                        </div>
+                                                    }
+
+                                                }
+                                                <div style="margin:auto">
+                                                    <input type="submit" class="btn btn-transparent" value="Send Request">
+
+                                                </div>
+                                                <!-- File chooser -->
+                                                @*</div>*@
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </form>
-</div>
+    </div>
+</section>
 
 
 

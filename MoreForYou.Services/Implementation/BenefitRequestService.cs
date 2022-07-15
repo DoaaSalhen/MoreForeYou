@@ -17,14 +17,14 @@ namespace MoreForYou.Services.Implementation
     public class BenefitRequestService : IBenefitRequestService
     {
         private readonly IRepository<BenefitRequest, long> _repository;
-        private readonly IRepository<BenefitRequest,RequestWorkflow> _requestWorflowRepository;
+        private readonly IRepository<BenefitRequest, RequestWorkflow> _requestWorflowRepository;
 
         private readonly ILogger<BenefitRequestService> _logger;
         private readonly IMapper _mapper;
 
 
         public BenefitRequestService(IRepository<BenefitRequest, long> benefitRequestRepository,
-          ILogger<BenefitRequestService> logger, 
+          ILogger<BenefitRequestService> logger,
           IMapper mapper,
           IRepository<BenefitRequest, RequestWorkflow> requestWorflowRepository
            )
@@ -95,7 +95,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                BenefitRequest benefitRequest = _repository.Find(b => b.Id == id && b.IsVisible == true, false, r=>r.Benefit, r=>r.Employee, r=>r.RequestStatus).First();
+                BenefitRequest benefitRequest = _repository.Find(b => b.Id == id && b.IsVisible == true, false, r => r.Benefit, r => r.Employee, r => r.RequestStatus).First();
                 BenefitRequestModel benefitRequestModel = _mapper.Map<BenefitRequestModel>(benefitRequest);
                 return benefitRequestModel;
             }
@@ -112,9 +112,9 @@ namespace MoreForYou.Services.Implementation
             try
             {
                 BenefitRequest benefitRequest = _mapper.Map<BenefitRequest>(model);
-                result =_repository.Update(benefitRequest);
-                          }
-            catch(Exception e)
+                result = _repository.Update(benefitRequest);
+            }
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
             }
@@ -130,14 +130,14 @@ namespace MoreForYou.Services.Implementation
                 BenefitRequest benefitRequest = _mapper.Map<BenefitRequest>(benefitRequestModel);
                 RequestWorkflow requestWorkflow = _mapper.Map<RequestWorkflow>(requestWokflowModel);
 
-                 var canelledBenefitRequest = _requestWorflowRepository.UpdateTwoEntities(benefitRequest, requestWorkflow);
-                if(canelledBenefitRequest != null)
+                var canelledBenefitRequest = _requestWorflowRepository.UpdateTwoEntities(benefitRequest, requestWorkflow);
+                if (canelledBenefitRequest != null)
                 {
                     result = true;
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
             }
@@ -149,7 +149,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                List<BenefitRequest> benefitRequests = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId, false, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company, r => r.Benefit, r=>r.Benefit.BenefitType,r=>r.RequestStatus).ToList();
+                List<BenefitRequest> benefitRequests = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId, false, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company, r => r.Benefit, r => r.Benefit.BenefitType, r => r.RequestStatus).ToList();
                 List<BenefitRequestModel> benefitRequestModels = _mapper.Map<List<BenefitRequestModel>>(benefitRequests);
                 return benefitRequestModels;
             }
@@ -164,7 +164,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                BenefitRequest benefitRequest = _repository.Find(r => r.GroupId == groupId && r.IsVisible == true, false, r => r.Benefit, r => r.Benefit.BenefitType, r => r.RequestStatus, r=>r.Group, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company).First();
+                BenefitRequest benefitRequest = _repository.Find(r => r.GroupId == groupId && r.IsVisible == true, false, r => r.Benefit, r => r.Benefit.BenefitType, r => r.RequestStatus, r => r.Group, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company).First();
                 BenefitRequestModel benefitRequestModel = _mapper.Map<BenefitRequestModel>(benefitRequest);
                 return benefitRequestModel;
             }
@@ -182,10 +182,32 @@ namespace MoreForYou.Services.Implementation
                 int times = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId && r.RequestStatusId == (int)CommanData.BenefitStatus.Approved).ToList().Count;
                 return times;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return -1;
+            }
+        }
+
+        public bool ISEmployeeHasHoldingRequestsForthisBenefit(long employeeNumber, long benefitId)
+        {
+            try
+            {
+                var times = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId && (r.RequestStatusId == (int)CommanData.BenefitStatus.Pending || r.RequestStatusId == (int)CommanData.BenefitStatus.InProgress));
+                if (times.Count() > 0)
+                {
+                    return true;
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return false;
             }
         }
         //public AddIndividualBenefitRequest(Request request)
@@ -281,10 +303,10 @@ namespace MoreForYou.Services.Implementation
                 else
                 {
                     DBBenefitRequestModel.RequestStatusId = (int)CommanData.BenefitStatus.Cancelled;
-                    cancelResult  = UpdateBenefitRequest(DBBenefitRequestModel).Result;
+                    cancelResult = UpdateBenefitRequest(DBBenefitRequestModel).Result;
                 }
 
-                if(cancelResult == true)
+                if (cancelResult == true)
                 {
                     message = "Success Process";
                 }
@@ -311,7 +333,7 @@ namespace MoreForYou.Services.Implementation
                 request.From = benefitRequestModel.ExpectedDateFrom.ToString("yyyy-MM-dd");
                 request.To = benefitRequestModel.ExpectedDateTo.ToString("yyyy-MM-dd");
                 request.RequestStatusId = benefitRequestModel.RequestStatusId;
-                if(benefitRequestModel.Participants == null)
+                if (benefitRequestModel.Participants == null)
                 {
                     request.ParticipantsData = new List<Participant>();
                 }
@@ -319,15 +341,15 @@ namespace MoreForYou.Services.Implementation
                 {
                     //request.ParticipantsData = benefitRequestModel.Participants;
                 }
-                if(benefitRequestModel.BenefitId == 3)
+                if (benefitRequestModel.BenefitId == 3)
                 {
                     request.GroupName = benefitRequestModel.Group.Name;
                 }
                 request.Message = benefitRequestModel.Message;
                 request.RequestWorkFlowAPIs = new List<RequestWorkFlowAPI>();
-                if(benefitRequestModel.RequestWokflowModels != null)
+                if (benefitRequestModel.RequestWokflowModels != null)
                 {
-                    foreach(var workflow in benefitRequestModel.RequestWokflowModels)
+                    foreach (var workflow in benefitRequestModel.RequestWokflowModels)
                     {
                         RequestWorkFlowAPI requestWorkFlowAPI = new RequestWorkFlowAPI();
                         requestWorkFlowAPI.EmployeeName = workflow.Employee.FullName;
@@ -382,19 +404,20 @@ namespace MoreForYou.Services.Implementation
             request.benefitId = requestAPI.benefitId;
             request.EmployeeNumber = requestAPI.EmployeeNumber;
             request.From = requestAPI.From;
+
             request.To = requestAPI.To;
-            if(request.Message != "" )
+            if (request.Message != "")
             {
                 request.Message = requestAPI.Message;
             }
             if (isGift == true)
             {
-                request.SendToId = requestAPI.SendToId;
+                request.SendToId = (long)requestAPI.SendToId;
 
             }
-            if(requestAPI.Documents.Length > 0)
+            if (requestAPI.Documents.Length > 0)
             {
-                request.DocumentsPath = requestAPI.Documents;
+                request.Documents = requestAPI.Documents;
             }
             if (benefitTypeId == (int)CommanData.BenefitTypes.Group)
             {
@@ -404,5 +427,25 @@ namespace MoreForYou.Services.Implementation
             return request;
         }
 
+        public List<BenefitRequestModel> GetRequestsSendToMe(long employeeNumber)
+        {
+            try
+            {
+                var requests = _repository.Find(r => r.SendTo == employeeNumber, false, r => r.RequestStatus);
+                if (requests != null)
+                {
+                    List<BenefitRequestModel> benefitRequestModels = _mapper.Map<List<BenefitRequestModel>>(requests);
+                    return benefitRequestModels;
+                }
+                else
+                {
+                    return new List<BenefitRequestModel>();
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

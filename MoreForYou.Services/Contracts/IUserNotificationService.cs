@@ -12,8 +12,7 @@ namespace MoreForYou.Services.Contracts
 
         List<UserNotificationModel> GetUserNotification(string userId);
 
-        List<UserNotificationModel> GetUserNotification(string userId, int start);
-
+        List<UserNotificationModel> GetFiftyUserNotification(string userId);
 
         List<NotificationAPIModel> CreateNotificationAPIModel(List<UserNotificationModel> userNotificationModels);
 

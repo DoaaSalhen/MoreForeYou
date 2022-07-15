@@ -2,18 +2,20 @@
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_APPLayout.cshtml";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
 }
 <script src="~/js/JQuery/jquery-3.5.1.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#SupervisorId').change(function () {
+        $('#SupervisorId').change(function ()
+        {
             var ddlsource = "#SupervisorId";
                 var url = '@Url.Content("~/")' + "Employee/DepartmentFilter";
                 $.getJSON(url, { id: $(ddlsource).val() }, function (data)
                 {
-                    if (data != null) {
+                    if (data != null)
+                    {
                         $('#SupervisorName').empty();
                         document.getElementById('SupervisorName').value = data;
                     }
@@ -22,8 +24,6 @@
                         document.getElementById('SupervisorName').value = "";
                         document.getElementById('SupervisorId').value = "";
                         document.getElementById('SupervisorIdMessage').value = "Not Found";
-
-
                     }
 
                 });
@@ -99,15 +99,14 @@
 </script>
 
 <h4>Add Employee</h4>
-<hr />
 
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-lg-12">
-            <div class="card">
+        <div class="col-lg-8">
+            <div class="card" style="box-shadow:10px 20px 20px rgba(0, 0, 0, 0.5)">
                 <div class="card-body">
                     <h4 class="card-title">Add Employee</h4>
-                    <div class="form-validation">
+                    <div class="form-validation" style="">
                         <form asp-action="Create" asp-controller="Employee">
                             <div class="form-group row">
                                 <label class="col-lg-4 col-form-label" for="val-username">
@@ -368,9 +367,10 @@
                 </div>
             </div>
         </div>
-        <a asp-action="Index" class="btn btn-primary">Back to List</a>
+
 
     </div>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
 </div>
 
 

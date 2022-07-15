@@ -98,10 +98,12 @@ namespace MoreForYou.Services.Implementation
                         notificationAPIModel.EmployeeProfilePicture = employeeModel.ProfilePicture;
 
                     }
-                    notificationAPIModel.NotificationType = userNotification.Notification.Message;
+                    notificationAPIModel.Message = userNotification.Notification.Message;
+                    notificationAPIModel.NotificationType = userNotification.Notification.Type;
                     notificationAPIModel.RequestStatus = userNotification.Notification.BenefitRequest.RequestStatus.Name;
-                    notificationAPIModel.Date = userNotification.CreatedDate.ToString("yyyy-MM-dd");
-                    notificationAPIModel.Time = userNotification.CreatedDate.ToString("hh-mm");
+                    notificationAPIModel.Date = userNotification.CreatedDate;
+                    notificationAPIModel.BenefitId = userNotification.Notification.BenefitRequest.BenefitId;
+                    notificationAPIModel.RequestNumber = userNotification.Notification.BenefitRequestId;
                     notificationAPIModels.Add(notificationAPIModel);
                 }
                 return notificationAPIModels;
@@ -114,11 +116,11 @@ namespace MoreForYou.Services.Implementation
         }
 
 
-        public List<UserNotificationModel> GetUserNotification(string userId, int start)
+        public List<UserNotificationModel> GetFiftyUserNotification(string userId)
         {
             try
             {
-                List<UserNotification> userNotifications = _repository.Find(UN => UN.Employee.UserId == userId && UN.NotificationId < start, false, UN => UN.Notification, UN => UN.Notification.BenefitRequest, UN => UN.Notification.BenefitRequest.RequestStatus, UN => UN.Notification.BenefitRequest.Benefit, UN => UN.Notification.BenefitRequest.Employee).ToList();
+                List<UserNotification> userNotifications = _repository.Find(UN => UN.Employee.UserId == userId, false, UN => UN.Notification, UN => UN.Notification.BenefitRequest, UN => UN.Notification.BenefitRequest.RequestStatus, UN => UN.Notification.BenefitRequest.Benefit, UN => UN.Notification.BenefitRequest.Employee).ToList();
                 List<UserNotificationModel> userNotificationModels = _mapper.Map<List<UserNotificationModel>>(userNotifications);
                 if (userNotificationModels != null)
                 {

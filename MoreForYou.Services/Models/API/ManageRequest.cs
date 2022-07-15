@@ -21,11 +21,18 @@ namespace MoreForYou.Services.Models.API
 
         //public string benefitNameSearch { get; set; }
         //public long RequestNumberSearch { get; set; }
-        public List<DepartmentModel> DepartmentModels { get; set; }
+        public List<DepartmentAPI> DepartmentModels { get; set; }
         public long SelectedDepartmentId { get; set; }
         public long employeeNumberSearch { get; set; }
         public bool SelectedAll { get; set; }
         public List<TimingModel> TimingModels { get; set; }
+
+        public DateTime SearchDateFrom { get; set; }
+
+        public DateTime SearchDateTo { get; set; }
+        public bool HasWarningMessage { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 
     //public class ReuestToApprove
@@ -58,5 +65,30 @@ namespace MoreForYou.Services.Models.API
 
 
     //}
+
+    public class RequestSearch
+    {
+        public int SelectedBenefitType { get; set; }
+        public int SelectedTimingId { get; set; }
+        public int SelectedRequestStatus { get; set; }
+        public long SelectedDepartmentId { get; set; }
+        public long employeeNumberSearch { get; set; }
+        public bool SelectedAll { get; set; }
+
+        public long employeeNumber { get; set; }
+
+        public DateTime SearchDateFrom { get; set; }
+
+        public DateTime SearchDateTo { get; set; }
+
+        public bool HasWarningMessage { get; set; }
+    }
+
+    public class DepartmentAPI
+    {
+        public long Id { get; set; }
+
+        public string Name { get; set; }
+    }
 
 }

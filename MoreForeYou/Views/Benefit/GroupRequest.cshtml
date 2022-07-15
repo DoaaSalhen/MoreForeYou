@@ -29,10 +29,34 @@
 <script>
     function setToDateValue(e) {
         var from = new Date(document.getElementById("From").value);
+
         var numberOfDays = parseInt(document.getElementById('numberOfDays').value);
         from.setDate(from.getDate() + numberOfDays - 1);
-        document.getElementById("To").value = formatDate(from);
-
+        var ToDate = formatDate(from);
+        var nextYear = parseInt(document.getElementById("year").value) + 1;
+        alert(nextYear);
+        var ToMaxDate = formatDate(new Date(nextYear, "00", "31"));
+        alert(ToDate);
+        alert(ToMaxDate);
+        if (ToDate > ToMaxDate) {
+            alert("invalid date");
+        }
+        else {
+            var fromDefaultValue = new Date(document.getElementById("defaultExpectedFrom").value);
+            var selectedDate = formatDate(from);
+            var defaultDate = formatDate(fromDefaultValue);
+            var benefitDateToMatch = document.getElementById("benefitDateToMatch").value;
+            if (defaultDate != selectedDate && benefitDateToMatch != "Any") {
+                alert("you must add Message to explain your request");
+                document.getElementById("Message").setAttribute('required', '');
+            }
+            else {
+                document.getElementById("Message").removeAttribute('required');
+            }
+            document.getElementById("To").value = formatDate(from);
+            document.getElementById("ToInfo").innerText = "you are selected from " + document.getElementById("From").value + " To "
+                + document.getElementById("To").value;
+        }
     }
 
     function padTo2Digits(num) {
@@ -51,6 +75,8 @@
     function setYear(year) {
         document.getElementById('From').setAttribute("min", year + "-01-01");
         document.getElementById('From').setAttribute("max", year + "-12-31");
+        var nextYear = year + 1;
+        document.getElementById('To').setAttribute("max", nextYear + "-01-31");
     }
 </script>
 
@@ -98,60 +124,79 @@ else if (ViewBag.Error != null)
 
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-lg-12">
+        <div class="col-lg-10">
             <div class="card-body">
-                <form asp-action="ConfirmRequest">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="card-body" style="box-shadow: 8px 8px 8px 8px rgba(0, 0, 0, .2); margin:auto">
+                    @*<h4 class="card-title">Benefits</h4>*@
+                    <div class="active-member">
+                        @*<div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">*@
+                        <!-- Article 01 -->
+                        <article>
+                            <!-- Edit Profile Welcome Text -->
+                            <div class="widget welcome-message">
+                                <h2>@Model.BenefitName</h2>
+                                <img src="~/images/BenefitCards/5a4a8215-5263-4442-bb11-69eb9191a8e3_BD.png" alt="Card image cap" />
+                                @*<p>@Model.Benefit.Description</p>*@
+                            </div>
+                            <!-- Edit Personal Info -->
+                            <div class="widget welcome-message col-lg-12">
+                                <form asp-action="ConfirmRequest">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <div class="form-group">
-                        <input type="hidden" asp-for="@Model.benefitId" />
-                        <input type="hidden" id="numberOfDays" asp-for="@Model.numberOfDays" />
-                        <input id="maxParticipant" type="hidden" asp-for="@Model.MaxParticipant" />
-                        <input id="minParticipant" type="hidden" asp-for="@Model.MinParticipant" />
+                                    <div class="form-group">
+                                        <input type="hidden" asp-for="@Model.benefitId" />
+                                        <input type="hidden" id="numberOfDays" asp-for="@Model.numberOfDays" />
+                                        <input id="maxParticipant" type="hidden" asp-for="@Model.MaxParticipant" />
+                                        <input id="minParticipant" type="hidden" asp-for="@Model.MinParticipant" />
 
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Group Name <span style="color:red">*</span></label>
-                        <input asp-for="GroupName" id="GroupName" name="GroupName" class="form-control" required />
-                        <span asp-validation-for="GroupName" class="text-danger"></span>
-                    </div>
-                    <div>
-                        <label class="control-label">Participants <span style="color:red">*</span></label>
-                        <select style="display:none; width:500px" class="dropdown-mul-1" name="" id="id_select2_example"
-                                multiple placeholder="Select" onchange="test(this)"
-                                asp-items="@( new SelectList(Model.ParticipantsData,"EmployeeNumber","FullName"))">
-                            @for (int index = 0; index < Model.ParticipantsData.Count; index++)
-                            {
-                                optionId = "optionId" + index;
-                                <option value="@Model.ParticipantsData[index].EmployeeNumber"
-                                        data-value="@Model.ParticipantsData[index].EmployeeNumber"
-                                        data-img_src="/~/images/userProfile/userProfile1.png" id="@optionId">
-                                    @Model.ParticipantsData[index].FullName
-                                </option>
-                            }
-                        </select>
-                    </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Group Name <span style="color:red">*</span></label>
+                                        <input asp-for="GroupName" id="GroupName" name="GroupName" class="form-control" required />
+                                        <span asp-validation-for="GroupName" class="text-danger"></span>
+                                    </div>
+                                    <div>
+                                        <label class="control-label">Participants <span style="color:red">*</span></label>
+                                        <select style="display:none; width:500px" class="dropdown-mul-1" name="" id="id_select2_example"
+                                                multiple placeholder="Select" onchange="test(this)"
+                                                asp-items="@( new SelectList(Model.ParticipantsData,"EmployeeNumber","FullName"))">
+                                            @for (int index = 0; index < Model.ParticipantsData.Count; index++)
+                                            {
+                                                optionId = "optionId" + index;
+                                                <option value="@Model.ParticipantsData[index].EmployeeNumber"
+                                                        data-value="@Model.ParticipantsData[index].EmployeeNumber"
+                                                        data-img_src="/~/images/userProfile/userProfile1.png" id="@optionId">
+                                                    @Model.ParticipantsData[index].FullName
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
 
-                    <div class="form-group">
-                        <label class="control-label">From <span style="color:red">*</span></label>
-                        <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">
-                        <span asp-validation-for="From" class="text-danger"></span>
+                                    <div class="form-group">
+                                        <label class="control-label">From <span style="color:red">*</span></label>
+                                        <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">
+                                        <span asp-validation-for="From" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <span id="ToInfo" style="color:red; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
+                                            you are selected from @Model.From To  @Model.To
+                                        </span>
+                                        <input class="form-control" id="To" type="hidden" asp-for="To">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Message <span style="color:red">*</span></label>
+                                        <textarea asp-for="Message" class="form-control" required></textarea>
+                                        <span asp-validation-for="Message" class="text-danger"></span>
+                                    </div>
+                                    <input type="hidden" asp-for="SelectedEmployeeNumbers" id="SelectedEmployeeNumbers" value="" />
+                                    <div class="form-group">
+                                        <input type="submit" value="Send Request" class="btn btn-primary" id="submitbtn" disabled />
+                                    </div>
+                                </form>
+                            </div>
+                        </article>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label">To <span style="color:red">*</span></label>
-                        <input type="date" id="To" asp-for="To" class="form-control" readonly />
-                        <span asp-validation-for="To" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Message <span style="color:red">*</span></label>
-                        <textarea asp-for="Message" class="form-control" required></textarea>
-                        <span asp-validation-for="Message" class="text-danger"></span>
-                    </div>
-                    <input type="hidden" asp-for="SelectedEmployeeNumbers" id="SelectedEmployeeNumbers" value="" />
-                    <div class="form-group">
-                        <input type="submit" value="Send Request" class="btn btn-primary" id="submitbtn" disabled />
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

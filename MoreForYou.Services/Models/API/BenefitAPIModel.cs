@@ -30,7 +30,7 @@ namespace MoreForYou.Services.Models.API
 
         public int MaxParticipant { get; set; }
 
-        public string RequiredDocuments { get; set; }
+        public string[] RequiredDocumentsArray { get; set; }
 
         [Required]
         public int numberOfDays { get; set; }
@@ -44,10 +44,14 @@ namespace MoreForYou.Services.Models.API
         public List<string> BenefitWorkflows { get; set; }
         //public List<string> BenefitConditions { get; set; }
 
-        public List<BenefitStats> benefitStatses { get; set; }
+        //public List<BenefitStats> benefitStatses { get; set; }
 
         public Dictionary<string, string> BenefitConditions { get; set; }
         public Dictionary<string, bool> BenefitApplicable { get; set; }
+
+        public int totalRequestsCount { get; set; }
+        public bool HasHoldingRequests { get; set; }
+
 
     }
 

@@ -573,7 +573,6 @@ C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razo
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_APPLayout.cshtml.g.cs
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Layout.cshtml.g.cs
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_LoginLayout.cshtml.g.cs
-C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_More4ULayout.cshtml.g.cs
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_More4ULayout2.cshtml.g.cs
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_ValidationScriptsPartial.cshtml.g.cs
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\_ViewImports.cshtml.g.cs
@@ -585,4 +584,6 @@ C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\More
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.dll
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.pdb
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.genruntimeconfig.cache
+C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Benefit\ShowAdminRequests.cshtml.g.cs
+C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_AdminLayout.cshtml.g.cs
 C:\_cemex\_projects\_more4u\MoreForeYou\MoreForeYou\obj\Debug\netcoreapp3.1\MoreForYou.MvcApplicationPartsAssemblyInfo.cs

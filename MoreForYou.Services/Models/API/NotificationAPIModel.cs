@@ -18,9 +18,9 @@ namespace MoreForYou.Services.Models.API
 
         public string RequestStatus { get; set; }
 
-        public string Date { get; set; }
-
-        public string Time { get; set; }
+        public DateTime Date { get; set; }
+        public long RequestNumber { get; set; }
+        public long BenefitId { get; set; }
 
     }
 }

@@ -685,8 +685,7 @@ namespace Repository.EntityFramework.Migrations
 
                     b.Property<string>("fileName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
