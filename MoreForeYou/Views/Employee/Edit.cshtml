@@ -1,0 +1,113 @@
+﻿@model MoreForYou.Services.Models.MaterModels.EmployeeModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+
+<h1>Edit</h1>
+
+<h4>Employee</h4>
+<hr />
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card" style="box-shadow:10px 20px 20px rgba(0, 0, 0, 0.5)">
+                <div class="card-body">
+                    <div class="form-validation">
+                        <form asp-action="Edit" asp-controller="Employee">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="EmployeeNumber" />
+                            <div class="form-group">
+                                <label asp-for="FullName" class="control-label"></label>
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="SapNumber" class="control-label"></label>
+                                <input asp-for="SapNumber" class="form-control" />
+                                <span asp-validation-for="SapNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Id" class="control-label"></label>
+                                <input asp-for="Id" class="form-control" />
+                                <span asp-validation-for="Id" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Gender" class="control-label"></label>
+                                <input asp-for="Gender" class="form-control" />
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="JoiningDate" class="control-label"></label>
+                                <input asp-for="JoiningDate" class="form-control" />
+                                <span asp-validation-for="JoiningDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BirthDate" class="control-label"></label>
+                                <input asp-for="BirthDate" class="form-control" />
+                                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="MaritalStatus" class="control-label"></label>
+                                <input asp-for="MaritalStatus" class="form-control" />
+                                <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DepartmentId" class="control-label"></label>
+                                <select asp-for="DepartmentId" class="form-control" asp-items="@(new SelectList(Model.DepartmentModels, "Id", "Name"))"></select>
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PositionId" class="control-label"></label>
+                                <select asp-for="PositionId" class="form-control" asp-items="@(new SelectList(Model.PositionModels, "Id", "Name"))"></select>
+                                <span asp-validation-for="PositionId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="SupervisorId" class="control-label"></label>
+                                <select asp-for="SupervisorId" class="form-control" asp-items="@(new SelectList(Model.EmployeeModels, "EmployeeNumber", "FullName"))"></select>
+                                <span asp-validation-for="SupervisorId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="isDeptManager" /> @Html.DisplayNameFor(model => model.isDeptManager)
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Address" class="control-label"></label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber" class="control-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="NationalityId" class="control-label"></label>
+                                <select asp-for="NationalityId" class="form-control" asp-items="@(new SelectList(Model.NationalityModels, "Id", "Name"))"></select>
+                                <span asp-validation-for="NationalityId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="IsVisible" /> @Html.DisplayNameFor(model => model.IsVisible)
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

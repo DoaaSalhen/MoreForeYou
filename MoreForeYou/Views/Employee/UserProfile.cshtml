@@ -1,0 +1,159 @@
+﻿@model MoreForYou.Services.Models.MaterModels.EmployeeModel
+
+@{
+    ViewData["Title"] = "UserProfile";
+    Layout = "~/Views/Shared/_More4ULayout2.cshtml";
+
+}
+<!--==================================
+=            User Profile            =
+===================================-->
+
+<section class="user-profile section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 offset-md-1 col-lg-3 offset-lg-0">
+                <div class="sidebar">
+                    <!-- User Widget -->
+                    <div class="widget user">
+                        <!-- User Image -->
+                        <div class="image d-flex justify-content-center">
+                            <img src="images/user/user-thumb.jpg" alt="" class="">
+                        </div>
+                        <!-- User Name -->
+                        <h5 class="text-center">@Model.FullName</h5>
+                        <a class="btn btn-main-sm" href="/Employee/MySeeting">Edit Profile</a>
+                    </div>
+                    <!-- Dashboard Links -->
+                    <div class="widget dashboard-links">
+                        <ul>
+                            <li><a class="my-1 d-inline-block" href="">Savings Dashboard</a></li>
+                            <li><a class="my-1 d-inline-block" href="">Saved Offer <span>(5)</span></a></li>
+                            <li><a class="my-1 d-inline-block" href="">Favourite Stores <span>(3)</span></a></li>
+                            <li><a class="my-1 d-inline-block" href="">Recommended</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0">
+                <!-- Edit Profile Welcome Text -->
+                <div class="widget welcome-message">
+                    <h2>USer profile</h2>
+                </div>
+                <!-- Edit Personal Info -->
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="widget personal-info">
+                            <h3 class="widget-header user">Personal Information</h3>
+                            <form action="#">
+                                <!-- First Name -->
+                                <div class="form-group">
+                                    <label for="first-name">Full Name</label>
+                                    <input type="text" class="form-control" id="FullName" asp-for="FullName" value="@Model.FullName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="first-name">ID </label>
+                                    <input type="text" class="form-control" id="FullName" asp-for="FullName" value="@Model.Id">
+                                </div>
+                                <div class="form-group">
+                                    <label for="comunity-name">Address</label>
+                                    <input type="text" class="form-control" id="Address" asp-for="@Model.Address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="comunity-name">Phone Number</label>
+                                    <input type="text" class="form-control" id="Address" asp-for="@Model.PhoneNumber">
+                                </div>
+                                <!-- File chooser -->
+                                <div class="form-group">
+                                    <label for="last-name">Gender</label>
+                                    <input class="form-control" id="Gender" name="Gender" asp-for="@Model.GenderString">
+                                </div>
+                                <!-- Comunity Name -->
+                                <div class="form-group">
+                                    <label for="last-name">Marital Status</label>
+                                    <input class="form-control" id="MaritalStatus" name="MaritalStatus" asp-for="@Model.MaritalStatusString">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">Nationality</label>
+                                    <input class="form-control" id="MaritalStatus" name="MaritalStatus" asp-for="@Model.Nationality.Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">Bith Date</label>
+                                    <input class="form-control" id="BirthDate" name="BirthDate" asp-for="@Model.BirthDate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">Email</label>
+                                    <input class="form-control" id="BirthDate" name="BirthDate" asp-for="@Model.Email">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <!-- Change Password -->
+                        <div class="widget change-password">
+                            <h3 class="widget-header user">Job Information</h3>
+                            <form action="#">
+                                <!-- Confirm New Password -->
+                                <div class="form-group">
+                                    <label for="first-name">Employee Number</label>
+                                    <input type="text" class="form-control" id="EmployeeNumber" asp-for="FullName" value="@Model.EmployeeNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label for="first-name">SAP Number</label>
+                                    <input type="text" class="form-control" id="SapNumber" asp-for="FullName" value="@Model.SapNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <input class="form-control" id="Company" asp-for="@Model.Company.Code">
+                                </div>
+                                <!-- Current Password -->
+                                <div class="form-group">
+                                    <label for="current-password">Department</label>
+                                    <input class="form-control" id="Department" asp-for="@Model.Department.Name">
+                                </div>
+                                <!-- New Password -->
+                                <div class="form-group">
+                                    <label>Position</label>
+                                    <input class="form-control" id="Position" asp-for="@Model.Position.Name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="new-password">Payroll Area</label>
+                                    <input class="form-control" id="Category" asp-for="@Model.CollarString">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">join Date</label>
+                                    <input class="form-control" id="JoiningDate" name="JoiningDate" asp-for="@Model.JoiningDate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">SuperVisor Name</label>
+                                    <input class="form-control" id="JoiningDate" name="JoiningDate" asp-for="@Model.Supervisor.FullName">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!--<div class="col-lg-6 col-md-6">-->
+                        <!-- Change Email Address -->
+                        <!--<div class="widget change-email mb-0">
+                            <h3 class="widget-header user">Edit Email Address</h3>
+                            <form action="#">-->
+                                <!-- Current Password -->
+                                <!--<div class="form-group">
+                                    <label for="current-email">Current Email</label>
+                                    <input type="email" class="form-control" id="current-email">
+                                </div>-->
+                                <!-- New email -->
+                                <!--<div class="form-group">
+                                    <label for="new-email">New email</label>
+                                    <input type="email" class="form-control" id="new-email">
+                                </div>-->
+                                <!-- Submit Button -->
+                                <!--<button class="btn btn-transparent">Change email</button>
+                            </form>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
