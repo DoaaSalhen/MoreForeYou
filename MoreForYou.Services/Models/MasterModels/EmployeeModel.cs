@@ -89,6 +89,10 @@ namespace MoreForYou.Services.Models.MaterModels
         public List<EmployeeModel> EmployeeModels { get; set; }
         public List<PositionModel> PositionModels { get; set; }
         public List<GenderModel> genderModels { get; set; }
+        public List<MartialStatusModel> MartialStatusModels { get; set; }
+
+        public List<CompanyModel> companyModels { get; set; }
+
 
         [RegularExpression("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",ErrorMessage ="Invalid Mail format")]
         public string Email { get; set; }
@@ -117,8 +121,6 @@ namespace MoreForYou.Services.Models.MaterModels
         public string ProfilePicture { get; set; }
 
         public FilterModel FilterModel { get; set; }
-
-
 
         [Required]
         public int CompanyId { get; set; }

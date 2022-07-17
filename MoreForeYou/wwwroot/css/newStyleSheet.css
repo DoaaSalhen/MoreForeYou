@@ -1,0 +1,75 @@
+﻿body 
+{
+    width:2000px;
+}
+
+
+/*input[type="text"] {
+    width: 300px;
+    height: 50px;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+input[type="number"] {
+    width: 300px;
+    height: 50px;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+input[type="datetime"] {
+    width: 400px;
+    height: 50px;
+    border-radius: 12px;
+    padding: 20px;
+}
+input[type="file"] {
+    width: 400px;
+    height: 50px;
+    border-radius: 12px;
+    padding: 20px;
+}
+input[type="submit"] {*/
+   /* width: 300px;
+    height: 50px;
+    border-radius: 10px;*/
+/*}*/
+
+label{
+   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+   font-size:larger;
+
+}
+
+.uploadOrdersDiv
+{
+    position:relative;
+    left:300px;
+    top:50px;
+
+}
+
+.FormMaindiv .uploadOrdersDiv {
+    background-color: cornflowerblue;
+    position: relative;
+    left: 300px;
+    width: auto;
+}
+
+.CreateForm
+{
+    margin:50px;
+    text-align:left;
+}
+
+h2{
+
+    margin:auto;
+}
+th{
+    width:200px;
+}
+td{
+    width:200px
+}

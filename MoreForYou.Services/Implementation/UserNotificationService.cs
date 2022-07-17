@@ -128,10 +128,15 @@ namespace MoreForYou.Services.Implementation
                     {
                         userNotificationModels = userNotificationModels.TakeLast(50).ToList();
                     }
-                    foreach (UserNotificationModel userNotificationModel in userNotificationModels.Where(UN => UN.Notification.Type == "Response"))
+                    var ResponseNotifications = userNotificationModels.Where(UN => UN.Notification.Type == "Response");
+                    if(ResponseNotifications.Count() > 0)
                     {
-                        userNotificationModel.ResponsedByEmployee = _employeeService.GetEmployee((long)userNotificationModel.Notification.ResponsedBy);
+                        foreach (UserNotificationModel userNotificationModel in ResponseNotifications)
+                        {
+                            userNotificationModel.ResponsedByEmployee = _employeeService.GetEmployee((long)userNotificationModel.Notification.ResponsedBy);
+                        }
                     }
+                   
                 }
                 return userNotificationModels;
             }

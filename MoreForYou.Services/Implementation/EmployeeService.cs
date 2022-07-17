@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MoreForYou.Services.Models.API;
 using MoreForYou.Services.Models;
+using MoreForYou.Services.Models.MasterModels;
 
 namespace MoreForYou.Services.Implementation
 {
@@ -51,7 +52,8 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                var employees = _repository.Find(i => i.IsVisible == true,false,i=>i.Department,i=>i.Position,i=>i.Nationality, i=>i.Supervisor).ToList();
+                var employees = _repository.Find(i => i.IsVisible == true,false,i=>i.Department,i=>i.Position,i=>i.Nationality, i=>i.Supervisor, i=>i.
+                Company).ToList();
                 var models = new List<EmployeeModel>();
                 models = _mapper.Map<List<EmployeeModel>>(employees);
                 return models;
@@ -233,6 +235,55 @@ namespace MoreForYou.Services.Implementation
             user.PendingRequestsCount = employeeModel.PendingRequestsCount;
             user.hasRequests = employeeModel.hasRequests;
             return user;
+        }
+
+        public List<EmployeeModel> EmployeesSearch(FilterModel filterModel)
+        {
+            try
+            {
+                List<EmployeeModel> employeeModels = GetAllEmployees().Result;
+                if (filterModel.EmployeeName != null)
+                {
+                    employeeModels = employeeModels.Where(e => e.FullName.Contains(filterModel.EmployeeName)).ToList();
+                }
+                if (filterModel.EmployeeNumber != 0)
+                {
+                    employeeModels = employeeModels.Where(e => e.EmployeeNumber == filterModel.EmployeeNumber).ToList();
+                }
+                if (filterModel.SapNumber != 0)
+                {
+                    employeeModels = employeeModels.Where(e => e.SapNumber == filterModel.SapNumber).ToList();
+                }
+                if (filterModel.Id != null)
+                {
+                    employeeModels = employeeModels.Where(e => e.Id == filterModel.Id).ToList();
+                }
+                //if (filterModel.Email != null)
+                //{
+                //    employeeModels = employeeModels.Where(e => e.Email.Contains(filterModel.Email)).ToList();
+                //}
+                if (filterModel.BirthDate != DateTime.Today)
+                {
+                    employeeModels = employeeModels.Where(e => e.BirthDate == filterModel.BirthDate).ToList();
+                }
+                if (filterModel.SelectedDepartmentId != -1)
+                {
+                    employeeModels = employeeModels.Where(e => e.DepartmentId == filterModel.SelectedDepartmentId).ToList();
+                }
+                if (filterModel.SelectedPositionId != -1)
+                {
+                    employeeModels = employeeModels.Where(e => e.PositionId == filterModel.SelectedPositionId).ToList();
+                }
+                if (filterModel.SelectedNationalityId != -1)
+                {
+                    employeeModels = employeeModels.Where(e => e.NationalityId == filterModel.SelectedNationalityId).ToList();
+                }
+                return employeeModels;
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
     }
 }

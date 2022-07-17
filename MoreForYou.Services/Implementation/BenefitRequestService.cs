@@ -431,7 +431,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                var requests = _repository.Find(r => r.SendTo == employeeNumber, false, r => r.RequestStatus);
+                var requests = _repository.Find(r => r.SendTo == employeeNumber, false, r => r.RequestStatus, r => r.Benefit, r => r.Employee, r => r.Employee.Department);
                 if (requests != null)
                 {
                     List<BenefitRequestModel> benefitRequestModels = _mapper.Map<List<BenefitRequestModel>>(requests);

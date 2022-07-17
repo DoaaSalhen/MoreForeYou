@@ -204,44 +204,44 @@ namespace MoreForYou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(FilterModel filterModel)
         {
-            List<EmployeeModel> employeeModels = _EmployeeService.GetAllEmployees().Result;
-            if(filterModel.EmployeeName != null)
-            {
-                employeeModels = employeeModels.Where(e => e.FullName.Contains(filterModel.EmployeeName)).ToList();
-            }
-            if(filterModel.EmployeeNumber != 0)
-            {
-                employeeModels = employeeModels.Where(e => e.EmployeeNumber == filterModel.EmployeeNumber).ToList();
-            }
-            if (filterModel.SapNumber != 0)
-            {
-                employeeModels = employeeModels.Where(e => e.SapNumber == filterModel.SapNumber).ToList();
-            }
-            if (filterModel.Id != null)
-            {
-                employeeModels = employeeModels.Where(e => e.Id == filterModel.Id).ToList();
-            }
-            if (filterModel.Email != null)
-            {
-                employeeModels = employeeModels.Where(e => e.Email.Contains(filterModel.Email)).ToList();
-            }
-            if (filterModel.BirthDate != DateTime.Today)
-            {
-                employeeModels = employeeModels.Where(e => e.BirthDate== filterModel.BirthDate).ToList();
-            }
-            if (filterModel.SelectedDepartmentId != -1)
-            {
-                employeeModels = employeeModels.Where(e => e.DepartmentId == filterModel.SelectedDepartmentId).ToList();
-            }
-            if (filterModel.SelectedPositionId != -1)
-            {
-                employeeModels = employeeModels.Where(e => e.PositionId == filterModel.SelectedPositionId).ToList();
-            }
-            if (filterModel.SelectedNationalityId != -1)
-            {
-                employeeModels = employeeModels.Where(e => e.NationalityId == filterModel.SelectedNationalityId).ToList();
-            }
-            filterModel.EmployeeModels = employeeModels;
+            //List<EmployeeModel> employeeModels = _EmployeeService.GetAllEmployees().Result;
+            //if(filterModel.EmployeeName != null)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.FullName.Contains(filterModel.EmployeeName)).ToList();
+            //}
+            //if(filterModel.EmployeeNumber != 0)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.EmployeeNumber == filterModel.EmployeeNumber).ToList();
+            //}
+            //if (filterModel.SapNumber != 0)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.SapNumber == filterModel.SapNumber).ToList();
+            //}
+            //if (filterModel.Id != null)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.Id == filterModel.Id).ToList();
+            //}
+            //if (filterModel.Email != null)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.Email.Contains(filterModel.Email)).ToList();
+            //}
+            //if (filterModel.BirthDate != DateTime.Today)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.BirthDate== filterModel.BirthDate).ToList();
+            //}
+            //if (filterModel.SelectedDepartmentId != -1)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.DepartmentId == filterModel.SelectedDepartmentId).ToList();
+            //}
+            //if (filterModel.SelectedPositionId != -1)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.PositionId == filterModel.SelectedPositionId).ToList();
+            //}
+            //if (filterModel.SelectedNationalityId != -1)
+            //{
+            //    employeeModels = employeeModels.Where(e => e.NationalityId == filterModel.SelectedNationalityId).ToList();
+            //}
+            filterModel.EmployeeModels = _EmployeeService.EmployeesSearch(filterModel);
             EmployeeModel employeeModel = new EmployeeModel();
             filterModel.DepartmentModels = _DepartmentService.GetAllDepartments();
             filterModel.NationalityModels = _NationalityService.GetAllNationalities().Result;
@@ -316,47 +316,113 @@ namespace MoreForYou.Controllers
             }
         }
 
-        // GET: EmployeeController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Search(FilterModel filterModel)
         {
-           EmployeeModel employeeModel = _EmployeeService.GetEmployee(id);
-            employeeModel.DepartmentModels = _DepartmentService.GetAllDepartments();
-            employeeModel.PositionModels = _PostionService.GetAllPositions().Result;
-            employeeModel.NationalityModels = _NationalityService.GetAllNationalities().Result;
-            employeeModel.genderModels = genderList;
-            employeeModel.EmployeeModels = _EmployeeService.GetEmployeesDataByDepartmentId(employeeModel.DepartmentId).Result;
-            employeeModel.RoleModels = _roleService.GetAllRoles().Result;
-            return View(employeeModel);
+            filterModel.EmployeeModels = _EmployeeService.EmployeesSearch(filterModel);
+            EmployeeModel employeeModel = new EmployeeModel();
+            filterModel.DepartmentModels = _DepartmentService.GetAllDepartments();
+            filterModel.NationalityModels = _NationalityService.GetAllNationalities().Result;
+            filterModel.PositionModels = _PostionService.GetAllPositions().Result;
+            filterModel.CompanyModels = _companyService.GetAllCompanies();
+            filterModel.collars = CommanData.Collars;
+            filterModel.DepartmentModels.Insert(0, new DepartmentModel { Id = -1, Name = "Departmrnt" });
+            filterModel.PositionModels.Insert(0, new PositionModel { Id = -1, Name = "Position" });
+            filterModel.NationalityModels.Insert(0, new NationalityModel { Id = -1, Name = "Nationality" });
+            filterModel.MartialStatusModels = CommanData.martialStatusModels;
+            filterModel.genderModels = CommanData.genderModels;
+            filterModel.BirthDate = DateTime.Today;
+            //List<EmployeeModel> employees = _EmployeeService.GetAllEmployees().Result.GetRange(0,100);
+            //employees.ForEach(e => e.JoiningDate.ToString("yyyy-MM-dd"));
+
+            return View("Edit", filterModel);
+        }
+
+        // GET: EmployeeController/Edit/5
+        public ActionResult Edit()
+        {
+            //EmployeeModel employeeModel = _EmployeeService.GetEmployee(id);
+            // employeeModel.DepartmentModels = _DepartmentService.GetAllDepartments();
+            // employeeModel.PositionModels = _PostionService.GetAllPositions().Result;
+            // employeeModel.NationalityModels = _NationalityService.GetAllNationalities().Result;
+            // employeeModel.genderModels = genderList;
+            // employeeModel.EmployeeModels = _EmployeeService.GetEmployeesDataByDepartmentId(employeeModel.DepartmentId).Result;
+            // employeeModel.RoleModels = _roleService.GetAllRoles().Result;
+            // return View(employeeModel);
+
+            EmployeeModel employeeModel = new EmployeeModel();
+            FilterModel filterModel = new FilterModel();
+            filterModel.DepartmentModels = _DepartmentService.GetAllDepartments();
+            filterModel.NationalityModels = _NationalityService.GetAllNationalities().Result;
+            filterModel.PositionModels = _PostionService.GetAllPositions().Result;
+            filterModel.DepartmentModels.Insert(0, new DepartmentModel { Id = -1, Name = "Departmrnt" });
+            filterModel.PositionModels.Insert(0, new PositionModel { Id = -1, Name = "Position" });
+
+            filterModel.NationalityModels.Insert(0, new NationalityModel { Id = -1, Name = "Nationality" });
+
+            filterModel.BirthDate = DateTime.Today;
+            //List<EmployeeModel> employees = _EmployeeService.GetAllEmployees().Result.GetRange(0,100);
+            //employees.ForEach(e => e.JoiningDate.ToString("yyyy-MM-dd"));
+
+            return View(filterModel);
         }
 
         // POST: EmployeeController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(EmployeeModel employeeModel)
+        public ActionResult Edit(FilterModel filterModel)
         {
             try
             {
-                EmployeeModel DBemployeeModel = _EmployeeService.GetEmployee(employeeModel.EmployeeNumber);
-                DBemployeeModel.FullName = employeeModel.FullName;
-                DBemployeeModel.Id = employeeModel.Id;
-                DBemployeeModel.SapNumber = employeeModel.SapNumber;
-                DBemployeeModel.Address = employeeModel.Address;
-                DBemployeeModel.PhoneNumber = employeeModel.PhoneNumber;
-                DBemployeeModel.DepartmentId = employeeModel.DepartmentId;
-                DBemployeeModel.PositionId = employeeModel.PositionId;
-                DBemployeeModel.JoiningDate = employeeModel.JoiningDate;
-                DBemployeeModel.BirthDate = employeeModel.BirthDate;
-                DBemployeeModel.MaritalStatus = employeeModel.MaritalStatus;
-                DBemployeeModel.NationalityId = employeeModel.NationalityId;
-                DBemployeeModel.SupervisorId = employeeModel.SupervisorId;
-                DBemployeeModel.UpdatedDate = DateTime.Today;
-                DBemployeeModel.IsVisible = employeeModel.IsVisible;
-                _EmployeeService.UpdateEmployee(DBemployeeModel);
+                //EmployeeModel DBemployeeModel = _EmployeeService.GetEmployee(employeeModel.EmployeeNumber);
+                //DBemployeeModel.FullName = employeeModel.FullName;
+                //DBemployeeModel.Id = employeeModel.Id;
+                //DBemployeeModel.SapNumber = employeeModel.SapNumber;
+                //DBemployeeModel.Address = employeeModel.Address;
+                //DBemployeeModel.PhoneNumber = employeeModel.PhoneNumber;
+                //DBemployeeModel.DepartmentId = employeeModel.DepartmentId;
+                //DBemployeeModel.PositionId = employeeModel.PositionId;
+                //DBemployeeModel.JoiningDate = employeeModel.JoiningDate;
+                //DBemployeeModel.BirthDate = employeeModel.BirthDate;
+                //DBemployeeModel.MaritalStatus = employeeModel.MaritalStatus;
+                //DBemployeeModel.NationalityId = employeeModel.NationalityId;
+                //DBemployeeModel.SupervisorId = employeeModel.SupervisorId;
+                //DBemployeeModel.UpdatedDate = DateTime.Today;
+                //DBemployeeModel.IsVisible = employeeModel.IsVisible;
+                //_EmployeeService.UpdateEmployee(DBemployeeModel);
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 return View();
+            }
+        }
+
+        [HttpPost]
+        public Task<bool> EditEmployee(EditEmployee employeeModel)
+        {
+            try
+            {
+               EmployeeModel employee = _EmployeeService.GetEmployee(employeeModel.EmployeeNumber);
+                employee.FullName = employeeModel.FullName;
+                employee.Address = employeeModel.Address;
+                employee.SapNumber = employeeModel.SapNumber;
+                employee.Id = employeeModel.Id;
+                employee.BirthDate = employeeModel.BirthDate;
+                employee.Gender = employeeModel.Gender;
+                employee.MaritalStatus = employeeModel.MaritalStatus;
+                employee.DepartmentId = employeeModel.DepartmentId;
+                employee.PositionId = employeeModel.PositionId;
+                employee.CompanyId = employeeModel.CompanyId;
+                employee.Collar = employeeModel.Collar;
+                employee.isDeptManager = employeeModel.IsDeptManager;
+                employee.PhoneNumber = employeeModel.PhoneNumber;
+                employee.NationalityId = employeeModel.NationalityId;
+                bool result = _EmployeeService.UpdateEmployee(employee).Result;
+                return Task<bool>.FromResult(result);
+            }
+            catch(Exception e)
+            {
+                return Task<bool>.FromResult(false);
             }
         }
 

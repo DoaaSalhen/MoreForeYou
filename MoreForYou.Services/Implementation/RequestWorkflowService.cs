@@ -1382,12 +1382,13 @@ namespace MoreForYou.Services.Implementation
                     List<RequestWokflowModel> requestWokflowModels = GetRequestWorkflow(request.Id);
                     requestWokflowModels = requestWokflowModels.OrderByDescending(w => w.ReplayDate).ToList();
                     Gift gift = new Gift();
+                    gift.RequestNumber = request.Id;
                     gift.BenefitCard = request.Benefit.BenefitCard;
                     gift.BenefitName = request.BenefitName;
                     gift.EmployeeName = request.Employee.FullName;
                     gift.EmployeeNumber = request.EmployeeId;
                     gift.EmployeeDepartment = request.Employee.Department.Name;
-                    gift.EmployeeEmail = request.Employee.Email;
+                    //gift.EmployeeEmail = request.Employee.Email;
                     gift.Date = requestWokflowModels[0].ReplayDate;
                     myGifts.Add(gift);
                 }

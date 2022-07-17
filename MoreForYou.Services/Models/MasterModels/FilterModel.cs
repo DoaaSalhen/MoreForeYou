@@ -12,8 +12,13 @@ namespace MoreForYou.Services.Models.MasterModels
         public List<DepartmentModel> DepartmentModels { get; set; }
         public List<PositionModel> PositionModels { get; set; }
 
+        public List<CompanyModel> CompanyModels { get; set; }
+
         public List<NationalityModel> NationalityModels { get; set; }
 
+        public List<GenderModel> genderModels { get; set; }
+        public List<MartialStatusModel> MartialStatusModels { get; set; }
+        public List<Collar> collars { get; set; }
         public long EmployeeNumber { get; set; }
 
         public long SelectedDepartmentId { get; set; }
@@ -28,7 +33,7 @@ namespace MoreForYou.Services.Models.MasterModels
 
         public string Id { get; set; }
 
-        public string Email { get; set; }
+        //public string Email { get; set; }
 
 
 

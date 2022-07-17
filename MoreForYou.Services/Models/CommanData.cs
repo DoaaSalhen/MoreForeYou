@@ -13,6 +13,7 @@ namespace MoreForYou.Services.Models
             Single = 1,
             Married = 2,
             Divorced = 3,
+            Widower = 4,
             Any = -1
         };
 
@@ -52,6 +53,12 @@ namespace MoreForYou.Services.Models
             {
                 new GenderModel {  Name='M'},
                 new GenderModel {  Name='F'}
+            };
+
+        public static List<GenderModel> genderModels = new List<GenderModel>()
+            {
+                new GenderModel {Id=1 , Name='M'},
+                new GenderModel {Id=2 ,  Name='F'}
             };
 
         public List<ResonseStatus> resonseStatuses = new List<ResonseStatus>()
@@ -109,6 +116,15 @@ namespace MoreForYou.Services.Models
 
         };
 
+        public static List<MartialStatusModel> martialStatusModels = new List<MartialStatusModel>()
+        {
+            new MartialStatusModel {Id =-1 , Name="Any"},
+            new MartialStatusModel {Id =1 , Name="Single"},
+            new MartialStatusModel {Id=2, Name="Married" },
+            new MartialStatusModel {Id=3, Name="Divorced" },
+            new MartialStatusModel {Id=4, Name="Widower"}
+        };
+
         public List<string> AgeSigns = new List<string>()
         {
            ">",
@@ -134,6 +150,13 @@ namespace MoreForYou.Services.Models
     }
 
     public class Collar
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+    }
+
+    public class MartialStatusModel
     {
         public int Id { get; set; }
 

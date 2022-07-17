@@ -1,4 +1,5 @@
 ﻿using MoreForYou.Services.Models.API;
+using MoreForYou.Services.Models.MasterModels;
 using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace MoreForYou.Services.Contracts
         Task<List<EmployeeModel>> GetAllEmployeeWhoCanIGive();
 
         LoginUser CreateLoginUser(EmployeeModel employeeModel);
+
+        List<EmployeeModel> EmployeesSearch(FilterModel filterModel);
 
     }
 }
