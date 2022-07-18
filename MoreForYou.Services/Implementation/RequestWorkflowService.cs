@@ -334,7 +334,25 @@ namespace MoreForYou.Services.Implementation
                             List<EmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupParticipants((long)requestWokflowModels[index].BenefitRequest.GroupId).Result.Select(eg => eg.Employee).ToList();
                             if (groupEmployeeModels != null)
                             {
-                                List<LoginUser> employeesData = CreateEmployeeData(groupEmployeeModels);
+                                // List<LoginUser> employeesData = CreateEmployeeData(groupEmployeeModels);
+                                List<LoginUser> employeesData = new List<LoginUser>();
+                                foreach (var groupEmployeeModel in groupEmployeeModels)
+                                {
+                                    LoginUser employeeData = new LoginUser();
+                                    employeeData.EmployeeNumber = groupEmployeeModel.EmployeeNumber;
+                                    employeeData.EmployeeName = groupEmployeeModel.FullName;
+                                    //employeeData.DepartmentName = groupEmployeeModel.Department.Name;
+                                    //employeeData.PositionName = groupEmployeeModel.Position.Name;
+                                    //employeeData.SapNumber = groupEmployeeModel.SapNumber;
+                                    //employeeData.PhoneNumber = groupEmployeeModel.PhoneNumber;
+                                    //employeeData.JoinDate = groupEmployeeModel.JoiningDate.ToString("yyyy-MM-dd");
+                                    //employeeData.BirthDate = groupEmployeeModel.BirthDate.ToString("yyyy-MM-dd");
+                                    //employeeData.Email = groupEmployeeModel.Email;
+                                    //employeeData.Collar = CommanData.Collars.Where(c => c.Id == groupEmployeeModel.Collar).First().Name;
+                                    //employeeData.Company = groupEmployeeModel.Company.Code;
+                                    //employeeData.WorkDuration = CalculateWorkDuration(Convert.ToDateTime(employeeData.JoinDate));
+                                    employeesData.Add(employeeData);
+                                }
                                 requestToApprove1.FullParticipantsData = employeesData;
                             }
                         }
