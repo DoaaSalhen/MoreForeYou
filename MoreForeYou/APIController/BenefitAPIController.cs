@@ -207,6 +207,7 @@ namespace MoreForYou.APIController
                     {
                         requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
                         List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                        manageRequest.DepartmentModels = new List<DepartmentAPI>();
                         foreach (var dept in departmentModels)
                         {
                             DepartmentAPI departmentAPI = new DepartmentAPI();
@@ -292,6 +293,7 @@ namespace MoreForYou.APIController
                             }
                             requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled).ToList();
                             List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                            manageRequest.DepartmentModels = new List<DepartmentAPI>();
                             foreach (var dept in departmentModels)
                             {
                                 DepartmentAPI departmentAPI = new DepartmentAPI();
@@ -682,13 +684,17 @@ namespace MoreForYou.APIController
                         gifts.Remove(requiredGift);
                         myGifts.AddRange(gifts);
                         myGifts.Insert(0, requiredGift);
+                        return Ok(new { Message = "Sucessful Process", Data = myGifts });
                     }
-                    return Ok(new { Message = "Sucessful Process", Data = myGifts });
+                    else
+                    {
+                        return Ok(new { Message = "Sucessful Process", Data = gifts });
+                    }
 
                 }
                 else
                 {
-                    return Ok(new { Message = "Sorray you don't have any gift", Data = gifts });
+                    return Ok(new { Message = "Sorry you don't have any gift", Data = myGifts });
                 }
             }
             catch (Exception e)
@@ -753,5 +759,27 @@ namespace MoreForYou.APIController
                 return BadRequest(new { Message = "Invalid employee Data", Data = false });
             }
         }
+
+        [HttpPost("GetEmployeeProfilePicture")]
+        public async Task<ActionResult> GetEmployeeProfilePicture(long employeeNumber)
+        {
+            EmployeeModel employeeModel = _employeeService.GetEmployee(employeeNumber);
+            if (employeeModel != null)
+            {
+                if (employeeModel.ProfilePicture != null)
+                {
+                    return Ok(new { Message = "Success Process", Data = employeeModel.ProfilePicture});
+                }
+                else
+                {
+                    return BadRequest(new { Message = "User doesn't has profile Picture", Data = "" });
+                }
+            }
+            else
+            {
+                return BadRequest(new { Message = "Invalid employee Data", Data = false });
+            }
+        }
+
     }
 }
