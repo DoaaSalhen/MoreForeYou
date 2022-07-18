@@ -146,5 +146,37 @@ namespace MoreForYou.Services.Implementation
                 return null;
             }
         }
+
+        public bool UpdateUserNotification(UserNotificationModel model)
+        {
+            bool result = false;
+            try
+            {
+                UserNotification userNotification = _mapper.Map<UserNotification>(model);
+                result = _repository.Update(userNotification);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.ToString());
+            }
+            return result;
+        }
+
+        public int GetUserUnseenNotificationCount(long employeeNumber)
+        {
+            try
+            {
+                var notifications = _repository.Find(un => un.EmployeeId == employeeNumber && un.Seen == false);
+                if (notifications != null)
+                {
+                    return notifications.Count();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+            }
+            return 0;
+        }
     }
 }

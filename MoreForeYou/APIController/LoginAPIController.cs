@@ -29,6 +29,7 @@ namespace MoreForYou.APIController
         private readonly IBenefitRequestService _benefitRequestService;
         private readonly IBenefitWorkflowService _benefitWorkflowService;
         private readonly IRoleService _roleService;
+        private readonly IUserNotificationService _userNotificationService;
         public LoginAPIController(IBenefitService BenefitService,
             IBenefitWorkflowService BenefitWorkflowService,
 
@@ -37,7 +38,8 @@ namespace MoreForYou.APIController
             IEmployeeService EmployeeService,
             IBenefitRequestService benefitRequestService,
             IBenefitWorkflowService benefitWorkflowService,
-            IRoleService roleService
+            IRoleService roleService,
+            IUserNotificationService userNotificationService
             )
         {
             _BenefitService = BenefitService;
@@ -47,6 +49,7 @@ namespace MoreForYou.APIController
             _benefitRequestService = benefitRequestService;
             _benefitWorkflowService = benefitWorkflowService;
             _roleService = roleService;
+            _userNotificationService = userNotificationService;
         }
         [HttpGet]
         [Route("All")]
@@ -69,10 +72,9 @@ namespace MoreForYou.APIController
                     if (result.Succeeded)
                     {
                         EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(aspNetUser.Id);
-
                         HomeModel homeModel = _BenefitService.ShowAllBenefits(employeeModel);
+                        homeModel.UserUnSeenNotificationCount = _userNotificationService.GetUserUnseenNotificationCount(employeeModel.EmployeeNumber);
                         homeModel.user.Email = aspNetUser.Email;
-
                         List<string> userRoles = _userManager.GetRolesAsync(aspNetUser).Result.ToList();
                         List<RequestWokflowModel> requestWokflowModels = new List<RequestWokflowModel>();
                         if (userRoles != null)
@@ -86,6 +88,7 @@ namespace MoreForYou.APIController
                                 homeModel.user.IsAdmin = false;
                             }
                         }
+                        
                         return Ok(new { Message = "Sucessful login", Data = homeModel });
 
                     }

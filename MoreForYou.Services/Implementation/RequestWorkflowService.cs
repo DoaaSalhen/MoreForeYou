@@ -1205,7 +1205,7 @@ namespace MoreForYou.Services.Implementation
                                 EmployeeModel employee = _EmployeeService.GetEmployee(benefitRequestModel.SendTo);
                                 RequestWokflowModel newRequestWokflowModel = DBRequestWorkflowModel;
                                 newRequestWokflowModel.BenefitRequest.Employee = employee;
-                                notificationMessage = benefitRequestModel.Employee.FullName + "send a new gift to you from" + benefitRequestModel.Benefit.Name + "benefit";
+                                notificationMessage = benefitRequestModel.Employee.FullName + " Send a new gift to you from" + benefitRequestModel.Benefit.Name + "benefit";
                                 notificationModel = CreateNotification("Gift", newRequestWokflowModel.BenefitRequest.SendTo, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
                                 await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, "Gift", benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
                             }

@@ -16,6 +16,9 @@ namespace MoreForYou.Services.Contracts
 
         List<NotificationAPIModel> CreateNotificationAPIModel(List<UserNotificationModel> userNotificationModels);
 
+        bool UpdateUserNotification(UserNotificationModel model);
+
+        int GetUserUnseenNotificationCount(long employeeNumber);
 
     }
 }

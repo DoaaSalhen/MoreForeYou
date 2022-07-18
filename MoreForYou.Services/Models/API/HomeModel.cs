@@ -15,6 +15,6 @@ namespace MoreForYou.Services.Models.API
 
         public LoginUser user { get; set; }
 
-
+        public int UserUnSeenNotificationCount { get; set; }
     }
 }

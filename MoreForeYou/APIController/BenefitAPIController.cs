@@ -438,6 +438,11 @@ namespace MoreForYou.APIController
                 List<UserNotificationModel> userNotificationModels = _userNotificationService.GetFiftyUserNotification(employee.UserId);
                 if (userNotificationModels != null)
                 {
+                    foreach(var notification in userNotificationModels)
+                    {
+                        notification.Seen = true;
+                        _userNotificationService.UpdateUserNotification(notification);
+                    }
                     List<NotificationAPIModel> NotificationAPIModels = new List<NotificationAPIModel>();
                     userNotificationModels = userNotificationModels.OrderByDescending(un => un.CreatedDate).ToList();
                     notificationAPIModels = _userNotificationService.CreateNotificationAPIModel(userNotificationModels);
@@ -745,6 +750,29 @@ namespace MoreForYou.APIController
                 return BadRequest(new { Message = "Failed Process", Data = 0 });
             }
 
+        }
+        
+        [HttpPost("GetEmployeeProfileData")]
+        public async Task<ActionResult> GetEmployeeProfileData(long employeeNumber)
+        {
+          EmployeeModel employeeModel =  _employeeService.GetEmployee(employeeNumber);
+            if(employeeModel != null)
+            {
+                LoginUser loginUser = new LoginUser();
+               loginUser = _employeeService.CreateLoginUser(employeeModel);
+               if(loginUser != null)
+                {
+                    return Ok(new { Message = "Success Process", Data = loginUser });
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Failed Process", Data = false });
+                }
+            }
+            else
+            {
+                return BadRequest(new { Message = "Invalid employee Data", Data = false });
+            }
         }
     }
 }
