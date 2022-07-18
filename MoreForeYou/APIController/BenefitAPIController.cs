@@ -252,31 +252,6 @@ namespace MoreForYou.APIController
                                 requests.Insert(0, myRequest);
                                 manageRequest.Requests = requests;
                             }
-
-                            //var request0 = manageRequest.Requests[0];
-                            //var myrequest = manageRequest.Requests.Where(r => r.RequestNumber == requestNumber);
-                            //var myrequest = manageRequest.Requests.Where(r => r.RequestNumber == requestNumber).First();
-                            //manageRequest.Requests.Remove(myrequest);
-                            //if(requestNumber != 0)
-                            //{
-                            //    var requiredRequest = manageRequest.Requests.Where(r => r.RequestNumber == requestNumber);
-                            //    if (requiredRequest != null)
-                            //    {
-                            //        manageRequest.Requests.Remove(requiredRequest.First());
-                            //        manageRequest.Requests.Insert(0, requiredRequest.First());
-
-                            //    }
-                            //    else
-                            //    {
-                            //        var requiredRequest2 = _requestWorkflowService.GetRequestWorkflow(requestNumber);
-
-                            //        List<Request> requestModels = _requestWorkflowService.CreateRequestToApprove(requiredRequest2);
-                            //        if (requestModels != null)
-                            //        {
-                            //            manageRequest.Requests.Insert(0, requestModels.First());
-                            //        }
-                            //    }
-                            //}
                         }
                     }
                 }
@@ -352,18 +327,22 @@ namespace MoreForYou.APIController
                                 requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.Benefit.BenefitTypeId == manageRequest.SelectedBenefitType).ToList();
                             }
                             requestWokflowModels = _requestWorkflowService.CreateWarningMessage(requestWokflowModels);
-                            //foreach (var requestWorkflow in requestWokflowModels)
-                            //{
-                            //    var documents = _requestDocumentService.GetRequestDocuments(requestWorkflow.BenefitRequestId);
-                            //    if (documents.Count > 0)
-                            //    {
-                            //        requestWorkflow.Documents = documents.Select(d => d.fileName).ToArray();
-                            //    }
-                            //}
+                            foreach (var requestWorkflow in requestWokflowModels)
+                            {
+                                var documents = _requestDocumentService.GetRequestDocuments(requestWorkflow.BenefitRequestId);
+                                if (documents.Count > 0)
+                                {
+                                    requestWorkflow.HasDocuments = true;
+                                }
+                                else
+                                {
+                                    requestWorkflow.HasDocuments = false;
+                                }
+                            }
                             if (manageRequest.HasWarningMessage == true)
                             {
-                                //requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.WarningMessage != null || rw.Documents != null).ToList();
-                                requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.WarningMessage != null).ToList();
+                                requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.WarningMessage != null || rw.HasDocuments == true).ToList();
+                                //requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.WarningMessage != null).ToList();
 
                             }
                             requestWokflowModels = _requestWorkflowService.EmployeeCanResponse(requestWokflowModels);
@@ -709,7 +688,7 @@ namespace MoreForYou.APIController
                 }
                 else
                 {
-                    return Ok(new { Message = "Sorray you don't have any gift", Data = myGifts });
+                    return Ok(new { Message = "Sorray you don't have any gift", Data = gifts });
                 }
             }
             catch (Exception e)

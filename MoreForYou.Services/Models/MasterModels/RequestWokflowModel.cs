@@ -49,7 +49,7 @@ namespace MoreForYou.Services.Models.MasterModels
         public string ConfirmedDateToString { get; set; }
         public string RoleName { get; set; }
         public string[] Documents { get; set; }
-
+        public bool HasDocuments { get; set; }
 
     }
 }

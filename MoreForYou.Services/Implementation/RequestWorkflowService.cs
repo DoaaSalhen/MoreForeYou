@@ -308,6 +308,7 @@ namespace MoreForYou.Services.Implementation
                         requestToApprove1.status = CommanData.RequestStatusModels.Where(s => s.Id == requestWokflowModels[index].BenefitRequest.RequestStatusId).First().Name;
                         requestToApprove1.BenefitType = requestWokflowModels[index].BenefitRequest.Benefit.BenefitType.Name;
                         requestToApprove1.BenefitCard = requestWokflowModels[index].BenefitRequest.Benefit.BenefitCard;
+                        requestToApprove1.HasDocuments = requestWokflowModels[index].HasDocuments;
                         requestToApprove1.EmployeeCanResponse = requestWokflowModels[index].canResponse;
 
                         if (requestWokflowModels[index].BenefitRequest.WarningMessage != null)
