@@ -28,6 +28,7 @@ namespace MoreForYou.Services.Models.API
         public string BenefitName { get; set; }
 
         public string BenefitType { get; set; }
+        public string BenefitCard { get; set; }
 
         public long EmployeeNumber { get; set; }
 
@@ -44,6 +45,8 @@ namespace MoreForYou.Services.Models.API
 
         public bool EmployeeCanResponse { get; set; }
         public DateTime Requestedat { get; set; }
+
+        public bool HasDocuments { get; set; }
 
         public List<RequestWorkFlowAPI> RequestWorkFlowAPIs { get; set; }
 

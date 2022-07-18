@@ -307,21 +307,24 @@ namespace MoreForYou.Services.Implementation
                         requestToApprove1.Message = requestWokflowModels[index].BenefitRequest.Message;
                         requestToApprove1.status = CommanData.RequestStatusModels.Where(s => s.Id == requestWokflowModels[index].BenefitRequest.RequestStatusId).First().Name;
                         requestToApprove1.BenefitType = requestWokflowModels[index].BenefitRequest.Benefit.BenefitType.Name;
+                        requestToApprove1.BenefitCard = requestWokflowModels[index].BenefitRequest.Benefit.BenefitCard;
                         requestToApprove1.EmployeeCanResponse = requestWokflowModels[index].canResponse;
 
                         if (requestWokflowModels[index].BenefitRequest.WarningMessage != null)
                         {
                             requestToApprove1.WarningMessage = requestWokflowModels[index].BenefitRequest.WarningMessage;
                         }
+                        //var documents = _requestDocumentService.GetRequestDocuments(requestWokflowModels[index].BenefitRequestId);
+                        //if (documents.Count > 0)
+                        //{
+                        //    //requestToApprove1.Documents = documents.Select(d => d.fileName).ToArray();
+                        //    requestToApprove1.HasDocuments = true;
+                        //}
                         //if (requestWokflowModels[index].Documents != null)
                         //{
                         //    requestToApprove1.Documents = requestWokflowModels[index].Documents;
                         //}
-                        // var documents = _requestDocumentService.GetRequestDocuments(requestWokflowModels[index].BenefitRequestId);
-                        if (requestWokflowModels[index].Documents != null)
-                        {
-                            requestToApprove1.Documents = requestWokflowModels[index].Documents;
-                        }
+
                         List<EmployeeModel> employeeModels1 = new List<EmployeeModel>();
                         employeeModels1.Add(requestWokflowModels[index].BenefitRequest.Employee);
                         requestToApprove1.CreatedBy = CreateEmployeeData(employeeModels1).First();
@@ -901,7 +904,7 @@ namespace MoreForYou.Services.Implementation
                 string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, path);
                 uniqueFileName = Guid.NewGuid().ToString() + "_" + ImageName.FileName;
                 filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var fileStream = new FileStream("https://drive.google.com/drive/folders/1pDks3wN8UU2vAiJlUS9-vRMdiI_ln5Yb/test.png", FileMode.Create))
+                using (var fileStream = new FileStream(path, FileMode.Create))
                 {
                     await ImageName.CopyToAsync(fileStream);
                 }
@@ -1185,8 +1188,8 @@ namespace MoreForYou.Services.Implementation
                                 RequestWokflowModel newRequestWokflowModel = DBRequestWorkflowModel;
                                 newRequestWokflowModel.BenefitRequest.Employee = employee;
                                 notificationMessage = benefitRequestModel.Employee.FullName + "send a new gift to you from" + benefitRequestModel.Benefit.Name + "benefit";
-                                notificationModel = CreateNotification(type, newRequestWokflowModel.BenefitRequest.SendTo, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
-                                await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
+                                notificationModel = CreateNotification("Gift", newRequestWokflowModel.BenefitRequest.SendTo, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
+                                await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, "Gift", benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
                             }
                         }
                         else

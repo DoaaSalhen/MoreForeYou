@@ -11,7 +11,7 @@
         $('#SupervisorId').change(function ()
         {
             var ddlsource = "#SupervisorId";
-                var url = '@Url.Content("~/")' + "Employee/DepartmentFilter";
+                var url = '@Url.Content("~/")' + "more4u/Employee/DepartmentFilter";
                 $.getJSON(url, { id: $(ddlsource).val() }, function (data)
                 {
                     if (data != null)

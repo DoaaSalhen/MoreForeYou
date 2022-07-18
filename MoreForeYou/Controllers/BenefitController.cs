@@ -291,7 +291,7 @@ namespace MoreForYou.Controllers
                 Model.HasWorkflow = true;
                 Model.BenefitReturn = 1;
 
-                string imageName = _requestWorkflowService.UploadedImageAsync(Model.ImageName, @"C:\inetpub\wwwroot\_more4u\wwwroot\images\BenefitCards").Result;
+                string imageName = _requestWorkflowService.UploadedImageAsync(Model.ImageName, @"http://20.86.97.165/more4u/_more4u/wwwroot/images/BenefitCards").Result;
                 Model.BenefitCard = imageName;
                 var addedBenefitModel = _BenefitService.CreateBenefit(Model);
                 if (addedBenefitModel != null)

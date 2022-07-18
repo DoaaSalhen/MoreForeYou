@@ -172,9 +172,9 @@
 
                                                 <td>
                                                     <span>
-                                                        <a asp-action="Edit" asp-route-id="@item.EmployeeNumber" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil color-muted m-r-5"></i> </a>
+                                                        <a asp-action="EditFromIndex" asp-route-id="@item.EmployeeNumber" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil color-muted m-r-5"></i> </a>
                                                         <a asp-action="Delete" asp-route-id="@item.EmployeeNumber" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash color-muted m-r-5"></i></a>
-                                                        <a asp-action="Details" asp-route-id="@item.EmployeeNumber" data-toggle="tooltip" data-placement="top" title="Details"><i class="fa fa-eye color-muted m-r-5"></i> </a>
+                                                        <a asp-action="UserProfile" asp-route-EmployeeNumber="@item.EmployeeNumber" data-toggle="tooltip" data-placement="top" title="Details"><i class="fa fa-eye color-muted m-r-5"></i> </a>
                                                     </span>
 
                                                     @*<a asp-action="Edit" asp-route-id="@item.EmployeeNumber">Edit</a> |

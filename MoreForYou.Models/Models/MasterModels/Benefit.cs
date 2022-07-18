@@ -59,5 +59,7 @@ namespace MoreForYou.Models.Models.MasterModels
         public bool IsAgift { get; set; }
 
         public int BenefitReturn { get; set; }
+
+        public string Country { get; set; }
     }
 }

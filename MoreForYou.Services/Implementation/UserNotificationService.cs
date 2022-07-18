@@ -87,7 +87,7 @@ namespace MoreForYou.Services.Implementation
                     {
                         notificationAPIModel.EmployeeFullName = userNotification.Notification.BenefitRequest.Employee.FullName;
                         notificationAPIModel.EmployeeNumber = userNotification.Notification.BenefitRequest.Employee.EmployeeNumber;
-                        notificationAPIModel.EmployeeProfilePicture = userNotification.Notification.BenefitRequest.Employee.ProfilePicture;
+                        //notificationAPIModel.EmployeeProfilePicture = userNotification.Notification.BenefitRequest.Employee.ProfilePicture;
 
                     }
                     else if (userNotification.Notification.Type == "Response")
@@ -95,7 +95,7 @@ namespace MoreForYou.Services.Implementation
                         EmployeeModel employeeModel = _employeeService.GetEmployee((long)userNotification.Notification.ResponsedBy);
                         notificationAPIModel.EmployeeNumber = employeeModel.EmployeeNumber;
                         notificationAPIModel.EmployeeFullName = employeeModel.FullName;
-                        notificationAPIModel.EmployeeProfilePicture = employeeModel.ProfilePicture;
+                        //notificationAPIModel.EmployeeProfilePicture = employeeModel.ProfilePicture;
 
                     }
                     notificationAPIModel.Message = userNotification.Notification.Message;
@@ -128,14 +128,14 @@ namespace MoreForYou.Services.Implementation
                     {
                         userNotificationModels = userNotificationModels.TakeLast(50).ToList();
                     }
-                    var ResponseNotifications = userNotificationModels.Where(UN => UN.Notification.Type == "Response");
-                    if(ResponseNotifications.Count() > 0)
-                    {
-                        foreach (UserNotificationModel userNotificationModel in ResponseNotifications)
-                        {
-                            userNotificationModel.ResponsedByEmployee = _employeeService.GetEmployee((long)userNotificationModel.Notification.ResponsedBy);
-                        }
-                    }
+                    //var ResponseNotifications = userNotificationModels.Where(UN => UN.Notification.Type == "Response");
+                    //if(ResponseNotifications.Count() > 0)
+                    //{
+                    //    foreach (UserNotificationModel userNotificationModel in ResponseNotifications)
+                    //    {
+                    //        userNotificationModel.ResponsedByEmployee = _employeeService.GetEmployee((long)userNotificationModel.Notification.ResponsedBy);
+                    //    }
+                    //}
                    
                 }
                 return userNotificationModels;

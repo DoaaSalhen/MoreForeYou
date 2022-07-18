@@ -204,43 +204,6 @@ namespace MoreForYou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(FilterModel filterModel)
         {
-            //List<EmployeeModel> employeeModels = _EmployeeService.GetAllEmployees().Result;
-            //if(filterModel.EmployeeName != null)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.FullName.Contains(filterModel.EmployeeName)).ToList();
-            //}
-            //if(filterModel.EmployeeNumber != 0)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.EmployeeNumber == filterModel.EmployeeNumber).ToList();
-            //}
-            //if (filterModel.SapNumber != 0)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.SapNumber == filterModel.SapNumber).ToList();
-            //}
-            //if (filterModel.Id != null)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.Id == filterModel.Id).ToList();
-            //}
-            //if (filterModel.Email != null)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.Email.Contains(filterModel.Email)).ToList();
-            //}
-            //if (filterModel.BirthDate != DateTime.Today)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.BirthDate== filterModel.BirthDate).ToList();
-            //}
-            //if (filterModel.SelectedDepartmentId != -1)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.DepartmentId == filterModel.SelectedDepartmentId).ToList();
-            //}
-            //if (filterModel.SelectedPositionId != -1)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.PositionId == filterModel.SelectedPositionId).ToList();
-            //}
-            //if (filterModel.SelectedNationalityId != -1)
-            //{
-            //    employeeModels = employeeModels.Where(e => e.NationalityId == filterModel.SelectedNationalityId).ToList();
-            //}
             filterModel.EmployeeModels = _EmployeeService.EmployeesSearch(filterModel);
             EmployeeModel employeeModel = new EmployeeModel();
             filterModel.DepartmentModels = _DepartmentService.GetAllDepartments();
@@ -284,7 +247,7 @@ namespace MoreForYou.Controllers
         // POST: EmployeeController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EmployeeModel Model)
+        public async Task<ActionResult> Create(EmployeeModel Model)
         {
             try
             {
@@ -305,13 +268,36 @@ namespace MoreForYou.Controllers
                     Model.IsVisible = true;
                     Model.IsDelted = false;
                     Model.UserId = addedUser.id;
+                    Model.UserToken = "InitialToken";
                     var response = _EmployeeService.CreateEmployee(Model);
+                    if(response.Result == true)
+                    {
+                        ViewBag.Message = "Employee Added Successfully";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        AspNetUser aspNetUser = await _userManager.FindByIdAsync(addedUser.id);
+                       var result = await _userManager.DeleteAsync(aspNetUser);
+                        if(result.Succeeded)
+                        {
+                            ViewBag.Error = "Invalid data, Can not add your Employee";
+                        }
+                        else
+                        {
+                            ViewBag.Error = "Problem Occurred while add your employee Data, contact your support";
+                        }
+                    }
                 }
-
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    ViewBag.Error = "Invalid data, Can not add new User";
+                }
+                return View();
             }
-            catch
+            catch(Exception e)
             {
+                ViewBag.Error = "Invalid data, Can not add your Employee";
                 return View();
             }
         }
@@ -340,15 +326,6 @@ namespace MoreForYou.Controllers
         // GET: EmployeeController/Edit/5
         public ActionResult Edit()
         {
-            //EmployeeModel employeeModel = _EmployeeService.GetEmployee(id);
-            // employeeModel.DepartmentModels = _DepartmentService.GetAllDepartments();
-            // employeeModel.PositionModels = _PostionService.GetAllPositions().Result;
-            // employeeModel.NationalityModels = _NationalityService.GetAllNationalities().Result;
-            // employeeModel.genderModels = genderList;
-            // employeeModel.EmployeeModels = _EmployeeService.GetEmployeesDataByDepartmentId(employeeModel.DepartmentId).Result;
-            // employeeModel.RoleModels = _roleService.GetAllRoles().Result;
-            // return View(employeeModel);
-
             EmployeeModel employeeModel = new EmployeeModel();
             FilterModel filterModel = new FilterModel();
             filterModel.DepartmentModels = _DepartmentService.GetAllDepartments();
@@ -364,6 +341,18 @@ namespace MoreForYou.Controllers
             //employees.ForEach(e => e.JoiningDate.ToString("yyyy-MM-dd"));
 
             return View(filterModel);
+        }
+
+        public ActionResult EditFromIndex(long id)
+        {
+            EmployeeModel employeeModel = new EmployeeModel();
+            FilterModel filterModel = new FilterModel();
+            filterModel.EmployeeNumber = id;
+            filterModel.BirthDate = DateTime.Today;
+            filterModel.SelectedDepartmentId = -1;
+            filterModel.SelectedNationalityId = -1;
+            filterModel.SelectedPositionId = -1;
+            return RedirectToAction("Search",filterModel);
         }
 
         // POST: EmployeeController/Edit/5
@@ -453,14 +442,14 @@ namespace MoreForYou.Controllers
 
         //}
 
-        public async Task<ActionResult> UserProfile(string userid)
+        public async Task<ActionResult> UserProfile(long EmployeeNumber)
         {
-            EmployeeModel employeeModel = await _EmployeeService.GetEmployeeByUserId(userid);
+            EmployeeModel employeeModel =  _EmployeeService.GetEmployee(EmployeeNumber);
             employeeModel.GenderString = (CommanData.Gender)employeeModel.Gender;
             employeeModel.MaritalStatusString = (CommanData.MaritialStatus)employeeModel.MaritalStatus;
             employeeModel.CollarString = (CommanData.CollarTypes)employeeModel.Collar;
-           var user = _userService.GetUser(employeeModel.UserId);
-            employeeModel.Email = user.Result.Email;
+           var user = await _userService.GetUser(employeeModel.UserId);
+            employeeModel.Email = user.Email;
             var supervisor = _EmployeeService.GetEmployee((long)employeeModel.SupervisorId);
             employeeModel.Supervisor = supervisor;
             return View(employeeModel);

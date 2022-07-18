@@ -138,12 +138,10 @@ namespace MoreForYou.APIController
                 if (benefitModels != null)
                 {
                     return Ok(new { Message = "Sucessful Process", Data = benefitModels.ToList() });
-
                 }
                 else
                 {
                     return BadRequest(new { Message = "you do not have any benefits", Data = 0 });
-
                 }
             }
             catch (Exception e)
@@ -167,7 +165,7 @@ namespace MoreForYou.APIController
                 {
                     requests = requests.OrderByDescending(r => r.Requestedat).ToList();
 
-                    if (requestNumber != 0)
+                    if (requestNumber != -1)
                     {
                         List<Request> arrangedRequests = new List<Request>();
                         var myrequest = requests.Where(r => r.RequestNumber == requestNumber).First();
@@ -208,15 +206,15 @@ namespace MoreForYou.APIController
                     if (userRoles.Contains("Admin"))
                     {
                         requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
-                        //List<DepartmentModel> departmentModels= _departmentService.GetAllDepartments().ToList();
-                        //foreach(var dept in departmentModels)
-                        //{
-                        //    DepartmentAPI departmentAPI = new DepartmentAPI();
-                        //    departmentAPI.Id = dept.Id;
-                        //    departmentAPI.Name = dept.Name;
-                        //    manageRequest.DepartmentModels.Add(departmentAPI);
-                        //}
-
+                        List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                        foreach (var dept in departmentModels)
+                        {
+                            DepartmentAPI departmentAPI = new DepartmentAPI();
+                            departmentAPI.Id = dept.Id;
+                            departmentAPI.Name = dept.Name;
+                            manageRequest.DepartmentModels.Add(departmentAPI);
+                        }
+                        manageRequest.IsAdmin = true;
                     }
                     else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
                     {
@@ -230,7 +228,7 @@ namespace MoreForYou.APIController
                     manageRequest.SelectedBenefitType = -1;
                     if (requestWokflowModels.Count != 0)
                     {
-                        if (requestNumber != 0)
+                        if (requestNumber != -1)
                         {
                             var requiredRequest = requestWokflowModels.Where(w => w.BenefitRequestId == requestNumber);
                             if (requiredRequest.Count() == 0)
@@ -245,7 +243,7 @@ namespace MoreForYou.APIController
                         if (manageRequest.Requests != null)
                         {
                             manageRequest.Requests = manageRequest.Requests.OrderByDescending(r => r.Requestedat).ToList();
-                            if (requestNumber != 0)
+                            if (requestNumber != -1)
                             {
                                 var myRequest = manageRequest.Requests.Where(r => r.RequestNumber == requestNumber).First();
                                 List<Request> requests = new List<Request>();
@@ -318,14 +316,14 @@ namespace MoreForYou.APIController
                                 requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows();
                             }
                             requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled).ToList();
-                            //List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
-                            //foreach (var dept in departmentModels)
-                            //{
-                            //    DepartmentAPI departmentAPI = new DepartmentAPI();
-                            //    departmentAPI.Id = dept.Id;
-                            //    departmentAPI.Name = dept.Name;
-                            //    manageRequest.DepartmentModels.Add(departmentAPI);
-                            //}
+                            List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                            foreach (var dept in departmentModels)
+                            {
+                                DepartmentAPI departmentAPI = new DepartmentAPI();
+                                departmentAPI.Id = dept.Id;
+                                departmentAPI.Name = dept.Name;
+                                manageRequest.DepartmentModels.Add(departmentAPI);
+                            }
                             manageRequest.IsAdmin = true;
                         }
                         else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
@@ -339,7 +337,6 @@ namespace MoreForYou.APIController
                             if (manageRequest.employeeNumberSearch != -1)
                             {
                                 requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.EmployeeId == manageRequest.employeeNumberSearch).ToList();
-
                             }
 
                             if (manageRequest.SelectedRequestStatus != -1)
@@ -355,17 +352,18 @@ namespace MoreForYou.APIController
                                 requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.Benefit.BenefitTypeId == manageRequest.SelectedBenefitType).ToList();
                             }
                             requestWokflowModels = _requestWorkflowService.CreateWarningMessage(requestWokflowModels);
-                            foreach (var requestWorkflow in requestWokflowModels)
-                            {
-                                var documents = _requestDocumentService.GetRequestDocuments(requestWorkflow.BenefitRequestId);
-                                if (documents.Count > 0)
-                                {
-                                    requestWorkflow.Documents = documents.Select(d => d.fileName).ToArray();
-                                }
-                            }
+                            //foreach (var requestWorkflow in requestWokflowModels)
+                            //{
+                            //    var documents = _requestDocumentService.GetRequestDocuments(requestWorkflow.BenefitRequestId);
+                            //    if (documents.Count > 0)
+                            //    {
+                            //        requestWorkflow.Documents = documents.Select(d => d.fileName).ToArray();
+                            //    }
+                            //}
                             if (manageRequest.HasWarningMessage == true)
                             {
-                                requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.WarningMessage != null || rw.Documents != null).ToList();
+                                //requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.WarningMessage != null || rw.Documents != null).ToList();
+                                requestWokflowModels = requestWokflowModels.Where(rw => rw.BenefitRequest.WarningMessage != null).ToList();
 
                             }
                             requestWokflowModels = _requestWorkflowService.EmployeeCanResponse(requestWokflowModels);
@@ -686,25 +684,67 @@ namespace MoreForYou.APIController
         }
 
         [HttpPost("ShowMyGifts")]
-        public async Task<IActionResult> ShowMyGifts(long employeeNumber)
+        public async Task<IActionResult> ShowMyGifts(long employeeNumber, long requestNumber)
         {
             try
             {
+                List<Gift> myGifts = new List<Gift>();
                 List<Gift> gifts = _requestWorkflowService.GetMyGifts(employeeNumber);
                 if (gifts.Count > 0)
                 {
-                    return Ok(new { Message = "Sucessful Process", Data = gifts });
+                    if(requestNumber != -1)
+                    {
+                       var requiredGift = gifts.Where(g => g.RequestNumber == requestNumber).First();
+                        gifts.Remove(requiredGift);
+                        myGifts.AddRange(gifts);
+                        myGifts.Insert(0, requiredGift);
+                    }
+                    return Ok(new { Message = "Sucessful Process", Data = myGifts });
 
                 }
                 else
                 {
-                    return Ok(new { Message = "Sorray you don't have any gift", Data = gifts });
+                    return Ok(new { Message = "Sorray you don't have any gift", Data = myGifts });
                 }
             }
             catch (Exception e)
             {
                 return BadRequest(new { Message = "Failed Process", Data = false });
             }
+        }
+
+        [HttpPost("GetProfilePictureAndRequestDocuments")]
+        public async Task<IActionResult> GetProfilePictureAndRequestDocuments(long employeeNumber, long requestNumber)
+        {
+            try
+            {
+                EmployeeModel employeeModel = _employeeService.GetEmployee(employeeNumber);
+                if (employeeModel != null)
+                {
+                    ProfileAndDocuments profileAndDocuments = new ProfileAndDocuments();
+
+                    profileAndDocuments.ProfilePicture = employeeModel.ProfilePicture;
+
+                    var documents = _requestDocumentService.GetRequestDocuments(requestNumber);
+
+                    if (documents != null)
+                    {
+                        List<string> requestDocuments = documents.Select(d => d.fileName).ToList();
+                        profileAndDocuments.Documents = requestDocuments;
+                    }
+                    return Ok(new { Message = "Success Process", Data = profileAndDocuments });
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Failed Process, Invalid employee data", Data = 0 });
+
+                }
+            }
+            catch(Exception e)
+            {
+                return BadRequest(new { Message = "Failed Process", Data = 0 });
+            }
+
         }
     }
 }

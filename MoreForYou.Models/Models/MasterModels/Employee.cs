@@ -98,5 +98,9 @@ namespace MoreForYou.Models.Models.MasterModels
         public int Collar { get; set; }
         [Required]
         public string UserToken { get; set; }
+
+        public string Country { get; set; }
+
+        public string State { get; set; }
     }
 }
