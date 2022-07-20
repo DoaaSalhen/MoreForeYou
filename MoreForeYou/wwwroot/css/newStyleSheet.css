@@ -1,7 +1,33 @@
-﻿body 
-{
-    width:2000px;
+﻿
+
+.ribbon-wrapper {
+    width: 165px;
+    height: 155px;
+    overflow: hidden;
+    position: absolute;
+    top: -3px;
+    right: -3px;
 }
+    .ribbon
+
+{
+    font: bold 15px sans-serif;
+    color: #333;
+    text-align: center;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    position: relative;
+    padding: 7px 0;
+    top: 15px;
+    right: -30px;
+    width: 170px;
+    background-color: #ebb134;
+    color: #fff;
+}
+
+
 
 
 /*input[type="text"] {

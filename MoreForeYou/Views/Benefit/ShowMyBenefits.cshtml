@@ -9,7 +9,7 @@
 <section class="section-sm">
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-lg-8 col-md-8" style="margin:auto">
                 <div class="search-result bg-gray">
                     <h2>My Benefits</h2>
                 </div>
@@ -18,7 +18,7 @@
         @if (Model != null && Model.Count() != 0)
         {
             <div class="row">
-                <div class="col-lg-12 col-md-8">
+                <div class="col-lg-8 col-md-8" style="margin:auto">
                     <div class="category-search-filter">
                         <div class="row">
                             <div class="col-md-6">
@@ -43,6 +43,30 @@
                                 </div>
                                 <div class="col-lg-8">
                                     <div class="row">
+                                        <div class="ribbon-wrapper">
+
+                                            @if (benefit.LastStatus == "Pending")
+                                            {
+                                                <div class="ribbon" style="background-color:blue">Pending</div>
+                                            }
+                                            else if (benefit.LastStatus == "InProgress")
+                                            {
+                                                <div class="ribbon" style="background-color:yellow">InProgress</div>
+                                            }
+                                            else if (benefit.LastStatus == "Approved")
+                                            {
+                                                <div class="ribbon" style="background-color:limegreen">Approved</div>
+                                            }
+                                            else if (benefit.LastStatus == "Rejected")
+                                            {
+                                                <div class="ribbon" style="background-color:red">Rejected</div>
+                                            }
+                                            else if (benefit.LastStatus == "Cancelled")
+                                            {
+                                                <div class="ribbon" style="background-color:limegreen">Cancelled</div>
+                                            }
+                                        </div>
+
                                         <div class="col-lg-6 col-md-10">
                                             <div class="ad-listing-content">
                                                 <div>
@@ -50,29 +74,35 @@
                                                 </div>
                                                 <ul class="list-inline mt-2 mb-3">
                                                     <li class="list-inline-item">
-                                                        <i class="fa fa-cube"></i>   @benefit.BenefitType
+                                                        <i class="fa-solid fa-rotate"></i> <span style="margin-left:5px">@benefit.TimesEmployeeReceiveThisBenefit/@benefit.Times</span>
                                                     </li>
-                                                    <li class="list-inline-item"><i class="fa fa-layers-counter"></i>@benefit.totalRequestsCount</li>
                                                 </ul>
-                                                <p class="pr-5">@benefit.Description</p>
+                                                <p class="pr-5">@benefit.totalRequestsCount Requests</p>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 align-self-center">
                                             <div class="product-ratings float-lg-right pb-3">
                                                 <div class="list-inline">
-                                                    @benefit.totalRequestsCount
+                                                    @if (benefit.BenefitType == "Individual")
+                                                    {
+                                                        <i class="fa fa-user"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fa fa-group"></i>
+                                                    }
                                                 </div>
                                             </div>
                                             @if (benefit.BenefitType == "Individual")
                                             {
-                                                <div class="product-ratings float-lg-right pb-3" style="margin-top:90px">
-                                                    <a value="@benefit.Id" asp-action="ShowMyBenefitRequests" asp-route-BenefitId="@benefit.Id" style="text-decoration:underline; color:blue; margin-right:-45px">Details</a>
+                                                <div class="product-ratings float-lg-right pb-3" style="margin-top:100px">
+                                                    <a value="@benefit.Id" asp-action="ShowMyBenefitRequests" asp-route-BenefitId="@benefit.Id" style="text-decoration:underline; color:blue; margin-right:-10px"><i class="fa fa-arrow-alt-circle-right"></i></a>
                                                 </div>
                                             }
                                             else
                                             {
-                                                <div class="product-ratings float-lg-right pb-3" style="margin-top:90px">
-                                                    <a value="@benefit.Id" asp-action="ShowMyBenefitRequests" asp-route-BenefitId="@benefit.Id" style="text-decoration:underline; color:blue; margin-right:-45px">Details</a>
+                                                <div class="product-ratings float-lg-right pb-3" style=" margin-top:100px;">
+                                                    <a value="@benefit.Id" asp-action="ShowMyBenefitRequests" asp-route-BenefitId="@benefit.Id" style="text-decoration:underline; color:blue; margin-right:-10px"><i class="fa fa-arrow-alt-circle-right"></i></a>
                                                 </div>
                                             }
 

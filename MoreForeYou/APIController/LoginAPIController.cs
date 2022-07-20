@@ -110,16 +110,15 @@ namespace MoreForYou.APIController
         }
 
         [HttpPost("refreshToken")]
-        public async Task<ActionResult> UpdateToken(string userId, string newToken)
+        public async Task<ActionResult> UpdateToken(long employeeNumber, string newToken)
         {
-            AspNetUser user = await _userManager.FindByIdAsync(userId);
+            EmployeeModel employeeModel = _EmployeeService.GetEmployee(employeeNumber);
             bool result = false;
-            if (user != null)
+            if (employeeModel != null)
             {
-                EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(userId).Result;
+                //EmployeeModel employeeModel = _EmployeeService.GetEmployeeByUserId(userId).Result;
                 employeeModel.UserToken = newToken;
                 result = _EmployeeService.UpdateEmployee(employeeModel).Result;
-
             }
             if (result == true)
             {
@@ -127,7 +126,7 @@ namespace MoreForYou.APIController
             }
             else
             {
-                return BadRequest(new { Message = "Failed Process", Data = false });
+                return BadRequest(new { Message = "Failed Process, invalid Employee Data", Data = false });
             }
         }
 
