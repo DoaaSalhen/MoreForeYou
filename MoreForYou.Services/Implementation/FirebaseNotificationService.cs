@@ -20,7 +20,7 @@ namespace MoreForYou.Services.Implementation
             {
                 app = FirebaseApp.Create(new AppOptions()
                 {
-                    Credential = GoogleCredential.FromFile("ServiceKey.json").
+                    Credential = GoogleCredential.FromFile("ServiceKey3.json").
                CreateScoped("https://www.googleapis.com/auth/firebase.messaging")
                 });
             }
@@ -31,7 +31,7 @@ namespace MoreForYou.Services.Implementation
         {
             var message = new Message()
             {
-                Token = "fBhANVH1R_WW0qOMGm18v6:APA91bE4eSYC8Rg2WoR6mt-LbATaubKfQa9yy40EpcWPT6QIJrSV0lHnZh2pFvIC2sp4iP0AQHxaNA_J-aLekdCJ84QTrN6dDfFUDi0SrWKEjUOJdxS52BEIrkbohAvdUdU4tgGYgdLG",
+                //Token = "fBhANVH1R_WW0qOMGm18v6:APA91bE4eSYC8Rg2WoR6mt-LbATaubKfQa9yy40EpcWPT6QIJrSV0lHnZh2pFvIC2sp4iP0AQHxaNA_J-aLekdCJ84QTrN6dDfFUDi0SrWKEjUOJdxS52BEIrkbohAvdUdU4tgGYgdLG",
                 //Topic = "news",
                 Notification = new Notification()
                 {

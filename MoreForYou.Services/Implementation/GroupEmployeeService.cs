@@ -69,7 +69,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-               var groupEmployees = _repository.Find(ge => ge.GroupId == id, false, ge => ge.Employee, ge => ge.Employee.Department, ge => ge.Employee.Position, ge => ge.Employee.Company);
+               var groupEmployees = _repository.Find(ge => ge.GroupId == id, false, ge => ge.Employee, ge => ge.Employee.Department, ge => ge.Employee.Position, ge => ge.Employee.Company, ge => ge.Employee.Nationality);
                 List<GroupEmployeeModel> groupEmployeeModels = _mapper.Map<List<GroupEmployeeModel>>(groupEmployees);
 
                 return groupEmployeeModels;
@@ -91,7 +91,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                var groupEmployees = _repository.Find(ge => ge.EmployeeId == employeeId, false, ge => ge.Employee, ge => ge.Group, ge => ge.Group.RequestStatus);
+                var groupEmployees = _repository.Find(ge => ge.EmployeeId == employeeId, false, ge => ge.Employee, ge => ge.Employee.Department, ge => ge.Employee.Position, ge => ge.Employee.Nationality, ge => ge.Employee.Company, ge => ge.Group, ge => ge.Group.RequestStatus);
                 List<GroupEmployeeModel> groupEmployeeModels = _mapper.Map<List<GroupEmployeeModel>>(groupEmployees);
 
                 return groupEmployeeModels;

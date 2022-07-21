@@ -945,7 +945,7 @@ namespace MoreForYou.Controllers
                 return null;
             }
         }
-        public async Task<ActionResult> ShowRequests()
+        public async Task<ActionResult> ShowRequests(long requestNumber = 0)
         {
             try
             {
@@ -958,43 +958,63 @@ namespace MoreForYou.Controllers
                 {
                     if (userRoles.Contains("Admin"))
                     {
-                        requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
+                        //requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
+                        //List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                        //manageRequest.DepartmentModels = new List<DepartmentAPI>();
+                        //foreach (var dept in departmentModels)
+                        //{
+                        //    DepartmentAPI departmentAPI = new DepartmentAPI();
+                        //    departmentAPI.Id = dept.Id;
+                        //    departmentAPI.Name = dept.Name;
+                        //    manageRequest.DepartmentModels.Add(departmentAPI);
+                        //}
+                        //manageRequest.IsAdmin = true;
                     }
-                    else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
+                    if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
                     {
                         requestWokflowModels = _requestWorkflowService.GetRequestWorkflowByEmployeeNumber(employeeModel.EmployeeNumber).Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
+
                     }
-                    manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id, manageRequest).Result;
+                    //manageRequest = _requestWorkflowService.CreateManageRequestFilter(CurrentUser.Id).Result;
+                    manageRequest.SelectedDepartmentId = -1;
+                    manageRequest.SelectedRequestStatus = -1;
+                    manageRequest.SelectedTimingId = -1;
+                    manageRequest.SelectedBenefitType = -1;
                     if (requestWokflowModels.Count != 0)
                     {
-                        foreach (var request in requestWokflowModels)
+                        if (requestNumber != -1)
                         {
-                            if (request.BenefitRequest.Benefit.RequiredDocuments != null)
+                            var requiredRequest = requestWokflowModels.Where(w => w.BenefitRequestId == requestNumber);
+                            if (requiredRequest.Count() == 0)
                             {
-                                List<RequestDocumentModel> requestDocumentModels = _requestDocumentService.GetRequestDocuments(request.BenefitRequestId);
-                                if (requestDocumentModels != null)
-                                {
-                                    //string[] documents = new string[requestDocumentModels.Count];
-                                    //for (int index = 0; index < requestDocumentModels.Count; index++)
-                                    //{
-                                    //    documents[index] = string.Concat("/BenefitRequestFiles/", requestDocumentModels[index].fileName);
-                                    //    request.Documents = documents;
-                                    //}
-                                    request.Documents = requestDocumentModels.Select(d => d.fileName).ToArray();
-                                }
+                                RequestWokflowModel requiredRequestWokflowModel = _requestWorkflowService.GetRequestWorkflowByEmployeeNumber(employeeModel.EmployeeNumber, requestNumber);
+                                requestWokflowModels.Add(requiredRequestWokflowModel);
                             }
                         }
                         requestWokflowModels = _requestWorkflowService.EmployeeCanResponse(requestWokflowModels);
                         requestWokflowModels = _requestWorkflowService.CreateWarningMessage(requestWokflowModels);
                         manageRequest.Requests = _requestWorkflowService.CreateRequestToApprove(requestWokflowModels);
+                        if (manageRequest.Requests != null)
+                        {
+                            manageRequest.Requests = manageRequest.Requests.OrderByDescending(r => r.Requestedat).ToList();
+                            if (requestNumber != -1)
+                            {
+                                var myRequest = manageRequest.Requests.Where(r => r.RequestNumber == requestNumber).First();
+                                List<Request> requests = new List<Request>();
+                                manageRequest.Requests.Remove(myRequest);
+                                requests.AddRange(manageRequest.Requests);
+                                requests.Insert(0, myRequest);
+                                manageRequest.Requests = requests;
+                            }
+                        }
                     }
                 }
-                return View(manageRequest);
+                return Ok(new { Message = "Sucessful Process", Data = manageRequest });
+
             }
             catch (Exception e)
             {
-                _logger.LogError(e.ToString());
-                return null;
+                return BadRequest(new { Message = "Failed Process", Data = 0 });
             }
 
         }

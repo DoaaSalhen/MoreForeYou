@@ -149,7 +149,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                List<BenefitRequest> benefitRequests = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId, false, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company, r => r.Benefit, r => r.Benefit.BenefitType, r => r.RequestStatus).ToList();
+                List<BenefitRequest> benefitRequests = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId, false, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company, r => r.Employee.Nationality, r => r.Benefit, r => r.Benefit.BenefitType, r => r.RequestStatus).ToList();
                 List<BenefitRequestModel> benefitRequestModels = _mapper.Map<List<BenefitRequestModel>>(benefitRequests);
                 return benefitRequestModels;
             }
@@ -164,7 +164,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                BenefitRequest benefitRequest = _repository.Find(r => r.GroupId == groupId && r.IsVisible == true, false, r => r.Benefit, r => r.Benefit.BenefitType, r => r.RequestStatus, r => r.Group, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company).First();
+                BenefitRequest benefitRequest = _repository.Find(r => r.GroupId == groupId && r.IsVisible == true, false, r => r.Benefit, r => r.Benefit.BenefitType, r => r.RequestStatus, r => r.Group, r => r.Employee, r => r.Employee.Department, r => r.Employee.Position, r => r.Employee.Company, r => r.Employee.Nationality).First();
                 BenefitRequestModel benefitRequestModel = _mapper.Map<BenefitRequestModel>(benefitRequest);
                 return benefitRequestModel;
             }

@@ -127,7 +127,7 @@ namespace MoreForYou.Services.Implementation
 
         public List<RequestWokflowModel> GetAllRequestWorkflows()
         {
-            List<RequestWorkflow> requestWorkflows = _repository.Find(rw => rw.IsVisible == true, false, RW => RW.Employee, RW => RW.BenefitRequest, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company).ToList();
+            List<RequestWorkflow> requestWorkflows = _repository.Find(rw => rw.IsVisible == true, false, RW => RW.Employee, RW => RW.BenefitRequest, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company, RW => RW.BenefitRequest.Employee.Nationality).ToList();
             List<RequestWokflowModel> requestWokflowModels = _mapper.Map<List<RequestWokflowModel>>(requestWorkflows);
             return requestWokflowModels;
         }
@@ -197,7 +197,7 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.IsVisible == true, false, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Group, RW => RW.BenefitRequest.Group.RequestStatus, RW => RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company).ToList();
+                List<RequestWorkflow> requestWorkflows = _repository.Find(RW => RW.EmployeeId == employeeNumber && RW.IsVisible == true, false, RW => RW.Employee, RW => RW.RequestStatus, RW => RW.BenefitRequest, RW => RW.BenefitRequest.Benefit, RW => RW.BenefitRequest.Benefit.BenefitType, RW => RW.BenefitRequest.Group, RW => RW.BenefitRequest.Group.RequestStatus, RW => RW.BenefitRequest.Employee, RW => RW.BenefitRequest.Employee.Department, RW => RW.BenefitRequest.Employee.Position, RW => RW.BenefitRequest.Employee.Company, RW => RW.BenefitRequest.Employee.Nationality).ToList();
                 List<RequestWokflowModel> requestWokflowModels = _mapper.Map<List<RequestWokflowModel>>(requestWorkflows);
                 return requestWokflowModels;
             }
@@ -345,16 +345,16 @@ namespace MoreForYou.Services.Implementation
                                 //    LoginUser employeeData = new LoginUser();
                                 //    employeeData.EmployeeNumber = groupEmployeeModel.EmployeeNumber;
                                 //    employeeData.EmployeeName = groupEmployeeModel.FullName;
-                                //    //employeeData.DepartmentName = groupEmployeeModel.Department.Name;
-                                //    //employeeData.PositionName = groupEmployeeModel.Position.Name;
-                                //    //employeeData.SapNumber = groupEmployeeModel.SapNumber;
-                                //    //employeeData.PhoneNumber = groupEmployeeModel.PhoneNumber;
-                                //    //employeeData.JoinDate = groupEmployeeModel.JoiningDate.ToString("yyyy-MM-dd");
-                                //    //employeeData.BirthDate = groupEmployeeModel.BirthDate.ToString("yyyy-MM-dd");
-                                //    //employeeData.Email = groupEmployeeModel.Email;
-                                //    //employeeData.Collar = CommanData.Collars.Where(c => c.Id == groupEmployeeModel.Collar).First().Name;
-                                //    //employeeData.Company = groupEmployeeModel.Company.Code;
-                                //    //employeeData.WorkDuration = CalculateWorkDuration(Convert.ToDateTime(employeeData.JoinDate));
+                                //    employeeData.DepartmentName = groupEmployeeModel.Department.Name;
+                                //    employeeData.PositionName = groupEmployeeModel.Position.Name;
+                                //    employeeData.SapNumber = groupEmployeeModel.SapNumber;
+                                //    employeeData.PhoneNumber = groupEmployeeModel.PhoneNumber;
+                                //    employeeData.JoinDate = groupEmployeeModel.JoiningDate.ToString("yyyy-MM-dd");
+                                //    employeeData.BirthDate = groupEmployeeModel.BirthDate.ToString("yyyy-MM-dd");
+                                //    employeeData.Email = groupEmployeeModel.Email;
+                                //    employeeData.Collar = CommanData.Collars.Where(c => c.Id == groupEmployeeModel.Collar).First().Name;
+                                //    employeeData.Company = groupEmployeeModel.Company.Code;
+                                //    employeeData.WorkDuration = CalculateWorkDuration(Convert.ToDateTime(employeeData.JoinDate));
                                 //    employeesData.Add(employeeData);
                                 //}
                                 requestToApprove1.FullParticipantsData = employeesData;
