@@ -509,7 +509,7 @@ namespace MoreForYou.Services.Implementation
                                 Participant participant = new Participant();
                                 participant.EmployeeNumber = employee.EmployeeNumber;
                                 participant.FullName = employee.FullName;
-                                participant.ProfilePicture = employee.ProfilePicture;
+                                //participant.ProfilePicture = employee.ProfilePicture;
                                 participants.Add(participant);
                             }
                         }
@@ -518,7 +518,7 @@ namespace MoreForYou.Services.Implementation
                             Participant participant = new Participant();
                             participant.EmployeeNumber = employee.EmployeeNumber;
                             participant.FullName = employee.FullName;
-                            participant.ProfilePicture = employee.ProfilePicture;
+                            //participant.ProfilePicture = employee.ProfilePicture;
                             participants.Add(participant);
                         }
 

@@ -179,13 +179,18 @@ namespace MoreForYou.Services.Implementation
         {
             try
             {
-                int times = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId && r.RequestStatusId == (int)CommanData.BenefitStatus.Approved).ToList().Count;
+                int times = 0;
+                var requests = _repository.Find(r => r.EmployeeId == employeeNumber && r.BenefitId == benefitId && r.RequestStatusId == (int)CommanData.BenefitStatus.Approved);
+                if(requests != null)
+                {
+                    times = requests.ToList().Count;
+                }
                 return times;
             }
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return -1;
+                return 0;
             }
         }
 
@@ -197,7 +202,6 @@ namespace MoreForYou.Services.Implementation
                 if (times.Count() > 0)
                 {
                     return true;
-
                 }
                 else
                 {

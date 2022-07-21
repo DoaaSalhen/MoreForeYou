@@ -47,6 +47,7 @@ namespace MoreForYou.Services.Implementation
         private readonly INotificationService _notificationService;
         private readonly IUserNotificationService _userNotificationService;
         private readonly IUserConnectionManager _userConnectionManager;
+        private readonly IFirebaseNotificationService _firebaseNotificationService;
 
         public RequestWorkflowService(IRepository<RequestWorkflow, long> requestWorkflowRepository,
           ILogger<RequestWorkflowService> logger,
@@ -68,7 +69,8 @@ namespace MoreForYou.Services.Implementation
            IHubContext<NotificationHub> hub,
             INotificationService notificationService,
             IUserNotificationService userNotificationService,
-            IUserConnectionManager userConnectionManager
+            IUserConnectionManager userConnectionManager,
+            IFirebaseNotificationService firebaseNotificationService
           )
         {
             _repository = requestWorkflowRepository;
@@ -91,6 +93,7 @@ namespace MoreForYou.Services.Implementation
             _notificationService = notificationService;
             _userNotificationService = userNotificationService;
             _userConnectionManager = userConnectionManager;
+            _firebaseNotificationService = firebaseNotificationService;
         }
         public async Task<RequestWokflowModel> CreateRequestWorkflow(RequestWokflowModel model)
         {
@@ -409,6 +412,11 @@ namespace MoreForYou.Services.Implementation
                     employeeData.Collar = CommanData.Collars.Where(c => c.Id == groupEmployeeModel.Collar).First().Name;
                     employeeData.Company = groupEmployeeModel.Company.Code;
                     employeeData.WorkDuration = CalculateWorkDuration(Convert.ToDateTime(employeeData.JoinDate));
+                    employeeData.Email = groupEmployeeModel.Email;
+                    employeeData.Address = groupEmployeeModel.Address;
+                    employeeData.MaritalStatus = Enum.GetName(typeof(CommanData.MaritialStatus), groupEmployeeModel.MaritalStatus);
+                    employeeData.Gender = Enum.GetName(typeof(CommanData.Gender), groupEmployeeModel.Gender);
+                    employeeData.Nationality = groupEmployeeModel.Nationality.Name;
                     employeesData.Add(employeeData);
                 }
 
@@ -1169,6 +1177,7 @@ namespace MoreForYou.Services.Implementation
             {
                 NotificationModel notificationModel = new NotificationModel();
                 string notificationMessage = "";
+                var token = _EmployeeService.GetEmployee(benefitRequestModel.EmployeeId).UserToken;
                 if (type == "CreateGroup")
                 {
                     List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupParticipants((long)DBRequestWorkflowModel.BenefitRequest.GroupId).Result.ToList();
@@ -1186,15 +1195,14 @@ namespace MoreForYou.Services.Implementation
                         notificationMessage = benefitRequestModel.Employee.FullName + " added new request for " + benefitRequestModel.Benefit.Name + " benefit";
                         notificationModel = CreateNotification(type, DBRequestWorkflowModel.EmployeeId, benefitRequestModel.Id, notificationMessage, 0);
                         await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
-                        // var token = "";
-                        // await _firebaseNotificationService.SendNotification("Request", notificationMessage, token);
+                        await _firebaseNotificationService.SendNotification("Request", notificationMessage, token);
                     }
                     if (type == "RequestCancel")
                     {
                         notificationMessage = benefitRequestModel.Employee.FullName + " cancelled his request for " + benefitRequestModel.Benefit.Name + " benefit";
                         notificationModel = CreateNotification(type, DBRequestWorkflowModel.EmployeeId, benefitRequestModel.Id, notificationMessage, 0);
                         await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
-
+                        await _firebaseNotificationService.SendNotification("RequestCancel", notificationMessage, token);
                     }
                     else if (type == "Response")
                     {
@@ -1209,6 +1217,9 @@ namespace MoreForYou.Services.Implementation
                                 notificationMessage = benefitRequestModel.Employee.FullName + " Send a new gift to you from" + benefitRequestModel.Benefit.Name + "benefit";
                                 notificationModel = CreateNotification("Gift", newRequestWokflowModel.BenefitRequest.SendTo, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
                                 await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, "Gift", benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
+                                token = _EmployeeService.GetEmployee(newRequestWokflowModel.BenefitRequest.SendTo).UserToken;
+                                await _firebaseNotificationService.SendNotification("Gift", notificationMessage, token);
+
                             }
                         }
                         else
@@ -1219,13 +1230,13 @@ namespace MoreForYou.Services.Implementation
                         {
                             notificationModel = CreateNotification(type, benefitRequestModel.EmployeeId, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
                             await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, DBRequestWorkflowModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
+                            await _firebaseNotificationService.SendNotification("Response", notificationMessage, token);
                         }
                         else
                         {
                             List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupParticipants((long)benefitRequestModel.GroupId).Result.ToList();
 
                             await SendNotificationToGroupMembers(groupEmployeeModels, DBRequestWorkflowModel, benefitRequestModel, notificationMessage, type);
-
                         }
                     }
                 }
@@ -1246,12 +1257,16 @@ namespace MoreForYou.Services.Implementation
             {
                 NotificationModel notificationModel = null;
                 string userId = benefitRequestModel.Employee.UserId;
+                string token = "";
                 foreach (GroupEmployeeModel groupEmployeeModel in groupEmployeeModels)
                 {
+                    token = _EmployeeService.GetEmployee(groupEmployeeModel.EmployeeId).UserToken;
                     RequestWokflowModel newRequestWokflowModel = DBRequestWorkflowModel;
                     newRequestWokflowModel.BenefitRequest.Employee = groupEmployeeModel.Employee;
                     notificationModel = CreateNotification(type, groupEmployeeModel.Employee.EmployeeNumber, benefitRequestModel.Id, notificationMessage, 0);
                     await SendToSpecificUser(notificationMessage, newRequestWokflowModel, type, benefitRequestModel.Employee.FullName, userId);
+                    await _firebaseNotificationService.SendNotification(type, notificationMessage, token);
+
                 }
                 if (notificationModel != null)
                 {

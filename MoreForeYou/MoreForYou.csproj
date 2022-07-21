@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="ServiceKey.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\classimax-premium\plugins\font-awesome\css\font-awesome.css" />
     <_ContentIncludedByDefault Remove="wwwroot\classimax-premium\plugins\font-awesome\css\font-awesome.min.css" />
   </ItemGroup>
@@ -55,7 +51,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="ServiceKey.json" />
     <None Include="wwwroot\bootstrap-4.6.1-dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\bootstrap-4.6.1-dist\css\bootstrap-grid.min.css.map" />
     <None Include="wwwroot\bootstrap-4.6.1-dist\css\bootstrap-reboot.css.map" />

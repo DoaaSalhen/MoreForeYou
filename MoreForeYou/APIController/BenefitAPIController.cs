@@ -50,7 +50,8 @@ namespace MoreForYou.APIController
             IUserNotificationService userNotificationService,
             IBenefitWorkflowService benefitWorkflowService,
             IRequestDocumentService requestDocumentService,
-            IEmployeeService employeeService
+            IEmployeeService employeeService,
+            IFirebaseNotificationService firebaseNotificationService
             )
         {
             _BenefitService = BenefitService;
@@ -205,17 +206,17 @@ namespace MoreForYou.APIController
                 {
                     if (userRoles.Contains("Admin"))
                     {
-                        requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
-                        List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
-                        manageRequest.DepartmentModels = new List<DepartmentAPI>();
-                        foreach (var dept in departmentModels)
-                        {
-                            DepartmentAPI departmentAPI = new DepartmentAPI();
-                            departmentAPI.Id = dept.Id;
-                            departmentAPI.Name = dept.Name;
-                            manageRequest.DepartmentModels.Add(departmentAPI);
-                        }
-                        manageRequest.IsAdmin = true;
+                        //requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.CreatedDate.Year == DateTime.Now.Year && rw.RequestStatusId == (int)CommanData.BenefitStatus.Pending).ToList();
+                        //List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                        //manageRequest.DepartmentModels = new List<DepartmentAPI>();
+                        //foreach (var dept in departmentModels)
+                        //{
+                        //    DepartmentAPI departmentAPI = new DepartmentAPI();
+                        //    departmentAPI.Id = dept.Id;
+                        //    departmentAPI.Name = dept.Name;
+                        //    manageRequest.DepartmentModels.Add(departmentAPI);
+                        //}
+                        //manageRequest.IsAdmin = true;
                     }
                     else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
                     {
@@ -283,25 +284,25 @@ namespace MoreForYou.APIController
                     {
                         if (userRoles.Contains("Admin"))
                         {
-                            if (manageRequest.SelectedDepartmentId != -1)
-                            {
-                                requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.BenefitRequest.Employee.DepartmentId == manageRequest.SelectedDepartmentId).ToList();
-                            }
-                            else
-                            {
-                                requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows();
-                            }
-                            requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled).ToList();
-                            List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
-                            manageRequest.DepartmentModels = new List<DepartmentAPI>();
-                            foreach (var dept in departmentModels)
-                            {
-                                DepartmentAPI departmentAPI = new DepartmentAPI();
-                                departmentAPI.Id = dept.Id;
-                                departmentAPI.Name = dept.Name;
-                                manageRequest.DepartmentModels.Add(departmentAPI);
-                            }
-                            manageRequest.IsAdmin = true;
+                            //if (manageRequest.SelectedDepartmentId != -1)
+                            //{
+                            //    requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows().Where(rw => rw.BenefitRequest.Employee.DepartmentId == manageRequest.SelectedDepartmentId).ToList();
+                            //}
+                            //else
+                            //{
+                            //    requestWokflowModels = _requestWorkflowService.GetAllRequestWorkflows();
+                            //}
+                            //requestWokflowModels = requestWokflowModels.Where(rw => rw.RequestStatusId != (int)CommanData.BenefitStatus.Cancelled).ToList();
+                            //List<DepartmentModel> departmentModels = _departmentService.GetAllDepartments().ToList();
+                            //manageRequest.DepartmentModels = new List<DepartmentAPI>();
+                            //foreach (var dept in departmentModels)
+                            //{
+                            //    DepartmentAPI departmentAPI = new DepartmentAPI();
+                            //    departmentAPI.Id = dept.Id;
+                            //    departmentAPI.Name = dept.Name;
+                            //    manageRequest.DepartmentModels.Add(departmentAPI);
+                            //}
+                            //manageRequest.IsAdmin = true;
                         }
                         else if (userRoles.Contains("Supervisor") || userRoles.Contains("Department Manager") || userRoles.Contains("HR"))
                         {
