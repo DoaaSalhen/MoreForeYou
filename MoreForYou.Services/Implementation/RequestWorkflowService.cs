@@ -1177,7 +1177,6 @@ namespace MoreForYou.Services.Implementation
             {
                 NotificationModel notificationModel = new NotificationModel();
                 string notificationMessage = "";
-                var token = _EmployeeService.GetEmployee(benefitRequestModel.EmployeeId).UserToken;
                 if (type == "CreateGroup")
                 {
                     List<GroupEmployeeModel> groupEmployeeModels = _groupEmployeeService.GetGroupParticipants((long)DBRequestWorkflowModel.BenefitRequest.GroupId).Result.ToList();
@@ -1195,6 +1194,7 @@ namespace MoreForYou.Services.Implementation
                         notificationMessage = benefitRequestModel.Employee.FullName + " added new request for " + benefitRequestModel.Benefit.Name + " benefit";
                         notificationModel = CreateNotification(type, DBRequestWorkflowModel.EmployeeId, benefitRequestModel.Id, notificationMessage, 0);
                         await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
+                        var token = _EmployeeService.GetEmployee(DBRequestWorkflowModel.EmployeeId).UserToken;
                         await _firebaseNotificationService.SendNotification("Request", notificationMessage, token);
                     }
                     if (type == "RequestCancel")
@@ -1202,6 +1202,7 @@ namespace MoreForYou.Services.Implementation
                         notificationMessage = benefitRequestModel.Employee.FullName + " cancelled his request for " + benefitRequestModel.Benefit.Name + " benefit";
                         notificationModel = CreateNotification(type, DBRequestWorkflowModel.EmployeeId, benefitRequestModel.Id, notificationMessage, 0);
                         await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
+                        var token = _EmployeeService.GetEmployee(DBRequestWorkflowModel.EmployeeId).UserToken;
                         await _firebaseNotificationService.SendNotification("RequestCancel", notificationMessage, token);
                     }
                     else if (type == "Response")
@@ -1217,7 +1218,7 @@ namespace MoreForYou.Services.Implementation
                                 notificationMessage = benefitRequestModel.Employee.FullName + " Send a new gift to you from" + benefitRequestModel.Benefit.Name + "benefit";
                                 notificationModel = CreateNotification("Gift", newRequestWokflowModel.BenefitRequest.SendTo, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
                                 await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, "Gift", benefitRequestModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
-                                token = _EmployeeService.GetEmployee(newRequestWokflowModel.BenefitRequest.SendTo).UserToken;
+                               var token = _EmployeeService.GetEmployee(newRequestWokflowModel.BenefitRequest.SendTo).UserToken;
                                 await _firebaseNotificationService.SendNotification("Gift", notificationMessage, token);
 
                             }
@@ -1230,6 +1231,7 @@ namespace MoreForYou.Services.Implementation
                         {
                             notificationModel = CreateNotification(type, benefitRequestModel.EmployeeId, benefitRequestModel.Id, notificationMessage, DBRequestWorkflowModel.EmployeeId);
                             await SendToSpecificUser(notificationMessage, DBRequestWorkflowModel, type, DBRequestWorkflowModel.Employee.FullName, DBRequestWorkflowModel.BenefitRequest.Employee.UserId);
+                            var token = _EmployeeService.GetEmployee(benefitRequestModel.EmployeeId).UserToken;
                             await _firebaseNotificationService.SendNotification("Response", notificationMessage, token);
                         }
                         else
